@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Leaderboard from './components/Leaderboard';
 
 const PRO_RECORDS = [
   { rank: 1, driver: "Valtteri Bottas", time: 0.040, note: "Fastest ever recorded" },
@@ -16,7 +17,9 @@ export default function Home() {
   const [reactionTime, setReactionTime] = useState<number | null>(null);
   const [name, setName] = useState('');
   const [personalBest, setPersonalBest] = useState<number | null>(null);
-  const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [leaderboardKey, setLeaderboardKey] = useState(0);
 
   const startTimeRef = useRef<number | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -25,37 +28,33 @@ export default function Home() {
   useEffect(() => {
     const saved = localStorage.getItem('f1PersonalBest');
     if (saved) setPersonalBest(parseFloat(saved));
-    fetchLeaderboard();
   }, []);
-
-  const fetchLeaderboard = async () => {
-    try {
-      const res = await fetch('/api/leaderboard');
-      if (res.ok) {
-        const data = await res.json();
-        setLeaderboard(data);
-      }
-    } catch (e) {
-      console.log('Leaderboard fetch failed:', e);
-    }
-  };
 
   const submitScore = async () => {
     if (!reactionTime || !name.trim()) return;
+    setSubmitting(true);
+    setSubmitError(null);
     try {
-      await fetch('/api/leaderboard', {
+      const res = await fetch('/api/leaderboard', {
         method: 'POST',
         body: JSON.stringify({ name: name.trim().slice(0, 15), time: reactionTime }),
         headers: { 'Content-Type': 'application/json' },
       });
-      fetchLeaderboard();
-      if (!personalBest || reactionTime < personalBest) {
-        localStorage.setItem('f1PersonalBest', reactionTime.toString());
-        setPersonalBest(reactionTime);
+      if (res.ok) {
+        if (!personalBest || reactionTime < personalBest) {
+          localStorage.setItem('f1PersonalBest', reactionTime.toString());
+          setPersonalBest(reactionTime);
+        }
+        setName('');
+        setLeaderboardKey(prev => prev + 1);
+      } else {
+        const data = await res.json();
+        setSubmitError(data.error || 'Submit failed - try again!');
       }
-      setName('');
     } catch (e) {
-      alert('Submit failed - try again!');
+      setSubmitError('An error occurred.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -103,8 +102,6 @@ export default function Home() {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [phase]);
-
-  const rank = reactionTime ? leaderboard.filter(p => p.time < reactionTime).length + 1 : null;
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4" onClick={handleReaction}>
@@ -160,8 +157,6 @@ export default function Home() {
               <div className="text-4xl text-green-400 animate-pulse">NEW PB!</div>
             )}
 
-            {rank && <div className="text-4xl">Rank: #{rank}</div>}
-
             <div className="flex flex-col items-center gap-4">
               <input
                 type="text"
@@ -172,9 +167,10 @@ export default function Home() {
                 className="px-6 py-4 bg-zinc-900 rounded-xl text-2xl text-center w-80"
                 onClick={(e) => e.stopPropagation()}
               />
-              <button onClick={submitScore} className="px-12 py-5 bg-green-600 hover:bg-green-500 rounded-2xl text-2xl font-bold">
-                Submit Score
+              <button onClick={submitScore} disabled={submitting} className="px-12 py-5 bg-green-600 hover:bg-green-500 rounded-2xl text-2xl font-bold disabled:bg-gray-500">
+                {submitting ? 'Submitting...' : 'Submit Score'}
               </button>
+              {submitError && <div className="text-red-500">{submitError}</div>}
             </div>
 
             <button onClick={start} className="px-12 py-5 bg-gray-700 hover:bg-gray-600 rounded-2xl text-2xl">
@@ -196,20 +192,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Leaderboard */}
-        {leaderboard.length > 0 && (
-          <div className="mt-12 bg-zinc-950 rounded-3xl p-8 border border-zinc-800">
-            <h2 className="text-3xl font-bold mb-6 text-center">TOP 20</h2>
-            <div className="space-y-2 font-mono text-lg">
-              {leaderboard.slice(0, 20).map((entry, i) => (
-                <div key={entry.id} className="flex justify-between">
-                  <span>{i + 1}. {entry.name}</span>
-                  <span>{entry.time.toFixed(5)}s</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <Leaderboard refresh={leaderboardKey} />
 
         {personalBest && phase === 'idle' && (
           <div className="text-center mt-12 text-3xl">

@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>F1 Lights Out! - Test Your Reaction Time</title>
+<meta name="description" content="Can you beat an F1 driver's reaction time? Play the official lights out challenge and compete on the global leaderboard.">
+<meta property="og:title" content="F1 Lights Out! - I just got 0.2s reaction time!">
+<meta property="og:description" content="Can you beat an F1 driver? Test your reaction time now.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+
+:root{
+  --red:#ff1801;
+  --red-glow:rgba(255,24,1,.8);
+  --green:#00ff44;
+  --green-glow:rgba(0,255,68,.8);
+  --bg:#0a0a0a;
+  --card:#141414;
+  --card-border:#222;
+  --text:#e0e0e0;
+  --text-dim:#666;
+  --gold:#ffd700;
+  --silver:#c0c0c0;
+  --bronze:#cd7f32;
+}
+
+html,body{
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ==================== BACKGROUND ANIMATION ==================== */
+.bg-scene{
+  position:fixed;inset:0;z-index:0;overflow:hidden;
+  background:linear-gradient(180deg,#0a0a0a 0%,#1a0a0a 50%,#0a0a0a 100%);
+}
+.bg-scene::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 80%,rgba(255,24,1,.06) 0%,transparent 70%);
+}
+
+/* Track lines */
+.track{
+  position:absolute;bottom:0;left:0;right:0;height:40%;
+  background:linear-gradient(0deg,#111 0%,transparent 100%);
+  overflow:hidden;
+}
+.track-line{
+  position:absolute;bottom:15%;height:3px;background:white;opacity:.15;
+  animation:trackMove 1.5s linear infinite;
+}
+.track-line:nth-child(1){left:20%;width:60px;animation-delay:0s}
+.track-line:nth-child(2){left:40%;width:80px;animation-delay:.3s}
+.track-line:nth-child(3){left:60%;width:50px;animation-delay:.7s}
+.track-line:nth-child(4){left:30%;width:70px;animation-delay:1s}
+.track-line:nth-child(5){left:70%;width:40px;animation-delay:.5s}
+.track-line:nth-child(6){left:50%;width:90px;animation-delay:1.2s}
+
+@keyframes trackMove{
+  0%{transform:translateX(100vw);opacity:.15}
+  80%{opacity:.15}
+  100%{transform:translateX(-200px);opacity:0}
+}
+
+/* Animated car silhouette */
+.f1-car{
+  position:absolute;bottom:12%;left:10%;
+  width:120px;height:30px;
+  opacity:.3;
+  transition:all 1.5s cubic-bezier(.2,.8,.2,1);
+}
+.f1-car.racing{
+  transform:translateX(calc(100vw - 50px)) scale(1.1);
+  opacity:.6;
+}
+.f1-car svg{width:100%;height:100%}
+
+/* Particles */
+.particle{
+  position:absolute;
+  width:2px;height:2px;
+  background:var(--red);
+  border-radius:50%;
+  opacity:0;
+}
+.f1-car.racing ~ .particles .particle{
+  animation:spark .6s ease-out forwards;
+}
+@keyframes spark{
+  0%{opacity:.8;transform:translate(0,0)}
+  100%{opacity:0;transform:translate(calc(-30px + var(--dx)),calc(var(--dy)))}
+}
+
+/* ==================== MAIN CONTAINER ==================== */
+.container{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:20px 16px 40px;
+}
+
+/* ==================== HEADER ==================== */
+.header{
+  text-align:center;margin-bottom:24px;
+  animation:fadeInDown .8s ease;
+}
+.header h1{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(24px,6vw,48px);
+  font-weight:900;
+  background:linear-gradient(135deg,#fff 0%,var(--red) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+.header .subtitle{
+  font-size:clamp(12px,3vw,16px);
+  color:var(--text-dim);
+  margin-top:6px;
+  font-weight:300;
+  letter-spacing:4px;
+  text-transform:uppercase;
+}
+
+@keyframes fadeInDown{
+  from{opacity:0;transform:translateY(-20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ==================== NAME ENTRY ==================== */
+.name-section{
+  margin-bottom:24px;
+  animation:fadeIn .8s ease .2s both;
+  display:flex;gap:10px;align-items:center;
+  flex-wrap:wrap;justify-content:center;
+}
+.name-input{
+  background:#1a1a1a;
+  border:1px solid #333;
+  color:#fff;
+  font-family:'Orbitron',monospace;
+  font-size:14px;
+  padding:10px 16px;
+  border-radius:8px;
+  outline:none;
+  width:220px;
+  transition:border-color .3s;
+  text-transform:uppercase;
+}
+.name-input:focus{border-color:var(--red)}
+.name-input::placeholder{color:#444;text-transform:none;font-family:'Inter',sans-serif}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ==================== LIGHTS PANEL ==================== */
+.lights-wrapper{
+  perspective:800px;
+  margin-bottom:20px;
+  animation:fadeIn .8s ease .3s both;
+}
+.lights-panel{
+  background:linear-gradient(180deg,#1c1c1c 0%,#111 100%);
+  border-radius:16px;
+  padding:24px 32px 20px;
+  border:1px solid #2a2a2a;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.6),
+    0 0 0 1px rgba(255,255,255,.03),
+    inset 0 1px 0 rgba(255,255,255,.05);
+  transform:rotateX(2deg);
+  position:relative;
+  overflow:hidden;
+}
+.lights-panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);
+}
+
+.lights-row{
+  display:flex;
+  gap:clamp(12px,3vw,24px);
+  justify-content:center;
+}
+
+/* Individual light column */
+.light-col{
+  display:flex;flex-direction:column;gap:8px;align-items:center;
+}
+
+/* 3D realistic light */
+.light{
+  width:clamp(36px,8vw,56px);
+  height:clamp(36px,8vw,56px);
+  border-radius:50%;
+  position:relative;
+  background:radial-gradient(circle at 35% 35%,#3a3a3a 0%,#1a1a1a 50%,#0d0d0d 100%);
+  border:2px solid #2a2a2a;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.05),
+    inset 0 -2px 4px rgba(0,0,0,.5),
+    0 2px 8px rgba(0,0,0,.4);
+  transition:all .15s ease;
+  overflow:hidden;
+}
+
+/* Glass lens effect */
+.light::before{
+  content:'';
+  position:absolute;
+  top:15%;left:20%;
+  width:30%;height:25%;
+  background:radial-gradient(ellipse,rgba(255,255,255,.15),transparent);
+  border-radius:50%;
+  z-index:2;
+}
+
+/* Inner filament */
+.light::after{
+  content:'';
+  position:absolute;
+  inset:15%;
+  border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,#2a2a2a 0%,#1a1a1a 100%);
+  transition:all .15s ease;
+}
+
+/* Light ON - RED */
+.light.on-red{
+  background:radial-gradient(circle at 40% 40%,#ff4444 0%,#cc0000 40%,#880000 70%,#440000 100%);
+  border-color:#ff2200;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.2),
+    inset 0 -2px 4px rgba(0,0,0,.3),
+    0 0 20px rgba(255,24,1,.5),
+    0 0 60px rgba(255,24,1,.3),
+    0 0 120px rgba(255,24,1,.15);
+}
+.light.on-red::after{
+  background:radial-gradient(circle at 50% 50%,#ff6644 0%,#ff2200 40%,#cc0000 100%);
+  box-shadow:0 0 15px rgba(255,24,1,.8);
+}
+
+/* Light ON - GREEN (lights out!) */
+.light.on-green{
+  background:radial-gradient(circle at 40% 40%,#44ff66 0%,#00cc44 40%,#008800 70%,#004400 100%);
+  border-color:#00ff44;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.2),
+    inset 0 -2px 4px rgba(0,0,0,.3),
+    0 0 20px rgba(0,255,68,.5),
+    0 0 60px rgba(0,255,68,.3),
+    0 0 120px rgba(0,255,68,.15);
+}
+.light.on-green::after{
+  background:radial-gradient(circle at 50% 50%,#66ff88 0%,#00ff44 40%,#00cc00 100%);
+  box-shadow:0 0 15px rgba(0,255,68,.8);
+}
+
+/* Housing around lights */
+.light-housing{
+  background:linear-gradient(180deg,#222 0%,#111 100%);
+  border-radius:12px;
+  padding:10px 8px;
+  display:flex;flex-direction:column;gap:8px;align-items:center;
+  border:1px solid #2a2a2a;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+/* Glow surface below lights */
+.glow-surface{
+  position:absolute;
+  bottom:-10px;left:10%;right:10%;
+  height:20px;
+  background:transparent;
+  border-radius:50%;
+  transition:all .3s;
+  filter:blur(10px);
+}
+.lights-panel.red-active .glow-surface{
+  background:rgba(255,24,1,.15);
+}
+.lights-panel.green-active .glow-surface{
+  background:rgba(0,255,68,.2);
+}
+
+/* ==================== STATUS & REACTION ==================== */
+.status{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(14px,3.5vw,20px);
+  text-align:center;
+  margin:16px 0;
+  min-height:28px;
+  letter-spacing:1px;
+  transition:all .3s;
+}
+.status.waiting{color:var(--text-dim)}
+.status.ready{color:var(--red);animation:pulse 1s infinite}
+.status.go{color:var(--green);font-size:clamp(20px,5vw,32px);font-weight:900}
+.status.fail{color:#ff4444}
+
+@keyframes pulse{
+  0%,100%{opacity:1}
+  50%{opacity:.5}
+}
+
+.reaction-display{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(36px,10vw,72px);
+  font-weight:900;
+  text-align:center;
+  margin:8px 0;
+  min-height:50px;
+  transition:all .3s;
+}
+.reaction-display.good{color:var(--green);text-shadow:0 0 30px rgba(0,255,68,.4)}
+.reaction-display.ok{color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.4)}
+.reaction-display.slow{color:var(--red);text-shadow:0 0 30px rgba(255,24,1,.4)}
+
+/* Driver comparison */
+.comparison{
+  text-align:center;
+  font-size:clamp(12px,3vw,16px);
+  margin-bottom:16px;
+  padding:12px 20px;
+  background:rgba(255,255,255,.03);
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.06);
+  animation:fadeIn .5s ease;
+}
+.comparison .beat{color:var(--green);font-weight:700}
+.comparison .lose{color:var(--red);font-weight:700}
+
+/* ==================== BUTTONS ==================== */
+.btn{
+  font-family:'Orbitron',monospace;
+  font-weight:700;
+  border:none;
+  cursor:pointer;
+  border-radius:10px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  transition:all .2s;
+  position:relative;
+  overflow:hidden;
+}
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.1) 0%,transparent 50%);
+  pointer-events:none;
+}
+
+.btn-start{
+  font-size:clamp(14px,3.5vw,18px);
+  padding:14px 40px;
+  background:linear-gradient(180deg,var(--red) 0%,#cc1400 100%);
+  color:#fff;
+  box-shadow:0 4px 20px rgba(255,24,1,.4),0 0 0 1px rgba(255,255,255,.1) inset;
+}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(255,24,1,.6)}
+.btn-start:active{transform:translateY(0)}
+
+.btn-share{
+  font-size:12px;
+  padding:10px 24px;
+  background:linear-gradient(180deg,#333 0%,#222 100%);
+  color:#fff;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);
+  margin:8px 4px;
+}
+.btn-share:hover{background:linear-gradient(180deg,#444 0%,#333 100%)}
+
+.btn-react{
+  position:fixed;inset:0;z-index:100;
+  background:transparent;
+  cursor:pointer;
+  border:none;
+  display:none;
+  font-size:0;
+}
+
+.buttons{
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:20px;
+}
+
+/* ==================== F1 PRO TIMES TABLE ==================== */
+.section-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(14px,3vw,18px);
+  font-weight:700;
+  text-align:center;
+  margin:28px 0 12px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--text-dim);
+}
+.section-title span{color:var(--red)}
+
+.pro-times{
+  width:100%;max-width:500px;
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:8px;
+  animation:fadeIn .8s ease .5s both;
+}
+.pro-row{
+  display:flex;align-items:center;
+  padding:10px 16px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  transition:background .2s;
+  font-size:clamp(12px,2.8vw,14px);
+}
+.pro-row:last-child{border-bottom:none}
+.pro-row:hover{background:rgba(255,255,255,.02)}
+.pro-rank{
+  width:28px;font-family:'Orbitron',monospace;font-weight:700;font-size:12px;
+  color:var(--text-dim);
+}
+.pro-rank.gold{color:var(--gold)}
+.pro-rank.silver{color:var(--silver)}
+.pro-rank.bronze{color:var(--bronze)}
+.pro-name{flex:1;font-weight:600}
+.pro-team{flex:1;color:var(--text-dim);font-size:11px}
+.pro-time{
+  font-family:'Orbitron',monospace;font-weight:700;font-size:13px;
+  color:var(--green);
+}
+.pro-year{
+  font-size:10px;color:var(--text-dim);margin-left:8px;width:40px;text-align:right;
+}
+
+/* ==================== LEADERBOARD ==================== */
+.leaderboard{
+  width:100%;max-width:500px;
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:20px;
+  animation:fadeIn .8s ease .6s both;
+}
+.lb-row{
+  display:flex;align-items:center;
+  padding:10px 16px;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:clamp(12px,2.8vw,14px);
+  transition:background .2s;
+}
+.lb-row:last-child{border-bottom:none}
+.lb-row:hover{background:rgba(255,255,255,.02)}
+.lb-row.you{background:rgba(255,24,1,.08);border-left:3px solid var(--red)}
+.lb-rank{
+  width:28px;font-family:'Orbitron',monospace;font-weight:700;font-size:12px;
+  color:var(--text-dim);
+}
+.lb-rank.gold{color:var(--gold)}
+.lb-rank.silver{color:var(--silver)}
+.lb-rank.bronze{color:var(--bronze)}
+.lb-name{flex:1;font-weight:600}
+.lb-time{
+  font-family:'Orbitron',monospace;font-weight:700;font-size:13px;
+  color:var(--green);
+}
+.lb-empty{
+  padding:24px;text-align:center;color:var(--text-dim);font-size:13px;
+}
+
+/* ==================== FOOTER ==================== */
+.footer{
+  text-align:center;
+  font-size:11px;
+  color:#333;
+  margin-top:auto;
+  padding-top:20px;
+}
+.footer a{color:#555;text-decoration:none}
+
+/* ==================== FALSE START OVERLAY ==================== */
+.false-start-overlay{
+  display:none;
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.9);
+  justify-content:center;align-items:center;
+  flex-direction:column;gap:16px;
+  animation:fadeIn .3s ease;
+}
+.false-start-overlay.show{display:flex}
+.false-start-text{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(24px,6vw,48px);
+  font-weight:900;
+  color:#ff4444;
+  text-shadow:0 0 40px rgba(255,0,0,.5);
+}
+.false-start-sub{color:var(--text-dim);font-size:14px}
+
+/* ==================== SCREEN FLASH ==================== */
+@keyframes screenFlashGreen{
+  0%{background:rgba(0,255,68,.15)}
+  100%{background:transparent}
+}
+.screen-flash{
+  position:fixed;inset:0;z-index:50;pointer-events:none;
+  animation:screenFlashGreen .4s ease;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media(max-width:400px){
+  .lights-panel{padding:16px 16px 14px}
+  .light-housing{padding:6px 5px}
+  .pro-team{display:none}
+}
+
+/* ==================== RACING LAUNCH EFFECT ==================== */
+.racing-overlay{
+  display:none;position:fixed;inset:0;z-index:150;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,24,1,.03) 50%,transparent 100%);
+  pointer-events:none;
+}
+.racing-overlay.active{display:block;animation:raceZoom 2s ease forwards}
+@keyframes raceZoom{
+  0%{opacity:1}
+  100%{opacity:0}
+}
+
+/* Speed lines */
+.speed-lines{
+  position:fixed;inset:0;z-index:49;pointer-events:none;overflow:hidden;
+  display:none;
+}
+.speed-lines.active{display:block}
+.speed-line{
+  position:absolute;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+  animation:speedLine .4s linear forwards;
+}
+@keyframes speedLine{
+  0%{transform:translateX(100vw);opacity:.6}
+  100%{transform:translateX(-100vw);opacity:0}
+}
+
+/* ==================== LOADING ==================== */
+.lb-loading{
+  padding:24px;text-align:center;
+}
+.lb-loading .spinner{
+  width:24px;height:24px;border:2px solid #333;border-top-color:var(--red);
+  border-radius:50%;margin:0 auto 8px;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Toast notification */
+.toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:#222;color:#fff;padding:10px 20px;border-radius:8px;
+  font-size:13px;z-index:300;transition:transform .3s ease;
+  border:1px solid #333;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* How to play hint */
+.hint{
+  font-size:clamp(11px,2.5vw,13px);
+  color:var(--text-dim);
+  text-align:center;
+  max-width:400px;
+  line-height:1.6;
+  margin-bottom:16px;
+  animation:fadeIn .8s ease .4s both;
+}
+
+/* Best time badge */
+.best-badge{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--gold),#b8860b);
+  color:#000;
+  font-family:'Orbitron',monospace;
+  font-size:10px;font-weight:700;
+  padding:3px 8px;border-radius:4px;
+  margin-left:8px;
+  text-transform:uppercase;
+}
+</style>
+</head>
+<body>
+
+<!-- Background Scene -->
+<div class="bg-scene">
+  <div class="track">
+    <div class="track-line"></div>
+    <div class="track-line"></div>
+    <div class="track-line"></div>
+    <div class="track-line"></div>
+    <div class="track-line"></div>
+    <div class="track-line"></div>
+  </div>
+  <div class="f1-car" id="f1Car">
+    <svg viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="35" cy="38" rx="12" ry="12" fill="#333" stroke="#555" stroke-width="1"/>
+      <ellipse cx="155" cy="38" rx="12" ry="12" fill="#333" stroke="#555" stroke-width="1"/>
+      <ellipse cx="35" cy="38" rx="6" ry="6" fill="#222"/>
+      <ellipse cx="155" cy="38" rx="6" ry="6" fill="#222"/>
+      <path d="M20 30 Q30 8 95 10 L180 14 Q200 16 195 28 L190 34 Q185 38 170 38 L40 38 Q22 38 20 30Z" fill="#cc0000" stroke="#ff1801" stroke-width="0.5"/>
+      <path d="M60 12 Q70 4 100 6 L105 10 Q95 10 60 12Z" fill="rgba(100,200,255,.3)" stroke="rgba(100,200,255,.2)" stroke-width="0.5"/>
+      <rect x="188" y="18" width="8" height="4" rx="1" fill="#ff4444" opacity=".8"/>
+      <path d="M50 10 L52 2 L56 2 L54 10Z" fill="#cc0000"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Speed Lines -->
+<div class="speed-lines" id="speedLines"></div>
+<div class="racing-overlay" id="racingOverlay"></div>
+
+<!-- False Start Overlay -->
+<div class="false-start-overlay" id="falseStart">
+  <div class="false-start-text">JUMP START!</div>
+  <div class="false-start-sub">You went before the lights went out</div>
+  <button class="btn btn-start" onclick="resetGame()" style="margin-top:12px;font-size:14px;padding:12px 30px">TRY AGAIN</button>
+</div>
+
+<!-- Full Screen Reaction Button (invisible, covers screen when GO) -->
+<button class="btn-react" id="btnReact" onclick="recordReaction()"></button>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Main Content -->
+<div class="container">
+  <header class="header">
+    <h1>Lights Out!</h1>
+    <div class="subtitle">F1 Reaction Challenge</div>
+  </header>
+
+  <!-- Name Entry -->
+  <div class="name-section" id="nameSection">
+    <input type="text" class="name-input" id="nameInput" placeholder="Enter your name" maxlength="20" autocomplete="off" spellcheck="false">
+  </div>
+
+  <!-- Lights Panel -->
+  <div class="lights-wrapper">
+    <div class="lights-panel" id="lightsPanel">
+      <div class="lights-row">
+        <div class="light-housing">
+          <div class="light" id="l1t"></div>
+          <div class="light" id="l1b"></div>
+        </div>
+        <div class="light-housing">
+          <div class="light" id="l2t"></div>
+          <div class="light" id="l2b"></div>
+        </div>
+        <div class="light-housing">
+          <div class="light" id="l3t"></div>
+          <div class="light" id="l3b"></div>
+        </div>
+        <div class="light-housing">
+          <div class="light" id="l4t"></div>
+          <div class="light" id="l4b"></div>
+        </div>
+        <div class="light-housing">
+          <div class="light" id="l5t"></div>
+          <div class="light" id="l5b"></div>
+        </div>
+      </div>
+      <div class="glow-surface"></div>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="status waiting" id="status">Enter your name and press START</div>
+  <div class="reaction-display" id="reactionDisplay"></div>
+  <div id="comparisonBox"></div>
+
+  <!-- Buttons -->
+  <div class="buttons" id="buttonsArea">
+    <button class="btn btn-start" id="btnStart" onclick="startGame()">START</button>
+  </div>
+
+  <div class="hint" id="hint">
+    5 red lights come on one by one. When they ALL go out — tap as fast as you can!<br>
+    Just like a real F1 race start.
+  </div>
+
+  <!-- Real F1 Pro Reaction Times -->
+  <div class="section-title"><span>F1</span> Pro Reaction Times</div>
+  <div class="pro-times" id="proTimes"></div>
+
+  <!-- Global Leaderboard -->
+  <div class="section-title">Global <span>Leaderboard</span></div>
+  <div class="leaderboard" id="leaderboard">
+    <div class="lb-loading"><div class="spinner"></div>Loading...</div>
+  </div>
+
+  <footer class="footer">
+    Built for speed. Hosted on Cloudflare.<br>
+    <a href="https://github.com/sree-pm/F1-lightsout-game" target="_blank">GitHub</a>
+  </footer>
+</div>
+
+<script>
+// ==================== CONFIG ====================
+const API_URL = '/api/leaderboard';
+
+// ==================== REAL F1 REACTION TIMES ====================
+const F1_PRO_TIMES = [
+  { name: 'Valtteri Bottas', team: 'Mercedes', time: 0.201, race: 'Austrian GP', year: 2019 },
+  { name: 'Max Verstappen', team: 'Red Bull', time: 0.214, race: 'Bahrain GP', year: 2023 },
+  { name: 'Lewis Hamilton', team: 'Mercedes', time: 0.219, race: 'British GP', year: 2020 },
+  { name: 'Charles Leclerc', team: 'Ferrari', time: 0.221, race: 'Monaco GP', year: 2024 },
+  { name: 'Lando Norris', team: 'McLaren', time: 0.224, race: 'Dutch GP', year: 2023 },
+  { name: 'Sebastian Vettel', team: 'Red Bull', time: 0.227, race: 'Japanese GP', year: 2013 },
+  { name: 'Carlos Sainz', team: 'Ferrari', time: 0.230, race: 'Italian GP', year: 2023 },
+  { name: 'Kimi Raikkonen', team: 'Ferrari', time: 0.233, race: 'Malaysian GP', year: 2017 },
+  { name: 'Fernando Alonso', team: 'Aston Martin', time: 0.236, race: 'Saudi GP', year: 2023 },
+  { name: 'Daniel Ricciardo', team: 'Red Bull', time: 0.240, race: 'Chinese GP', year: 2018 },
+];
+
+// ==================== AUDIO ENGINE (Web Audio API, no files) ====================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playBeep(freq, duration, vol = 0.15) {
+  try {
+    ensureAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch(e) {}
+}
+
+function playLightOn() { playBeep(880, 0.12, 0.1); }
+function playLightsOut() { playBeep(1200, 0.3, 0.2); }
+function playFalseStart() { playBeep(200, 0.5, 0.2); }
+function playSuccess() {
+  try {
+    ensureAudio();
+    [0, .1, .2].forEach((d, i) => {
+      setTimeout(() => playBeep(800 + i * 200, 0.15, 0.12), d * 1000);
+    });
+  } catch(e) {}
+}
+
+// ==================== GAME STATE ====================
+let gameState = 'idle'; // idle | sequence | waiting | go | done | false_start
+let lightTimers = [];
+let lightsOutTime = 0;
+let bestTime = parseFloat(localStorage.getItem('f1_best') || '99');
+
+// ==================== DOM ====================
+const $ = id => document.getElementById(id);
+const lights = [
+  ['l1t','l1b'],['l2t','l2b'],['l3t','l3b'],['l4t','l4b'],['l5t','l5b']
+];
+
+// ==================== INIT ====================
+function init() {
+  renderProTimes();
+  loadLeaderboard();
+  const saved = localStorage.getItem('f1_name');
+  if (saved) $('nameInput').value = saved;
+
+  // Keyboard support
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      e.preventDefault();
+      if (gameState === 'go') recordReaction();
+      else if (gameState === 'waiting') falseStart();
+      else if (gameState === 'idle' || gameState === 'done' || gameState === 'false_start') startGame();
+    }
+  });
+
+  // Touch/click anywhere during GO
+  document.addEventListener('mousedown', e => {
+    if (gameState === 'go') recordReaction();
+    else if (gameState === 'waiting') falseStart();
+  });
+  document.addEventListener('touchstart', e => {
+    if (gameState === 'go') recordReaction();
+    else if (gameState === 'waiting') falseStart();
+  }, { passive: true });
+}
+
+// ==================== RENDER PRO TIMES ====================
+function renderProTimes() {
+  $('proTimes').innerHTML = F1_PRO_TIMES.map((p, i) => `
+    <div class="pro-row">
+      <span class="pro-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
+      <span class="pro-name">${p.name}</span>
+      <span class="pro-team">${p.team}</span>
+      <span class="pro-time">${p.time.toFixed(3)}s</span>
+      <span class="pro-year">${p.race} '${String(p.year).slice(2)}</span>
+    </div>
+  `).join('');
+}
+
+// ==================== GAME LOGIC ====================
+function startGame() {
+  const name = $('nameInput').value.trim();
+  if (!name) {
+    $('nameInput').focus();
+    $('nameInput').style.borderColor = '#ff4444';
+    setTimeout(() => $('nameInput').style.borderColor = '#333', 1500);
+    showToast('Enter your name first!');
+    return;
+  }
+  localStorage.setItem('f1_name', name);
+
+  // Reset
+  gameState = 'sequence';
+  $('falseStart').classList.remove('show');
+  $('reactionDisplay').textContent = '';
+  $('reactionDisplay').className = 'reaction-display';
+  $('comparisonBox').innerHTML = '';
+  $('btnStart').style.display = 'none';
+  $('hint').style.display = 'none';
+  $('f1Car').classList.remove('racing');
+  $('speedLines').classList.remove('active');
+  $('racingOverlay').classList.remove('active');
+  $('lightsPanel').classList.remove('red-active', 'green-active');
+  lights.forEach(pair => pair.forEach(id => {
+    $(id).className = 'light';
+  }));
+
+  $('status').textContent = 'WATCH THE LIGHTS...';
+  $('status').className = 'status ready';
+
+  // Light sequence: 1 column every ~1s, then random delay before lights out
+  const baseDelay = 800 + Math.random() * 400;
+  lightTimers = [];
+
+  lights.forEach((pair, i) => {
+    const t = setTimeout(() => {
+      pair.forEach(id => $(id).classList.add('on-red'));
+      $('lightsPanel').classList.add('red-active');
+      playLightOn();
+    }, baseDelay * (i + 1));
+    lightTimers.push(t);
+  });
+
+  // After all 5 lit, random wait 0.5-3.5s then lights out
+  const allLitTime = baseDelay * 5;
+  const randomWait = 500 + Math.random() * 3000;
+
+  const goTimer = setTimeout(() => {
+    // Lights out!
+    gameState = 'go';
+    lights.forEach(pair => pair.forEach(id => {
+      $(id).classList.remove('on-red');
+    }));
+    $('lightsPanel').classList.remove('red-active');
+    $('status').textContent = 'GO GO GO!';
+    $('status').className = 'status go';
+    lightsOutTime = performance.now();
+    playLightsOut();
+    $('btnReact').style.display = 'block';
+
+    // Screen flash
+    const flash = document.createElement('div');
+    flash.className = 'screen-flash';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 500);
+  }, allLitTime + randomWait);
+
+  lightTimers.push(goTimer);
+
+  // Enable false start detection during waiting period
+  const waitTimer = setTimeout(() => {
+    if (gameState === 'sequence') gameState = 'waiting';
+  }, baseDelay);
+  lightTimers.push(waitTimer);
+}
+
+function falseStart() {
+  gameState = 'false_start';
+  lightTimers.forEach(clearTimeout);
+  lightTimers = [];
+  $('falseStart').classList.add('show');
+  $('btnReact').style.display = 'none';
+  playFalseStart();
+  $('lightsPanel').classList.remove('red-active', 'green-active');
+  lights.forEach(pair => pair.forEach(id => $(id).className = 'light'));
+}
+
+function recordReaction() {
+  if (gameState !== 'go') return;
+  gameState = 'done';
+  $('btnReact').style.display = 'none';
+
+  const reaction = (performance.now() - lightsOutTime) / 1000;
+  const reactionMs = reaction.toFixed(3);
+
+  // Display
+  $('reactionDisplay').textContent = reactionMs + 's';
+  let cls = 'good';
+  if (reaction > 0.3) cls = 'ok';
+  if (reaction > 0.5) cls = 'slow';
+  $('reactionDisplay').className = 'reaction-display ' + cls;
+
+  // Car animation
+  $('f1Car').classList.add('racing');
+  $('speedLines').classList.add('active');
+  $('racingOverlay').classList.add('active');
+  fireSpeedLines();
+
+  // Status
+  $('status').textContent = '';
+  $('status').className = 'status';
+
+  // Comparison with F1 drivers
+  const beaten = F1_PRO_TIMES.filter(p => reaction < p.time);
+  let compHTML = '';
+  if (beaten.length === F1_PRO_TIMES.length) {
+    compHTML = `<div class="comparison"><span class="beat">INCREDIBLE!</span> You beat ALL F1 drivers' best times! Are you superhuman?</div>`;
+  } else if (beaten.length > 0) {
+    const best = beaten[beaten.length - 1];
+    compHTML = `<div class="comparison"><span class="beat">You beat ${best.name}!</span> (${best.time.toFixed(3)}s at ${best.race} ${best.year})</div>`;
+  } else {
+    const closest = F1_PRO_TIMES[F1_PRO_TIMES.length - 1];
+    const diff = (reaction - closest.time).toFixed(3);
+    compHTML = `<div class="comparison"><span class="lose">${diff}s slower</span> than ${closest.name}'s ${closest.time.toFixed(3)}s — keep practicing!</div>`;
+  }
+  $('comparisonBox').innerHTML = compHTML;
+
+  // Best time
+  let isBest = false;
+  if (reaction < bestTime) {
+    bestTime = reaction;
+    localStorage.setItem('f1_best', reaction.toString());
+    isBest = true;
+  }
+
+  // Sound
+  playSuccess();
+
+  // Buttons
+  $('btnStart').textContent = 'PLAY AGAIN';
+  $('btnStart').style.display = '';
+  const shareBtn = document.createElement('button');
+  shareBtn.className = 'btn btn-share';
+  shareBtn.textContent = 'SHARE RESULT';
+  shareBtn.onclick = () => shareResult(reactionMs);
+  $('buttonsArea').innerHTML = '';
+  $('buttonsArea').appendChild($('btnStart'));
+  $('buttonsArea').appendChild(shareBtn);
+
+  // Submit to leaderboard
+  const name = $('nameInput').value.trim();
+  submitScore(name, reaction);
+}
+
+function fireSpeedLines() {
+  const container = $('speedLines');
+  container.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const line = document.createElement('div');
+    line.className = 'speed-line';
+    line.style.top = Math.random() * 100 + '%';
+    line.style.width = (50 + Math.random() * 150) + 'px';
+    line.style.animationDelay = (Math.random() * 0.3) + 's';
+    container.appendChild(line);
+  }
+  setTimeout(() => {
+    container.classList.remove('active');
+  }, 1500);
+}
+
+function resetGame() {
+  gameState = 'idle';
+  $('falseStart').classList.remove('show');
+  $('btnStart').textContent = 'START';
+  $('btnStart').style.display = '';
+  $('status').textContent = 'Press START when ready';
+  $('status').className = 'status waiting';
+  $('reactionDisplay').textContent = '';
+  $('comparisonBox').innerHTML = '';
+  $('hint').style.display = '';
+  $('lightsPanel').classList.remove('red-active','green-active');
+  lights.forEach(pair => pair.forEach(id => $(id).className = 'light'));
+  $('f1Car').classList.remove('racing');
+}
+
+// ==================== SHARE ====================
+function shareResult(time) {
+  const name = $('nameInput').value.trim();
+  const beaten = F1_PRO_TIMES.filter(p => parseFloat(time) < p.time);
+  let extra = '';
+  if (beaten.length > 0) extra = ` and beat ${beaten[beaten.length-1].name}! 🏆`;
+
+  const text = `🏎️ I got ${time}s reaction time on F1 Lights Out!${extra}\n\nCan you beat me?\n${window.location.href}`;
+
+  if (navigator.share) {
+    navigator.share({ title: 'F1 Lights Out!', text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Copied to clipboard!');
+    }).catch(() => {
+      showToast('Could not copy');
+    });
+  }
+}
+
+// ==================== LEADERBOARD ====================
+async function loadLeaderboard() {
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    renderLeaderboard(data);
+  } catch (e) {
+    $('leaderboard').innerHTML = '<div class="lb-empty">Leaderboard loading... Play a game to be first!</div>';
+  }
+}
+
+function renderLeaderboard(entries) {
+  if (!entries || entries.length === 0) {
+    $('leaderboard').innerHTML = '<div class="lb-empty">No scores yet. Be the first!</div>';
+    return;
+  }
+  const currentName = ($('nameInput').value.trim() || '').toUpperCase();
+  $('leaderboard').innerHTML = entries.slice(0, 50).map((e, i) => {
+    const isYou = e.name.toUpperCase() === currentName;
+    return `<div class="lb-row${isYou ? ' you' : ''}">
+      <span class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
+      <span class="lb-name">${escHtml(e.name)}${isYou ? ' <small>(you)</small>' : ''}</span>
+      <span class="lb-time">${e.time.toFixed(3)}s</span>
+    </div>`;
+  }).join('');
+}
+
+async function submitScore(name, time) {
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, time: parseFloat(time.toFixed(3)) })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.leaderboard) renderLeaderboard(data.leaderboard);
+      else loadLeaderboard();
+    }
+  } catch (e) {
+    console.log('Score submit failed:', e);
+  }
+}
+
+// ==================== UTILS ====================
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ==================== START ====================
+init();
+</script>
+</body>
+</html>

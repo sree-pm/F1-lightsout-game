@@ -583,6 +583,57 @@ html,body{
   animation:fadeIn .8s ease .4s both;
 }
 
+/* ==================== RESULT BLAST ==================== */
+.blast-container{
+  position:fixed;inset:0;z-index:200;pointer-events:none;overflow:hidden;
+}
+.blast-particle{
+  position:absolute;
+  border-radius:50%;
+  animation:blastFly var(--dur) cubic-bezier(.15,.8,.3,1) forwards;
+}
+@keyframes blastFly{
+  0%{transform:translate(0,0) scale(1);opacity:1}
+  60%{opacity:1}
+  100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}
+}
+.blast-ring{
+  position:fixed;
+  border:3px solid var(--green);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:199;
+  animation:ringExpand .7s cubic-bezier(.2,.8,.3,1) forwards;
+}
+@keyframes ringExpand{
+  0%{width:0;height:0;opacity:.8}
+  100%{width:300px;height:300px;opacity:0;border-width:1px}
+}
+.result-zoom{
+  animation:resultPop .5s cubic-bezier(.2,1.4,.4,1) both;
+}
+@keyframes resultPop{
+  0%{transform:scale(0.3);opacity:0}
+  60%{transform:scale(1.15)}
+  100%{transform:scale(1);opacity:1}
+}
+.comparison-slide{
+  animation:slideUp .5s cubic-bezier(.2,.8,.3,1) .3s both;
+}
+@keyframes slideUp{
+  0%{transform:translateY(30px);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
+.checkered-flash{
+  position:fixed;inset:0;z-index:198;pointer-events:none;
+  background:repeating-conic-gradient(#fff 0% 25%, transparent 0% 50%) 0 0 / 40px 40px;
+  animation:checkeredIn .6s ease forwards;
+}
+@keyframes checkeredIn{
+  0%{opacity:.12}
+  100%{opacity:0}
+}
+
 /* Best time badge */
 .best-badge{
   display:inline-block;
@@ -957,12 +1008,15 @@ function recordReaction() {
   const reaction = (performance.now() - lightsOutTime) / 1000;
   const reactionMs = reaction.toFixed(3);
 
-  // Display
+  // Display with pop animation
   $('reactionDisplay').textContent = reactionMs + 's';
   let cls = 'good';
   if (reaction > 0.3) cls = 'ok';
   if (reaction > 0.5) cls = 'slow';
-  $('reactionDisplay').className = 'reaction-display ' + cls;
+  $('reactionDisplay').className = 'reaction-display ' + cls + ' result-zoom';
+
+  // Fire the blast effect from the center of the reaction display
+  fireBlast(cls);
 
   // Car animation
   $('f1Car').classList.add('racing');
@@ -978,14 +1032,14 @@ function recordReaction() {
   const beaten = F1_PRO_TIMES.filter(p => reaction < p.time);
   let compHTML = '';
   if (beaten.length === F1_PRO_TIMES.length) {
-    compHTML = `<div class="comparison"><span class="beat">INCREDIBLE!</span> You beat ALL F1 drivers' best times! Are you superhuman?</div>`;
+    compHTML = `<div class="comparison comparison-slide"><span class="beat">INCREDIBLE!</span> You beat ALL F1 drivers' best times! Are you superhuman?</div>`;
   } else if (beaten.length > 0) {
     const best = beaten[beaten.length - 1];
-    compHTML = `<div class="comparison"><span class="beat">You beat ${best.name}!</span> (${best.time.toFixed(3)}s at ${best.race} ${best.year})</div>`;
+    compHTML = `<div class="comparison comparison-slide"><span class="beat">You beat ${best.name}!</span> (${best.time.toFixed(3)}s at ${best.race} ${best.year})</div>`;
   } else {
     const closest = F1_PRO_TIMES[F1_PRO_TIMES.length - 1];
     const diff = (reaction - closest.time).toFixed(3);
-    compHTML = `<div class="comparison"><span class="lose">${diff}s slower</span> than ${closest.name}'s ${closest.time.toFixed(3)}s — keep practicing!</div>`;
+    compHTML = `<div class="comparison comparison-slide"><span class="lose">${diff}s slower</span> than ${closest.name}'s ${closest.time.toFixed(3)}s — keep practicing!</div>`;
   }
   $('comparisonBox').innerHTML = compHTML;
 
@@ -1024,6 +1078,75 @@ function fireSpeedLines() {
   }
   setTimeout(() => {
     container.classList.remove('active');
+  }, 1500);
+}
+
+function fireBlast(tier) {
+  // Color palette based on performance
+  const colors = tier === 'good'
+    ? ['#00ff44','#44ff88','#00cc33','#88ffaa','#ffffff','#ffdd00']
+    : tier === 'ok'
+    ? ['#ffd700','#ffaa00','#ff8800','#ffcc44','#ffffff','#ff6600']
+    : ['#ff4444','#ff6644','#ff2200','#ff8866','#ffffff','#cc0000'];
+
+  // 1. Particle burst from center
+  const container = document.createElement('div');
+  container.className = 'blast-container';
+  document.body.appendChild(container);
+
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight * 0.38; // roughly where the reaction time shows
+
+  const particleCount = tier === 'good' ? 50 : tier === 'ok' ? 30 : 20;
+  for (let i = 0; i < particleCount; i++) {
+    const p = document.createElement('div');
+    p.className = 'blast-particle';
+    const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5;
+    const dist = 80 + Math.random() * 200;
+    const tx = Math.cos(angle) * dist;
+    const ty = Math.sin(angle) * dist - 40; // bias upward
+    const size = 4 + Math.random() * 8;
+    const dur = 0.6 + Math.random() * 0.6;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    p.style.cssText = `
+      left:${cx}px;top:${cy}px;
+      width:${size}px;height:${size}px;
+      background:${color};
+      box-shadow:0 0 ${size*2}px ${color};
+      --tx:${tx}px;--ty:${ty}px;--dur:${dur}s;
+    `;
+    container.appendChild(p);
+  }
+
+  // 2. Expanding ring
+  const ring = document.createElement('div');
+  ring.className = 'blast-ring';
+  ring.style.cssText = `left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);`;
+  ring.style.borderColor = colors[0];
+  document.body.appendChild(ring);
+
+  // 3. Second ring slightly delayed
+  setTimeout(() => {
+    const ring2 = document.createElement('div');
+    ring2.className = 'blast-ring';
+    ring2.style.cssText = `left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);`;
+    ring2.style.borderColor = colors[1];
+    document.body.appendChild(ring2);
+    setTimeout(() => ring2.remove(), 800);
+  }, 150);
+
+  // 4. Checkered flag flash for good times
+  if (tier === 'good') {
+    const flag = document.createElement('div');
+    flag.className = 'checkered-flash';
+    document.body.appendChild(flag);
+    setTimeout(() => flag.remove(), 700);
+  }
+
+  // Cleanup
+  setTimeout(() => {
+    container.remove();
+    ring.remove();
   }, 1500);
 }
 

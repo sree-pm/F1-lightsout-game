@@ -715,6 +715,49 @@ html,body{
 // ==================== CONFIG ====================
 const API_URL = '/api/leaderboard';
 
+// ==================== RATE LIMITING & CACHING ====================
+// Client-side protections to stay within Cloudflare free tier
+// KV writes: 1,000/day free → only submit personal bests
+// KV reads: 100,000/day free → cache leaderboard locally
+const LEADERBOARD_CACHE_KEY = 'f1_lb_cache';
+const LEADERBOARD_CACHE_TTL = 30_000; // 30s — don't re-fetch more often
+const SUBMIT_COOLDOWN = 5_000; // 5s between submissions
+let lastSubmitTime = 0;
+let lastFetchTime = 0;
+let cachedLeaderboard = null;
+
+function getCachedLeaderboard() {
+  try {
+    const raw = sessionStorage.getItem(LEADERBOARD_CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts < LEADERBOARD_CACHE_TTL) return data;
+  } catch(e) {}
+  return null;
+}
+
+function setCachedLeaderboard(data) {
+  try {
+    sessionStorage.setItem(LEADERBOARD_CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
+    cachedLeaderboard = data;
+  } catch(e) {}
+}
+
+// Only submit if it's a personal best (saves KV writes)
+function shouldSubmitScore(time) {
+  // Cooldown check
+  if (Date.now() - lastSubmitTime < SUBMIT_COOLDOWN) return false;
+  // Only submit personal best
+  const prevBest = parseFloat(localStorage.getItem('f1_best') || '99');
+  if (time >= prevBest) return false;
+  // If we have cached leaderboard and score wouldn't make top 100, skip
+  if (cachedLeaderboard && cachedLeaderboard.length >= 100) {
+    const worstInTop100 = cachedLeaderboard[cachedLeaderboard.length - 1].time;
+    if (time > worstInTop100) return false;
+  }
+  return true;
+}
+
 // ==================== REAL F1 REACTION TIMES ====================
 const F1_PRO_TIMES = [
   { name: 'Valtteri Bottas', team: 'Mercedes', time: 0.201, race: 'Austrian GP', year: 2019 },
@@ -946,16 +989,20 @@ function recordReaction() {
   }
   $('comparisonBox').innerHTML = compHTML;
 
-  // Best time
+  // Sound
+  playSuccess();
+
+  // Submit to leaderboard BEFORE updating local best (so shouldSubmitScore sees old best)
+  const name = $('nameInput').value.trim();
+  submitScore(name, reaction);
+
+  // Now update best time locally
   let isBest = false;
   if (reaction < bestTime) {
     bestTime = reaction;
     localStorage.setItem('f1_best', reaction.toString());
     isBest = true;
   }
-
-  // Sound
-  playSuccess();
 
   // Buttons
   $('btnStart').textContent = 'PLAY AGAIN';
@@ -967,10 +1014,6 @@ function recordReaction() {
   $('buttonsArea').innerHTML = '';
   $('buttonsArea').appendChild($('btnStart'));
   $('buttonsArea').appendChild(shareBtn);
-
-  // Submit to leaderboard
-  const name = $('nameInput').value.trim();
-  submitScore(name, reaction);
 }
 
 function fireSpeedLines() {
@@ -1025,14 +1068,34 @@ function shareResult(time) {
 }
 
 // ==================== LEADERBOARD ====================
-async function loadLeaderboard() {
+async function loadLeaderboard(force = false) {
+  // Use cached data if fresh enough (reduces KV reads)
+  if (!force) {
+    const cached = getCachedLeaderboard();
+    if (cached) {
+      renderLeaderboard(cached);
+      return;
+    }
+  }
+  // Throttle fetches: max 1 per CACHE_TTL
+  if (Date.now() - lastFetchTime < LEADERBOARD_CACHE_TTL && cachedLeaderboard) {
+    renderLeaderboard(cachedLeaderboard);
+    return;
+  }
   try {
     const res = await fetch(API_URL);
     if (!res.ok) throw new Error('API error');
     const data = await res.json();
+    lastFetchTime = Date.now();
+    setCachedLeaderboard(data);
     renderLeaderboard(data);
   } catch (e) {
-    $('leaderboard').innerHTML = '<div class="lb-empty">Leaderboard loading... Play a game to be first!</div>';
+    // Show cached data if available, otherwise placeholder
+    if (cachedLeaderboard) {
+      renderLeaderboard(cachedLeaderboard);
+    } else {
+      $('leaderboard').innerHTML = '<div class="lb-empty">Leaderboard loading... Play a game to be first!</div>';
+    }
   }
 }
 
@@ -1053,6 +1116,12 @@ function renderLeaderboard(entries) {
 }
 
 async function submitScore(name, time) {
+  // Client-side gate: only submit personal bests to save KV writes
+  if (!shouldSubmitScore(time)) {
+    console.log('Skipping submit — not a personal best or cooldown active');
+    return;
+  }
+  lastSubmitTime = Date.now();
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
@@ -1061,8 +1130,14 @@ async function submitScore(name, time) {
     });
     if (res.ok) {
       const data = await res.json();
-      if (data.leaderboard) renderLeaderboard(data.leaderboard);
-      else loadLeaderboard();
+      if (data.leaderboard) {
+        setCachedLeaderboard(data.leaderboard);
+        renderLeaderboard(data.leaderboard);
+      } else {
+        loadLeaderboard(true);
+      }
+    } else if (res.status === 429) {
+      showToast('Too many attempts — slow down!');
     }
   } catch (e) {
     console.log('Score submit failed:', e);

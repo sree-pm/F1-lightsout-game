@@ -1004,16 +1004,11 @@ function recordReaction() {
     isBest = true;
   }
 
-  // Buttons
-  $('btnStart').textContent = 'PLAY AGAIN';
-  $('btnStart').style.display = '';
-  const shareBtn = document.createElement('button');
-  shareBtn.className = 'btn btn-share';
-  shareBtn.textContent = 'SHARE RESULT';
-  shareBtn.onclick = () => shareResult(reactionMs);
-  $('buttonsArea').innerHTML = '';
-  $('buttonsArea').appendChild($('btnStart'));
-  $('buttonsArea').appendChild(shareBtn);
+  // Buttons — rebuild to avoid losing references
+  $('buttonsArea').innerHTML = `
+    <button class="btn btn-start" id="btnStart" onclick="startGame()">PLAY AGAIN</button>
+    <button class="btn btn-share" onclick="shareResult('${reactionMs}')">SHARE RESULT</button>
+  `;
 }
 
 function fireSpeedLines() {

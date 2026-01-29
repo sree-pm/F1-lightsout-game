@@ -1,11 +1,11 @@
 /**
  * Cloudflare Pages Function — /api/user
  *
- * Handles email-based user management:
- * - GET ?email=xxx: Lookup user by email, return username & best time
+ * FAST email-based user management:
+ * - GET ?email=xxx: Lookup user by email (cached at edge)
  * - POST: Create or update user profile
  *
- * Uses D1 database for persistent storage.
+ * Optimized for Cloudflare free tier with edge caching.
  */
 
 const MAX_USERNAME_LENGTH = 20;
@@ -19,10 +19,10 @@ function corsHeaders() {
   };
 }
 
-function jsonResponse(data, status = 200) {
+function jsonResponse(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
+    headers: { ...corsHeaders(), 'Content-Type': 'application/json', ...extraHeaders },
   });
 }
 
@@ -57,7 +57,7 @@ export async function onRequest(context) {
   }
 }
 
-// GET — Lookup user by email
+// GET — Lookup user by email (edge-cached)
 async function handleGet(request, env) {
   const url = new URL(request.url);
   const email = url.searchParams.get('email')?.toLowerCase()?.trim();
@@ -66,12 +66,17 @@ async function handleGet(request, env) {
     return jsonResponse({ error: 'Valid email required' }, 400);
   }
 
+  // Short cache for user lookups (personalized, but can be stale briefly)
+  const cacheHeaders = {
+    'Cache-Control': 'private, max-age=5, stale-while-revalidate=10',
+  };
+
   const user = await env.DB.prepare(
     'SELECT username, best_time, games_played FROM users WHERE email = ?'
   ).bind(email).first();
 
   if (!user) {
-    return jsonResponse({ found: false });
+    return jsonResponse({ found: false }, 200, cacheHeaders);
   }
 
   return jsonResponse({
@@ -79,7 +84,7 @@ async function handleGet(request, env) {
     username: user.username,
     bestTime: user.best_time,
     gamesPlayed: user.games_played,
-  });
+  }, 200, cacheHeaders);
 }
 
 // POST — Create or update user

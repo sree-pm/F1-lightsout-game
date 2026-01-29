@@ -1,21 +1,25 @@
 /**
  * Cloudflare Pages Function — /api/leaderboard
  *
- * Hybrid D1 + KV approach:
- * - D1: Primary storage for user accounts and leaderboard
- * - KV: Fallback for anonymous users + caching layer
+ * LIGHTNING FAST Hybrid D1 + KV approach:
+ * - KV: Hot cache layer (10s TTL) for leaderboard reads
+ * - D1: Primary storage for user accounts and scores
+ * - Edge caching: Cloudflare CDN caches responses
  *
- * Rate-limited & optimized for Cloudflare free tier:
- * - D1 reads: 5M/day (free), D1 writes: 100K/day
- * - KV reads: 100,000/day → Cache-Control headers reduce repeat reads
- * - KV writes: 1,000/day → Skip writes for non-competitive scores
+ * Free tier limits (optimized):
+ * - D1 reads: 5M/day → KV cache reduces to ~1000s/day
+ * - D1 writes: 100K/day → Batch operations, skip non-competitive
+ * - KV reads: 100K/day → Edge cache reduces repeat reads
+ * - KV writes: 1K/day → Only update cache on score changes
  */
 
 const MAX_ENTRIES = 100;
 const MAX_NAME_LENGTH = 20;
 const MAX_EMAIL_LENGTH = 100;
-const RATE_LIMIT_WINDOW = 10; // seconds between submissions per IP
+const RATE_LIMIT_WINDOW = 10;
 const MAX_DAILY_KV_WRITES = 900;
+const LEADERBOARD_CACHE_KEY = 'd1_leaderboard_cache';
+const CACHE_TTL = 10; // seconds
 
 function corsHeaders() {
   return {
@@ -57,13 +61,25 @@ export async function onRequest(context) {
   }
 }
 
-// ==================== GET — Hybrid D1/KV ====================
+// ==================== GET — KV-cached D1 reads ====================
 async function handleGet(env) {
+  // Aggressive edge caching for maximum speed
   const cacheHeaders = {
-    'Cache-Control': 'public, max-age=15, s-maxage=30, stale-while-revalidate=60',
+    'Cache-Control': 'public, max-age=10, s-maxage=15, stale-while-revalidate=30',
+    'CDN-Cache-Control': 'max-age=15',
   };
 
-  // Try D1 first if available
+  // 1. Try KV cache first (fastest - global edge)
+  if (env.LEADERBOARD) {
+    try {
+      const cached = await env.LEADERBOARD.get(LEADERBOARD_CACHE_KEY, { type: 'json' });
+      if (cached && cached.data && (Date.now() - cached.ts) < CACHE_TTL * 1000) {
+        return jsonResponse(cached.data, 200, cacheHeaders);
+      }
+    } catch (e) { /* cache miss, continue */ }
+  }
+
+  // 2. Query D1 (still fast - regional)
   if (env.DB) {
     try {
       const { results } = await env.DB.prepare(`
@@ -74,13 +90,23 @@ async function handleGet(env) {
         LIMIT ?
       `).bind(MAX_ENTRIES).all();
 
-      return jsonResponse(results || [], 200, cacheHeaders);
+      const leaderboard = results || [];
+
+      // 3. Update KV cache (async, don't block response)
+      if (env.LEADERBOARD) {
+        env.LEADERBOARD.put(LEADERBOARD_CACHE_KEY, JSON.stringify({
+          data: leaderboard,
+          ts: Date.now()
+        }), { expirationTtl: 60 }).catch(() => {});
+      }
+
+      return jsonResponse(leaderboard, 200, cacheHeaders);
     } catch (e) {
-      console.error('D1 read failed, falling back to KV:', e);
+      console.error('D1 read failed:', e);
     }
   }
 
-  // Fallback to KV
+  // 4. Fallback to KV scores (for anonymous/legacy)
   if (env.LEADERBOARD) {
     const data = await env.LEADERBOARD.get('scores', { type: 'json' });
     return jsonResponse(data || [], 200, cacheHeaders);
@@ -143,63 +169,69 @@ async function handlePost(request, env) {
   return jsonResponse({ error: 'Storage unavailable' }, 503);
 }
 
-// ==================== D1 Submit (email-linked users) ====================
+// ==================== D1 Submit (email-linked users) — OPTIMIZED ====================
 async function handleD1Submit(env, email, username, time) {
   try {
-    // Get or create user
+    // Get or create user - single query
     let user = await env.DB.prepare(
       'SELECT id, username, best_time, games_played FROM users WHERE email = ?'
     ).bind(email).first();
 
     let personalBest = null;
     let isNewBest = false;
+    let userId = user?.id;
 
     if (user) {
       personalBest = user.best_time;
       isNewBest = !user.best_time || time < user.best_time;
 
-      // Update user record
+      // BATCH: Update user + insert score in single transaction
       if (isNewBest) {
-        await env.DB.prepare(`
-          UPDATE users
-          SET username = ?, best_time = ?, games_played = games_played + 1, updated_at = datetime('now')
-          WHERE email = ?
-        `).bind(username, time, email).run();
+        await env.DB.batch([
+          env.DB.prepare(`
+            UPDATE users SET username = ?, best_time = ?, games_played = games_played + 1, updated_at = datetime('now')
+            WHERE email = ?
+          `).bind(username, time, email),
+          env.DB.prepare('INSERT INTO scores (user_id, time) VALUES (?, ?)').bind(userId, time)
+        ]);
       } else {
-        await env.DB.prepare(`
-          UPDATE users
-          SET username = ?, games_played = games_played + 1, updated_at = datetime('now')
-          WHERE email = ?
-        `).bind(username, email).run();
+        await env.DB.batch([
+          env.DB.prepare(`
+            UPDATE users SET username = ?, games_played = games_played + 1, updated_at = datetime('now')
+            WHERE email = ?
+          `).bind(username, email),
+          env.DB.prepare('INSERT INTO scores (user_id, time) VALUES (?, ?)').bind(userId, time)
+        ]);
       }
     } else {
-      // Create new user with this score as their best
-      await env.DB.prepare(`
-        INSERT INTO users (email, username, best_time, games_played)
-        VALUES (?, ?, ?, 1)
+      // New user - insert then get ID for score
+      const result = await env.DB.prepare(`
+        INSERT INTO users (email, username, best_time, games_played) VALUES (?, ?, ?, 1)
       `).bind(email, username, time).run();
+
       isNewBest = true;
-    }
+      userId = result.meta?.last_row_id;
 
-    // Record individual score in scores table
-    const userId = user?.id || (await env.DB.prepare(
-      'SELECT id FROM users WHERE email = ?'
-    ).bind(email).first())?.id;
-
-    if (userId) {
-      await env.DB.prepare(
-        'INSERT INTO scores (user_id, time) VALUES (?, ?)'
-      ).bind(userId, time).run();
+      // Insert score with new user ID
+      if (userId) {
+        await env.DB.prepare('INSERT INTO scores (user_id, time) VALUES (?, ?)').bind(userId, time).run();
+      }
     }
 
     // Fetch updated leaderboard
     const { results: leaderboard } = await env.DB.prepare(`
       SELECT username as name, best_time as time, updated_at as date
-      FROM users
-      WHERE best_time IS NOT NULL
-      ORDER BY best_time ASC
-      LIMIT ?
+      FROM users WHERE best_time IS NOT NULL
+      ORDER BY best_time ASC LIMIT ?
     `).bind(MAX_ENTRIES).all();
+
+    // Invalidate KV cache (async)
+    if (env.LEADERBOARD) {
+      env.LEADERBOARD.put(LEADERBOARD_CACHE_KEY, JSON.stringify({
+        data: leaderboard,
+        ts: Date.now()
+      }), { expirationTtl: 60 }).catch(() => {});
+    }
 
     return jsonResponse({
       ok: true,

@@ -5,11 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>F1 Lights Out! - Test Your Reaction Time</title>
 <meta name="description" content="Can you beat an F1 driver's reaction time? Play the official lights out challenge and compete on the global leaderboard.">
-<meta property="og:title" content="F1 Lights Out! - I just got 0.2s reaction time!">
-<meta property="og:description" content="Can you beat an F1 driver? Test your reaction time now.">
+<meta property="og:title" content="F1 Lights Out! - Test Your Reaction Time">
+<meta property="og:description" content="Can you beat an F1 driver? Test your reaction time and compete globally!">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://f1lightsoutgame.site">
+<meta property="og:image" content="https://f1lightsoutgame.site/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="twitter:title" content="F1 Lights Out! - Test Your Reaction Time">
+<meta name="twitter:description" content="Can you beat an F1 driver? Test your reaction time now!">
+<meta name="twitter:image" content="https://f1lightsoutgame.site/og-image.png">
+<meta name="theme-color" content="#ff1801">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="F1 Lights Out">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -616,6 +626,150 @@ html,body{
     transition-duration:0.01ms !important;
   }
 }
+
+/* ==================== CHALLENGE BANNER ==================== */
+.challenge-banner{
+  background:linear-gradient(135deg,rgba(255,24,1,.15) 0%,rgba(255,215,0,.1) 100%);
+  border:2px solid var(--red);
+  border-radius:12px;
+  padding:12px 20px;
+  margin-bottom:16px;
+  text-align:center;
+  animation:challengePulse 2s ease infinite;
+}
+.challenge-banner .title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(11px,2.5vw,14px);
+  color:var(--gold);
+  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-bottom:4px;
+}
+.challenge-banner .target{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(24px,6vw,36px);
+  font-weight:900;
+  color:var(--red);
+}
+.challenge-banner .from{
+  font-size:11px;
+  color:var(--text-dim);
+  margin-top:4px;
+}
+@keyframes challengePulse{
+  0%,100%{box-shadow:0 0 20px rgba(255,24,1,.2)}
+  50%{box-shadow:0 0 30px rgba(255,24,1,.4)}
+}
+
+/* ==================== RANKED TIERS ==================== */
+.tier-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'Orbitron',monospace;
+  font-size:11px;font-weight:700;
+  padding:4px 10px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:1px;
+}
+.tier-badge.diamond{background:linear-gradient(135deg,#b9f2ff,#00d4ff);color:#003344;box-shadow:0 0 15px rgba(0,212,255,.4)}
+.tier-badge.platinum{background:linear-gradient(135deg,#e5e4e2,#a8a9ad);color:#222;box-shadow:0 0 12px rgba(168,169,173,.4)}
+.tier-badge.gold{background:linear-gradient(135deg,#ffd700,#ffaa00);color:#442200;box-shadow:0 0 12px rgba(255,215,0,.4)}
+.tier-badge.silver{background:linear-gradient(135deg,#c0c0c0,#888);color:#222;box-shadow:0 0 10px rgba(192,192,192,.3)}
+.tier-badge.bronze{background:linear-gradient(135deg,#cd7f32,#8b4513);color:#fff;box-shadow:0 0 10px rgba(205,127,50,.3)}
+.tier-badge.unranked{background:#333;color:#888}
+
+/* ==================== ACHIEVEMENTS ==================== */
+.achievements-panel{
+  width:100%;max-width:480px;
+  margin-bottom:16px;
+}
+.achievements-grid{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+}
+.achievement{
+  width:56px;height:56px;
+  background:#1a1a1a;
+  border:2px solid #333;
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;
+  position:relative;
+  transition:all .3s;
+  cursor:default;
+}
+.achievement.locked{filter:grayscale(1) opacity(.4)}
+.achievement.unlocked{border-color:var(--gold);box-shadow:0 0 12px rgba(255,215,0,.3)}
+.achievement:hover .achievement-tooltip{opacity:1;transform:translateX(-50%) translateY(0)}
+.achievement-tooltip{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(5px);
+  background:#222;border:1px solid #444;border-radius:8px;padding:8px 12px;
+  white-space:nowrap;font-size:11px;opacity:0;transition:all .2s;z-index:100;
+  pointer-events:none;
+}
+.achievement-tooltip .name{color:#fff;font-weight:700;display:block}
+.achievement-tooltip .desc{color:var(--text-dim)}
+.achievement-new{
+  animation:achievementPop .6s cubic-bezier(.2,1.4,.4,1);
+}
+@keyframes achievementPop{
+  0%{transform:scale(0)}
+  60%{transform:scale(1.2)}
+  100%{transform:scale(1)}
+}
+
+/* ==================== PRACTICE MODE & STREAKS ==================== */
+.mode-toggles{
+  display:flex;gap:12px;align-items:center;justify-content:center;
+  margin-bottom:12px;flex-wrap:wrap;
+}
+.mode-toggle{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--text-dim);
+  cursor:pointer;
+}
+.mode-toggle input{display:none}
+.toggle-switch{
+  width:36px;height:20px;
+  background:#333;border-radius:10px;
+  position:relative;transition:background .3s;
+}
+.toggle-switch::after{
+  content:'';position:absolute;top:2px;left:2px;
+  width:16px;height:16px;background:#666;
+  border-radius:50%;transition:all .3s;
+}
+.mode-toggle input:checked + .toggle-switch{background:var(--green)}
+.mode-toggle input:checked + .toggle-switch::after{left:18px;background:#fff}
+
+.streak-display{
+  display:flex;align-items:center;gap:6px;
+  font-family:'Orbitron',monospace;
+  font-size:12px;
+  color:var(--gold);
+  padding:6px 12px;
+  background:rgba(255,215,0,.08);
+  border-radius:20px;
+}
+.streak-display .fire{font-size:16px}
+
+/* ==================== STATS ROW ==================== */
+.stats-row{
+  display:flex;gap:16px;justify-content:center;
+  margin-bottom:12px;flex-wrap:wrap;
+}
+.stat-item{
+  text-align:center;
+}
+.stat-value{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(16px,4vw,22px);
+  font-weight:700;
+  color:var(--text);
+}
+.stat-label{
+  font-size:9px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
 </style>
 </head>
 <body>
@@ -668,6 +822,31 @@ html,body{
     <h1>Lights Out!</h1>
     <p class="subtitle">F1 Reaction Challenge</p>
   </header>
+
+  <!-- Challenge Banner (shown when ?challenge=X.XXX) -->
+  <div class="challenge-banner" id="challengeBanner" style="display:none">
+    <div class="title">Challenge Mode</div>
+    <div class="target" id="challengeTarget">Beat 0.234s</div>
+    <div class="from" id="challengeFrom">Can you beat this time?</div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-item">
+      <div class="stat-value" id="statGames">0</div>
+      <div class="stat-label">Games</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="statTier"><span class="tier-badge unranked">Unranked</span></div>
+      <div class="stat-label">Rank</div>
+    </div>
+    <div class="stat-item">
+      <div class="streak-display" id="streakDisplay">
+        <span class="fire">🔥</span>
+        <span id="streakCount">0</span> day streak
+      </div>
+    </div>
+  </div>
 
   <!-- User Entry (Email + Name) -->
   <div class="user-section">
@@ -739,10 +918,25 @@ html,body{
     <button class="btn btn-start" id="btnStart" type="button" aria-describedby="gameHint">START</button>
   </div>
 
+  <!-- Mode Toggles -->
+  <div class="mode-toggles">
+    <label class="mode-toggle">
+      <input type="checkbox" id="practiceMode">
+      <span class="toggle-switch"></span>
+      Practice Mode
+    </label>
+  </div>
+
   <p class="hint" id="gameHint">
     5 columns of lights turn red one by one. When they ALL go out — tap anywhere or press any key!<br>
     Timing varies each round, just like real F1.
   </p>
+
+  <!-- Achievements -->
+  <h2 class="section-title">Your <span>Achievements</span></h2>
+  <div class="achievements-panel">
+    <div class="achievements-grid" id="achievementsGrid"></div>
+  </div>
 
   <!-- Real F1 Pro Reaction Times -->
   <h2 class="section-title"><span>F1</span> Pro Reaction Times</h2>
@@ -777,6 +971,58 @@ let cachedLeaderboard = null;
 let currentUserEmail = null;
 let currentUserBestTime = null;
 let emailLookupTimeout = null;
+
+// ==================== CHALLENGE MODE ====================
+let challengeTime = null;
+let challengeFrom = null;
+
+// ==================== STATS & STREAKS ====================
+let gamesPlayed = parseInt(localStorage.getItem('f1_games') || '0');
+let currentStreak = parseInt(localStorage.getItem('f1_streak') || '0');
+let lastPlayDate = localStorage.getItem('f1_last_play');
+let practiceMode = false;
+
+// ==================== ACHIEVEMENTS ====================
+const ACHIEVEMENTS = [
+  { id: 'first_game', icon: '🎮', name: 'First Start', desc: 'Play your first game' },
+  { id: 'sub_500', icon: '⚡', name: 'Quick Reflexes', desc: 'Get under 0.500s' },
+  { id: 'sub_300', icon: '🚀', name: 'Lightning Fast', desc: 'Get under 0.300s' },
+  { id: 'sub_250', icon: '💨', name: 'Pro Tier', desc: 'Get under 0.250s' },
+  { id: 'sub_200', icon: '👑', name: 'Sub-200 Club', desc: 'Get under 0.200s' },
+  { id: 'beat_ricciardo', icon: '🇦🇺', name: 'Beat Ricciardo', desc: 'Beat Daniel Ricciardo (0.240s)' },
+  { id: 'beat_hamilton', icon: '🇬🇧', name: 'Beat Hamilton', desc: 'Beat Lewis Hamilton (0.219s)' },
+  { id: 'beat_verstappen', icon: '🇳🇱', name: 'Beat Verstappen', desc: 'Beat Max Verstappen (0.214s)' },
+  { id: 'beat_bottas', icon: '🇫🇮', name: 'Beat Bottas', desc: 'Beat Valtteri Bottas (0.201s)' },
+  { id: 'games_10', icon: '🔟', name: 'Warming Up', desc: 'Play 10 games' },
+  { id: 'games_50', icon: '5️⃣', name: 'Dedicated', desc: 'Play 50 games' },
+  { id: 'games_100', icon: '💯', name: 'Centurion', desc: 'Play 100 games' },
+  { id: 'streak_3', icon: '🔥', name: 'On Fire', desc: '3 day streak' },
+  { id: 'streak_7', icon: '🌟', name: 'Week Warrior', desc: '7 day streak' },
+  { id: 'no_false_start', icon: '🎯', name: 'Perfect Start', desc: '10 games without false start' },
+  { id: 'challenge_win', icon: '🏆', name: 'Challenger', desc: 'Beat a challenge' },
+];
+let unlockedAchievements = JSON.parse(localStorage.getItem('f1_achievements') || '[]');
+let gamesWithoutFalseStart = parseInt(localStorage.getItem('f1_no_false') || '0');
+
+// ==================== RANKED TIERS ====================
+const TIERS = [
+  { name: 'Diamond', class: 'diamond', maxTime: 0.200 },
+  { name: 'Platinum', class: 'platinum', maxTime: 0.220 },
+  { name: 'Gold', class: 'gold', maxTime: 0.250 },
+  { name: 'Silver', class: 'silver', maxTime: 0.300 },
+  { name: 'Bronze', class: 'bronze', maxTime: 0.400 },
+  { name: 'Unranked', class: 'unranked', maxTime: Infinity },
+];
+
+function getTier(time) {
+  if (!time || time >= 99) return TIERS[TIERS.length - 1];
+  return TIERS.find(t => time < t.maxTime) || TIERS[TIERS.length - 1];
+}
+
+function renderTierBadge(time) {
+  const tier = getTier(time);
+  return `<span class="tier-badge ${tier.class}">${tier.name}</span>`;
+}
 
 function getCachedLeaderboard() {
   try {
@@ -873,6 +1119,10 @@ function announce(message) {
 function init() {
   renderProTimes();
   loadLeaderboard();
+  renderAchievements();
+  updateStats();
+  checkStreak();
+  parseChallenge();
 
   // Load saved data
   const savedName = localStorage.getItem('f1_name');
@@ -883,16 +1133,14 @@ function init() {
   if (savedEmail) {
     $('emailInput').value = savedEmail;
     currentUserEmail = savedEmail;
-    // Auto-lookup user on load
     lookupUser(savedEmail);
   }
 
-  // Show local best if available
   if (savedBest < 99) {
     showPersonalBest(savedBest);
   }
 
-  // Global input handler - keyboard and clicks/taps
+  // Global input handler
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('mousedown', handleTap);
   document.addEventListener('touchstart', handleTap, { passive: true });
@@ -916,18 +1164,159 @@ function init() {
 
   // Focus management
   $('nameInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      startGame();
-    }
+    if (e.key === 'Enter') { e.preventDefault(); startGame(); }
+  });
+  $('emailInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); $('nameInput').focus(); }
   });
 
-  $('emailInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      $('nameInput').focus();
-    }
+  // Practice mode toggle
+  $('practiceMode').addEventListener('change', e => {
+    practiceMode = e.target.checked;
+    showToast(practiceMode ? 'Practice mode ON - scores not saved' : 'Practice mode OFF');
   });
+
+  // Register service worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+}
+
+// ==================== CHALLENGE MODE ====================
+function parseChallenge() {
+  const params = new URLSearchParams(window.location.search);
+  const challenge = params.get('challenge');
+  const from = params.get('from');
+
+  if (challenge) {
+    challengeTime = parseFloat(challenge);
+    challengeFrom = from || 'a friend';
+    if (!isNaN(challengeTime) && challengeTime > 0 && challengeTime < 10) {
+      $('challengeBanner').style.display = 'block';
+      $('challengeTarget').textContent = `Beat ${challengeTime.toFixed(3)}s`;
+      $('challengeFrom').textContent = `Challenge from ${challengeFrom}`;
+    }
+  }
+}
+
+// ==================== STREAKS ====================
+function checkStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (lastPlayDate) {
+    const lastDate = new Date(lastPlayDate);
+    const todayDate = new Date(today);
+    const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 1) {
+      currentStreak = 0;
+      localStorage.setItem('f1_streak', '0');
+    }
+  }
+  updateStreakDisplay();
+}
+
+function updateStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (lastPlayDate !== today) {
+    if (lastPlayDate) {
+      const lastDate = new Date(lastPlayDate);
+      const todayDate = new Date(today);
+      const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+      if (diffDays === 1) {
+        currentStreak++;
+      } else if (diffDays > 1) {
+        currentStreak = 1;
+      }
+    } else {
+      currentStreak = 1;
+    }
+    lastPlayDate = today;
+    localStorage.setItem('f1_streak', String(currentStreak));
+    localStorage.setItem('f1_last_play', today);
+    checkStreakAchievements();
+  }
+  updateStreakDisplay();
+}
+
+function updateStreakDisplay() {
+  $('streakCount').textContent = currentStreak;
+}
+
+// ==================== STATS ====================
+function updateStats() {
+  $('statGames').textContent = gamesPlayed;
+  const best = parseFloat(localStorage.getItem('f1_best') || '99');
+  $('statTier').innerHTML = renderTierBadge(best);
+}
+
+// ==================== ACHIEVEMENTS ====================
+function renderAchievements() {
+  $('achievementsGrid').innerHTML = ACHIEVEMENTS.map(a => {
+    const unlocked = unlockedAchievements.includes(a.id);
+    return `<div class="achievement ${unlocked ? 'unlocked' : 'locked'}" id="ach-${a.id}">
+      ${a.icon}
+      <div class="achievement-tooltip">
+        <span class="name">${a.name}</span>
+        <span class="desc">${a.desc}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function unlockAchievement(id) {
+  if (unlockedAchievements.includes(id)) return;
+  unlockedAchievements.push(id);
+  localStorage.setItem('f1_achievements', JSON.stringify(unlockedAchievements));
+
+  const ach = ACHIEVEMENTS.find(a => a.id === id);
+  if (ach) {
+    showToast(`🏆 Achievement: ${ach.name}!`);
+    const el = $(`ach-${id}`);
+    if (el) {
+      el.classList.remove('locked');
+      el.classList.add('unlocked', 'achievement-new');
+    }
+  }
+}
+
+function checkAchievements(reactionTime) {
+  // First game
+  if (gamesPlayed === 1) unlockAchievement('first_game');
+
+  // Time-based
+  if (reactionTime < 0.500) unlockAchievement('sub_500');
+  if (reactionTime < 0.300) unlockAchievement('sub_300');
+  if (reactionTime < 0.250) unlockAchievement('sub_250');
+  if (reactionTime < 0.200) unlockAchievement('sub_200');
+
+  // Beat drivers
+  if (reactionTime < 0.240) unlockAchievement('beat_ricciardo');
+  if (reactionTime < 0.219) unlockAchievement('beat_hamilton');
+  if (reactionTime < 0.214) unlockAchievement('beat_verstappen');
+  if (reactionTime < 0.201) unlockAchievement('beat_bottas');
+
+  // Games played
+  if (gamesPlayed >= 10) unlockAchievement('games_10');
+  if (gamesPlayed >= 50) unlockAchievement('games_50');
+  if (gamesPlayed >= 100) unlockAchievement('games_100');
+
+  // No false start streak
+  if (gamesWithoutFalseStart >= 10) unlockAchievement('no_false_start');
+
+  // Challenge win
+  if (challengeTime && reactionTime < challengeTime) unlockAchievement('challenge_win');
+}
+
+function checkStreakAchievements() {
+  if (currentStreak >= 3) unlockAchievement('streak_3');
+  if (currentStreak >= 7) unlockAchievement('streak_7');
+}
+
+// ==================== HAPTICS ====================
+function vibrate(pattern) {
+  if ('vibrate' in navigator) {
+    try { navigator.vibrate(pattern); } catch(e) {}
+  }
 }
 
 // ==================== USER LOOKUP ====================
@@ -1104,8 +1493,14 @@ function falseStart() {
   lightTimers = [];
   $('falseStart').classList.add('show');
   playFalseStart();
+  vibrate([200, 100, 200]); // Haptic feedback for false start
   $('lightsPanel').classList.remove('red-active');
   lights.forEach(col => col.forEach(id => $(id).className = 'light'));
+
+  // Reset no false start counter
+  gamesWithoutFalseStart = 0;
+  localStorage.setItem('f1_no_false', '0');
+
   announce('Jump start! You went too early. Tap or press Enter to try again.');
 }
 
@@ -1115,6 +1510,17 @@ function recordReaction() {
 
   const reaction = (performance.now() - lightsOutTime) / 1000;
   const reactionMs = reaction.toFixed(3);
+
+  // Haptic feedback
+  vibrate(reaction < 0.3 ? [50, 30, 50, 30, 100] : [50, 50, 50]);
+
+  // Update stats
+  gamesPlayed++;
+  gamesWithoutFalseStart++;
+  localStorage.setItem('f1_games', String(gamesPlayed));
+  localStorage.setItem('f1_no_false', String(gamesWithoutFalseStart));
+  updateStreak();
+  updateStats();
 
   // Display with pop animation
   $('reactionDisplay').textContent = reactionMs + 's';
@@ -1135,11 +1541,25 @@ function recordReaction() {
   $('status').textContent = '';
   $('status').className = 'status';
 
+  // Challenge mode check
+  let challengeWon = false;
+  if (challengeTime && reaction < challengeTime) {
+    challengeWon = true;
+  }
+
   // Comparison with F1 drivers
   const beaten = F1_PRO_TIMES.filter(p => reaction < p.time);
   let compHTML = '';
   let announceMsg = `Your reaction time: ${reactionMs} seconds. `;
-  if (beaten.length === F1_PRO_TIMES.length) {
+
+  if (challengeWon) {
+    compHTML = `<div class="comparison comparison-slide"><span class="beat">CHALLENGE WON!</span> You beat ${challengeTime.toFixed(3)}s!</div>`;
+    announceMsg += `Challenge won! You beat ${challengeTime.toFixed(3)}s!`;
+  } else if (challengeTime && reaction >= challengeTime) {
+    const diff = (reaction - challengeTime).toFixed(3);
+    compHTML = `<div class="comparison comparison-slide"><span class="lose">Challenge failed</span> — ${diff}s too slow. Try again!</div>`;
+    announceMsg += `Challenge failed. ${diff}s too slow.`;
+  } else if (beaten.length === F1_PRO_TIMES.length) {
     compHTML = `<div class="comparison comparison-slide"><span class="beat">INCREDIBLE!</span> You beat ALL F1 drivers' best times!</div>`;
     announceMsg += 'Incredible! You beat all F1 drivers!';
   } else if (beaten.length > 0) {
@@ -1158,9 +1578,14 @@ function recordReaction() {
   // Sound
   playSuccess();
 
-  // Submit to leaderboard
-  const name = $('nameInput').value.trim();
-  submitScore(name, reaction);
+  // Check achievements
+  checkAchievements(reaction);
+
+  // Submit to leaderboard (unless practice mode)
+  if (!practiceMode) {
+    const name = $('nameInput').value.trim();
+    submitScore(name, reaction);
+  }
 
   // Update best time locally
   if (reaction < bestTime) {
@@ -1169,15 +1594,18 @@ function recordReaction() {
     localStorage.setItem('f1_best', reaction.toString());
     currentUserBestTime = reaction;
     showPersonalBest(reaction);
+    updateStats(); // Update tier display
     if (wasPreviousBest) {
       showToast('🎉 New personal best!');
     }
   }
 
-  // Buttons
+  // Buttons with challenge share option
+  const shareParam = challengeTime ? '' : `?challenge=${reactionMs}&from=${encodeURIComponent($('nameInput').value.trim() || 'Anonymous')}`;
   $('buttonsArea').innerHTML = `
     <button class="btn btn-start" id="btnStart" type="button" onclick="startGame()">PLAY AGAIN</button>
     <button class="btn btn-share" type="button" onclick="shareResult('${reactionMs}')">SHARE</button>
+    <button class="btn btn-share" type="button" onclick="shareChallenge('${reactionMs}')">⚔️ CHALLENGE</button>
   `;
 }
 
@@ -1266,13 +1694,35 @@ function shareResult(time) {
   let extra = '';
   if (beaten.length > 0) extra = ` and beat ${beaten[beaten.length-1].name}! 🏆`;
 
-  const text = `🏎️ I got ${time}s reaction time on F1 Lights Out!${extra}\n\nCan you beat me?\n${window.location.href}`;
+  const tier = getTier(parseFloat(time));
+  const text = `🏎️ I got ${time}s reaction time on F1 Lights Out!${extra}\n\n${tier.name} Tier 🎖️\n\nCan you beat me?\nhttps://f1lightsoutgame.site`;
 
   if (navigator.share) {
     navigator.share({ title: 'F1 Lights Out!', text }).catch(() => {});
   } else {
     navigator.clipboard.writeText(text).then(() => {
       showToast('Copied to clipboard!');
+    }).catch(() => {
+      showToast('Could not copy');
+    });
+  }
+}
+
+function shareChallenge(time) {
+  const name = $('nameInput').value.trim() || 'Someone';
+  const challengeUrl = `https://f1lightsoutgame.site?challenge=${time}&from=${encodeURIComponent(name)}`;
+
+  const text = `⚔️ ${name} challenges you!\n\n🏎️ Beat my ${time}s reaction time on F1 Lights Out!\n\n${challengeUrl}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: `${name} challenges you - F1 Lights Out!`,
+      text,
+      url: challengeUrl
+    }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Challenge link copied!');
     }).catch(() => {
       showToast('Could not copy');
     });

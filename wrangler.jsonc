@@ -8,5 +8,12 @@
       "binding": "LEADERBOARD",
       "id": "713bd23b6871426790469b9ee61d46e3"
     }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "f1-lightsout-db",
+      "database_id": "YOUR_D1_DATABASE_ID"
+    }
   ]
 }

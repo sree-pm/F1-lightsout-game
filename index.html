@@ -9,6 +9,7 @@
 <meta property="og:description" content="Can you beat an F1 driver? Test your reaction time now.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a0a0a">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -29,6 +30,15 @@
   --bronze:#cd7f32;
 }
 
+/* Skip link for accessibility */
+.skip-link{
+  position:absolute;top:-100px;left:50%;transform:translateX(-50%);
+  background:var(--red);color:#fff;padding:12px 24px;z-index:9999;
+  border-radius:0 0 8px 8px;font-weight:700;text-decoration:none;
+  transition:top .3s;
+}
+.skip-link:focus{top:0}
+
 html,body{
   height:100%;
   background:var(--bg);
@@ -37,6 +47,11 @@ html,body{
   overflow-x:hidden;
   -webkit-tap-highlight-color:transparent;
 }
+
+/* Focus styles for accessibility - WCAG AAA */
+:focus{outline:3px solid var(--gold);outline-offset:2px}
+:focus:not(:focus-visible){outline:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
 /* ==================== BACKGROUND ANIMATION ==================== */
 .bg-scene{
@@ -84,22 +99,6 @@ html,body{
 }
 .f1-car svg{width:100%;height:100%}
 
-/* Particles */
-.particle{
-  position:absolute;
-  width:2px;height:2px;
-  background:var(--red);
-  border-radius:50%;
-  opacity:0;
-}
-.f1-car.racing ~ .particles .particle{
-  animation:spark .6s ease-out forwards;
-}
-@keyframes spark{
-  0%{opacity:.8;transform:translate(0,0)}
-  100%{opacity:0;transform:translate(calc(-30px + var(--dx)),calc(var(--dy)))}
-}
-
 /* ==================== MAIN CONTAINER ==================== */
 .container{
   position:relative;z-index:1;
@@ -110,12 +109,12 @@ html,body{
 
 /* ==================== HEADER ==================== */
 .header{
-  text-align:center;margin-bottom:24px;
+  text-align:center;margin-bottom:20px;
   animation:fadeInDown .8s ease;
 }
 .header h1{
   font-family:'Orbitron',monospace;
-  font-size:clamp(24px,6vw,48px);
+  font-size:clamp(22px,5.5vw,42px);
   font-weight:900;
   background:linear-gradient(135deg,#fff 0%,var(--red) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
@@ -124,11 +123,11 @@ html,body{
   text-transform:uppercase;
 }
 .header .subtitle{
-  font-size:clamp(12px,3vw,16px);
+  font-size:clamp(11px,2.5vw,14px);
   color:var(--text-dim);
-  margin-top:6px;
+  margin-top:4px;
   font-weight:300;
-  letter-spacing:4px;
+  letter-spacing:3px;
   text-transform:uppercase;
 }
 
@@ -136,17 +135,18 @@ html,body{
   from{opacity:0;transform:translateY(-20px)}
   to{opacity:1;transform:translateY(0)}
 }
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
 /* ==================== NAME ENTRY ==================== */
 .name-section{
-  margin-bottom:24px;
+  margin-bottom:16px;
   animation:fadeIn .8s ease .2s both;
   display:flex;gap:10px;align-items:center;
   flex-wrap:wrap;justify-content:center;
 }
 .name-input{
   background:#1a1a1a;
-  border:1px solid #333;
+  border:2px solid #333;
   color:#fff;
   font-family:'Orbitron',monospace;
   font-size:14px;
@@ -154,53 +154,66 @@ html,body{
   border-radius:8px;
   outline:none;
   width:220px;
-  transition:border-color .3s;
+  transition:border-color .3s,box-shadow .3s;
   text-transform:uppercase;
 }
-.name-input:focus{border-color:var(--red)}
-.name-input::placeholder{color:#444;text-transform:none;font-family:'Inter',sans-serif}
+.name-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,215,0,.2)}
+.name-input::placeholder{color:#555;text-transform:none;font-family:'Inter',sans-serif}
 
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-/* ==================== LIGHTS PANEL ==================== */
+/* ==================== LIGHTS PANEL - 5x4 MATRIX ==================== */
 .lights-wrapper{
-  perspective:800px;
-  margin-bottom:20px;
+  perspective:1000px;
+  margin-bottom:16px;
   animation:fadeIn .8s ease .3s both;
 }
 .lights-panel{
-  background:linear-gradient(180deg,#1c1c1c 0%,#111 100%);
-  border-radius:16px;
-  padding:24px 32px 20px;
-  border:1px solid #2a2a2a;
+  background:linear-gradient(180deg,#1a1a1a 0%,#0d0d0d 100%);
+  border-radius:12px;
+  padding:16px 20px;
+  border:2px solid #222;
   box-shadow:
-    0 20px 60px rgba(0,0,0,.6),
-    0 0 0 1px rgba(255,255,255,.03),
-    inset 0 1px 0 rgba(255,255,255,.05);
-  transform:rotateX(2deg);
+    0 20px 60px rgba(0,0,0,.7),
+    0 0 0 1px rgba(255,255,255,.02),
+    inset 0 1px 0 rgba(255,255,255,.04),
+    inset 0 -2px 0 rgba(0,0,0,.3);
+  transform:rotateX(3deg);
   position:relative;
-  overflow:hidden;
 }
 .lights-panel::before{
   content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+}
+
+/* F1 authentic gantry bar above lights */
+.gantry-bar{
+  position:absolute;top:-8px;left:5%;right:5%;height:6px;
+  background:linear-gradient(180deg,#333 0%,#1a1a1a 100%);
+  border-radius:3px;
+  box-shadow:0 2px 4px rgba(0,0,0,.5);
 }
 
 .lights-row{
   display:flex;
-  gap:clamp(12px,3vw,24px);
+  gap:clamp(8px,2vw,16px);
   justify-content:center;
 }
 
-/* Individual light column */
-.light-col{
-  display:flex;flex-direction:column;gap:8px;align-items:center;
+/* Individual light column - 4 lights stacked */
+.light-housing{
+  background:linear-gradient(180deg,#1c1c1c 0%,#0a0a0a 100%);
+  border-radius:8px;
+  padding:6px 5px;
+  display:flex;flex-direction:column;gap:5px;align-items:center;
+  border:1px solid #2a2a2a;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.03),
+    0 4px 8px rgba(0,0,0,.4);
 }
 
 /* 3D realistic light */
 .light{
-  width:clamp(36px,8vw,56px);
-  height:clamp(36px,8vw,56px);
+  width:clamp(28px,6vw,40px);
+  height:clamp(28px,6vw,40px);
   border-radius:50%;
   position:relative;
   background:radial-gradient(circle at 35% 35%,#3a3a3a 0%,#1a1a1a 50%,#0d0d0d 100%);
@@ -208,8 +221,8 @@ html,body{
   box-shadow:
     inset 0 2px 4px rgba(255,255,255,.05),
     inset 0 -2px 4px rgba(0,0,0,.5),
-    0 2px 8px rgba(0,0,0,.4);
-  transition:all .15s ease;
+    0 2px 6px rgba(0,0,0,.4);
+  transition:all .1s ease;
   overflow:hidden;
 }
 
@@ -217,9 +230,9 @@ html,body{
 .light::before{
   content:'';
   position:absolute;
-  top:15%;left:20%;
-  width:30%;height:25%;
-  background:radial-gradient(ellipse,rgba(255,255,255,.15),transparent);
+  top:12%;left:18%;
+  width:35%;height:28%;
+  background:radial-gradient(ellipse,rgba(255,255,255,.12),transparent);
   border-radius:50%;
   z-index:2;
 }
@@ -228,10 +241,10 @@ html,body{
 .light::after{
   content:'';
   position:absolute;
-  inset:15%;
+  inset:18%;
   border-radius:50%;
   background:radial-gradient(circle at 50% 50%,#2a2a2a 0%,#1a1a1a 100%);
-  transition:all .15s ease;
+  transition:all .1s ease;
 }
 
 /* Light ON - RED */
@@ -239,73 +252,44 @@ html,body{
   background:radial-gradient(circle at 40% 40%,#ff4444 0%,#cc0000 40%,#880000 70%,#440000 100%);
   border-color:#ff2200;
   box-shadow:
-    inset 0 2px 4px rgba(255,255,255,.2),
+    inset 0 2px 4px rgba(255,255,255,.25),
     inset 0 -2px 4px rgba(0,0,0,.3),
-    0 0 20px rgba(255,24,1,.5),
-    0 0 60px rgba(255,24,1,.3),
-    0 0 120px rgba(255,24,1,.15);
+    0 0 15px rgba(255,24,1,.6),
+    0 0 40px rgba(255,24,1,.4),
+    0 0 80px rgba(255,24,1,.2);
 }
 .light.on-red::after{
   background:radial-gradient(circle at 50% 50%,#ff6644 0%,#ff2200 40%,#cc0000 100%);
-  box-shadow:0 0 15px rgba(255,24,1,.8);
-}
-
-/* Light ON - GREEN (lights out!) */
-.light.on-green{
-  background:radial-gradient(circle at 40% 40%,#44ff66 0%,#00cc44 40%,#008800 70%,#004400 100%);
-  border-color:#00ff44;
-  box-shadow:
-    inset 0 2px 4px rgba(255,255,255,.2),
-    inset 0 -2px 4px rgba(0,0,0,.3),
-    0 0 20px rgba(0,255,68,.5),
-    0 0 60px rgba(0,255,68,.3),
-    0 0 120px rgba(0,255,68,.15);
-}
-.light.on-green::after{
-  background:radial-gradient(circle at 50% 50%,#66ff88 0%,#00ff44 40%,#00cc00 100%);
-  box-shadow:0 0 15px rgba(0,255,68,.8);
-}
-
-/* Housing around lights */
-.light-housing{
-  background:linear-gradient(180deg,#222 0%,#111 100%);
-  border-radius:12px;
-  padding:10px 8px;
-  display:flex;flex-direction:column;gap:8px;align-items:center;
-  border:1px solid #2a2a2a;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+  box-shadow:0 0 12px rgba(255,24,1,.9);
 }
 
 /* Glow surface below lights */
 .glow-surface{
   position:absolute;
-  bottom:-10px;left:10%;right:10%;
-  height:20px;
+  bottom:-8px;left:10%;right:10%;
+  height:16px;
   background:transparent;
   border-radius:50%;
-  transition:all .3s;
-  filter:blur(10px);
+  transition:all .2s;
+  filter:blur(8px);
 }
 .lights-panel.red-active .glow-surface{
-  background:rgba(255,24,1,.15);
-}
-.lights-panel.green-active .glow-surface{
-  background:rgba(0,255,68,.2);
+  background:rgba(255,24,1,.2);
 }
 
 /* ==================== STATUS & REACTION ==================== */
 .status{
   font-family:'Orbitron',monospace;
-  font-size:clamp(14px,3.5vw,20px);
+  font-size:clamp(13px,3vw,18px);
   text-align:center;
-  margin:16px 0;
-  min-height:28px;
+  margin:12px 0;
+  min-height:24px;
   letter-spacing:1px;
   transition:all .3s;
 }
 .status.waiting{color:var(--text-dim)}
 .status.ready{color:var(--red);animation:pulse 1s infinite}
-.status.go{color:var(--green);font-size:clamp(20px,5vw,32px);font-weight:900}
+.status.go{color:var(--green);font-size:clamp(18px,4.5vw,28px);font-weight:900}
 .status.fail{color:#ff4444}
 
 @keyframes pulse{
@@ -315,11 +299,11 @@ html,body{
 
 .reaction-display{
   font-family:'Orbitron',monospace;
-  font-size:clamp(36px,10vw,72px);
+  font-size:clamp(32px,9vw,64px);
   font-weight:900;
   text-align:center;
-  margin:8px 0;
-  min-height:50px;
+  margin:6px 0;
+  min-height:44px;
   transition:all .3s;
 }
 .reaction-display.good{color:var(--green);text-shadow:0 0 30px rgba(0,255,68,.4)}
@@ -329,13 +313,12 @@ html,body{
 /* Driver comparison */
 .comparison{
   text-align:center;
-  font-size:clamp(12px,3vw,16px);
-  margin-bottom:16px;
-  padding:12px 20px;
+  font-size:clamp(11px,2.8vw,15px);
+  margin-bottom:12px;
+  padding:10px 16px;
   background:rgba(255,255,255,.03);
-  border-radius:10px;
+  border-radius:8px;
   border:1px solid rgba(255,255,255,.06);
-  animation:fadeIn .5s ease;
 }
 .comparison .beat{color:var(--green);font-weight:700}
 .comparison .lose{color:var(--red);font-weight:700}
@@ -366,7 +349,7 @@ html,body{
   color:#fff;
   box-shadow:0 4px 20px rgba(255,24,1,.4),0 0 0 1px rgba(255,255,255,.1) inset;
 }
-.btn-start:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(255,24,1,.6)}
+.btn-start:hover,.btn-start:focus{transform:translateY(-2px);box-shadow:0 6px 30px rgba(255,24,1,.6)}
 .btn-start:active{transform:translateY(0)}
 
 .btn-share{
@@ -377,121 +360,81 @@ html,body{
   box-shadow:0 2px 10px rgba(0,0,0,.3);
   margin:8px 4px;
 }
-.btn-share:hover{background:linear-gradient(180deg,#444 0%,#333 100%)}
-
-.btn-react{
-  position:fixed;inset:0;z-index:100;
-  background:transparent;
-  cursor:pointer;
-  border:none;
-  display:none;
-  font-size:0;
-}
+.btn-share:hover,.btn-share:focus{background:linear-gradient(180deg,#444 0%,#333 100%)}
 
 .buttons{
   display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
-  margin-bottom:20px;
+  margin-bottom:16px;
 }
 
 /* ==================== F1 PRO TIMES TABLE ==================== */
 .section-title{
   font-family:'Orbitron',monospace;
-  font-size:clamp(14px,3vw,18px);
+  font-size:clamp(12px,2.8vw,16px);
   font-weight:700;
   text-align:center;
-  margin:28px 0 12px;
+  margin:20px 0 10px;
   letter-spacing:2px;
   text-transform:uppercase;
   color:var(--text-dim);
 }
 .section-title span{color:var(--red)}
 
-.pro-times{
-  width:100%;max-width:500px;
+.pro-times,.leaderboard{
+  width:100%;max-width:480px;
   background:var(--card);
   border:1px solid var(--card-border);
-  border-radius:12px;
+  border-radius:10px;
   overflow:hidden;
   margin-bottom:8px;
-  animation:fadeIn .8s ease .5s both;
 }
-.pro-row{
+.pro-row,.lb-row{
   display:flex;align-items:center;
-  padding:10px 16px;
+  padding:8px 14px;
   border-bottom:1px solid rgba(255,255,255,.04);
   transition:background .2s;
-  font-size:clamp(12px,2.8vw,14px);
+  font-size:clamp(11px,2.6vw,13px);
 }
-.pro-row:last-child{border-bottom:none}
-.pro-row:hover{background:rgba(255,255,255,.02)}
-.pro-rank{
-  width:28px;font-family:'Orbitron',monospace;font-weight:700;font-size:12px;
+.pro-row:last-child,.lb-row:last-child{border-bottom:none}
+.pro-row:hover,.lb-row:hover{background:rgba(255,255,255,.02)}
+.pro-rank,.lb-rank{
+  width:26px;font-family:'Orbitron',monospace;font-weight:700;font-size:11px;
   color:var(--text-dim);
 }
-.pro-rank.gold{color:var(--gold)}
-.pro-rank.silver{color:var(--silver)}
-.pro-rank.bronze{color:var(--bronze)}
-.pro-name{flex:1;font-weight:600}
-.pro-team{flex:1;color:var(--text-dim);font-size:11px}
-.pro-time{
-  font-family:'Orbitron',monospace;font-weight:700;font-size:13px;
+.pro-rank.gold,.lb-rank.gold{color:var(--gold)}
+.pro-rank.silver,.lb-rank.silver{color:var(--silver)}
+.pro-rank.bronze,.lb-rank.bronze{color:var(--bronze)}
+.pro-name,.lb-name{flex:1;font-weight:600}
+.pro-team{flex:1;color:var(--text-dim);font-size:10px}
+.pro-time,.lb-time{
+  font-family:'Orbitron',monospace;font-weight:700;font-size:12px;
   color:var(--green);
 }
 .pro-year{
-  font-size:10px;color:var(--text-dim);margin-left:8px;width:40px;text-align:right;
+  font-size:9px;color:var(--text-dim);margin-left:6px;width:35px;text-align:right;
 }
 
-/* ==================== LEADERBOARD ==================== */
-.leaderboard{
-  width:100%;max-width:500px;
-  background:var(--card);
-  border:1px solid var(--card-border);
-  border-radius:12px;
-  overflow:hidden;
-  margin-bottom:20px;
-  animation:fadeIn .8s ease .6s both;
-}
-.lb-row{
-  display:flex;align-items:center;
-  padding:10px 16px;
-  border-bottom:1px solid rgba(255,255,255,.04);
-  font-size:clamp(12px,2.8vw,14px);
-  transition:background .2s;
-}
-.lb-row:last-child{border-bottom:none}
-.lb-row:hover{background:rgba(255,255,255,.02)}
 .lb-row.you{background:rgba(255,24,1,.08);border-left:3px solid var(--red)}
-.lb-rank{
-  width:28px;font-family:'Orbitron',monospace;font-weight:700;font-size:12px;
-  color:var(--text-dim);
-}
-.lb-rank.gold{color:var(--gold)}
-.lb-rank.silver{color:var(--silver)}
-.lb-rank.bronze{color:var(--bronze)}
-.lb-name{flex:1;font-weight:600}
-.lb-time{
-  font-family:'Orbitron',monospace;font-weight:700;font-size:13px;
-  color:var(--green);
-}
 .lb-empty{
-  padding:24px;text-align:center;color:var(--text-dim);font-size:13px;
+  padding:20px;text-align:center;color:var(--text-dim);font-size:12px;
 }
 
 /* ==================== FOOTER ==================== */
 .footer{
   text-align:center;
-  font-size:11px;
+  font-size:10px;
   color:#333;
   margin-top:auto;
-  padding-top:20px;
+  padding-top:16px;
 }
 .footer a{color:#555;text-decoration:none}
+.footer a:hover,.footer a:focus{color:var(--red)}
 
 /* ==================== FALSE START OVERLAY ==================== */
 .false-start-overlay{
   display:none;
   position:fixed;inset:0;z-index:200;
-  background:rgba(0,0,0,.9);
+  background:rgba(0,0,0,.95);
   justify-content:center;align-items:center;
   flex-direction:column;gap:16px;
   animation:fadeIn .3s ease;
@@ -499,12 +442,12 @@ html,body{
 .false-start-overlay.show{display:flex}
 .false-start-text{
   font-family:'Orbitron',monospace;
-  font-size:clamp(24px,6vw,48px);
+  font-size:clamp(22px,5.5vw,42px);
   font-weight:900;
   color:#ff4444;
   text-shadow:0 0 40px rgba(255,0,0,.5);
 }
-.false-start-sub{color:var(--text-dim);font-size:14px}
+.false-start-sub{color:var(--text-dim);font-size:13px;text-align:center;padding:0 20px}
 
 /* ==================== SCREEN FLASH ==================== */
 @keyframes screenFlashGreen{
@@ -518,24 +461,15 @@ html,body{
 
 /* ==================== RESPONSIVE ==================== */
 @media(max-width:400px){
-  .lights-panel{padding:16px 16px 14px}
-  .light-housing{padding:6px 5px}
+  .lights-panel{padding:12px 12px}
+  .light-housing{padding:4px 4px;gap:4px}
   .pro-team{display:none}
 }
-
-/* ==================== RACING LAUNCH EFFECT ==================== */
-.racing-overlay{
-  display:none;position:fixed;inset:0;z-index:150;
-  background:linear-gradient(90deg,transparent 0%,rgba(255,24,1,.03) 50%,transparent 100%);
-  pointer-events:none;
-}
-.racing-overlay.active{display:block;animation:raceZoom 2s ease forwards}
-@keyframes raceZoom{
-  0%{opacity:1}
-  100%{opacity:0}
+@media(min-width:600px){
+  .light{width:44px;height:44px}
 }
 
-/* Speed lines */
+/* ==================== SPEED LINES ==================== */
 .speed-lines{
   position:fixed;inset:0;z-index:49;pointer-events:none;overflow:hidden;
   display:none;
@@ -554,11 +488,11 @@ html,body{
 
 /* ==================== LOADING ==================== */
 .lb-loading{
-  padding:24px;text-align:center;
+  padding:20px;text-align:center;
 }
 .lb-loading .spinner{
-  width:24px;height:24px;border:2px solid #333;border-top-color:var(--red);
-  border-radius:50%;margin:0 auto 8px;
+  width:20px;height:20px;border:2px solid #333;border-top-color:var(--red);
+  border-radius:50%;margin:0 auto 6px;
   animation:spin .8s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -574,32 +508,98 @@ html,body{
 
 /* How to play hint */
 .hint{
-  font-size:clamp(11px,2.5vw,13px);
+  font-size:clamp(10px,2.4vw,12px);
   color:var(--text-dim);
   text-align:center;
-  max-width:400px;
-  line-height:1.6;
-  margin-bottom:16px;
-  animation:fadeIn .8s ease .4s both;
+  max-width:380px;
+  line-height:1.5;
+  margin-bottom:12px;
 }
 
-/* Best time badge */
-.best-badge{
-  display:inline-block;
-  background:linear-gradient(135deg,var(--gold),#b8860b);
-  color:#000;
-  font-family:'Orbitron',monospace;
-  font-size:10px;font-weight:700;
-  padding:3px 8px;border-radius:4px;
-  margin-left:8px;
-  text-transform:uppercase;
+/* ==================== RESULT BLAST ==================== */
+.blast-container{
+  position:fixed;inset:0;z-index:200;pointer-events:none;overflow:hidden;
+}
+.blast-particle{
+  position:absolute;
+  border-radius:50%;
+  animation:blastFly var(--dur) cubic-bezier(.15,.8,.3,1) forwards;
+}
+@keyframes blastFly{
+  0%{transform:translate(0,0) scale(1);opacity:1}
+  60%{opacity:1}
+  100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}
+}
+.blast-ring{
+  position:fixed;
+  border:3px solid var(--green);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:199;
+  animation:ringExpand .7s cubic-bezier(.2,.8,.3,1) forwards;
+}
+@keyframes ringExpand{
+  0%{width:0;height:0;opacity:.8}
+  100%{width:300px;height:300px;opacity:0;border-width:1px}
+}
+.result-zoom{
+  animation:resultPop .5s cubic-bezier(.2,1.4,.4,1) both;
+}
+@keyframes resultPop{
+  0%{transform:scale(0.3);opacity:0}
+  60%{transform:scale(1.15)}
+  100%{transform:scale(1);opacity:1}
+}
+.comparison-slide{
+  animation:slideUp .5s cubic-bezier(.2,.8,.3,1) .3s both;
+}
+@keyframes slideUp{
+  0%{transform:translateY(30px);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
+.checkered-flash{
+  position:fixed;inset:0;z-index:198;pointer-events:none;
+  background:repeating-conic-gradient(#fff 0% 25%, transparent 0% 50%) 0 0 / 40px 40px;
+  animation:checkeredIn .6s ease forwards;
+}
+@keyframes checkeredIn{
+  0%{opacity:.12}
+  100%{opacity:0}
+}
+
+/* Live region for screen readers */
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* High contrast mode support */
+@media(prefers-contrast:high){
+  .light{border-width:3px}
+  .btn{border:2px solid #fff}
+  .name-input{border-width:3px}
+}
+
+/* Reduced motion support */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
 }
 </style>
 </head>
 <body>
 
+<!-- Skip link for keyboard users -->
+<a href="#game" class="skip-link">Skip to game</a>
+
+<!-- Live region for screen reader announcements -->
+<div id="liveRegion" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
 <!-- Background Scene -->
-<div class="bg-scene">
+<div class="bg-scene" aria-hidden="true">
   <div class="track">
     <div class="track-line"></div>
     <div class="track-line"></div>
@@ -623,105 +623,110 @@ html,body{
 </div>
 
 <!-- Speed Lines -->
-<div class="speed-lines" id="speedLines"></div>
-<div class="racing-overlay" id="racingOverlay"></div>
+<div class="speed-lines" id="speedLines" aria-hidden="true"></div>
 
 <!-- False Start Overlay -->
-<div class="false-start-overlay" id="falseStart">
-  <div class="false-start-text">JUMP START!</div>
-  <div class="false-start-sub">You went before the lights went out</div>
-  <button class="btn btn-start" onclick="resetGame()" style="margin-top:12px;font-size:14px;padding:12px 30px">TRY AGAIN</button>
+<div class="false-start-overlay" id="falseStart" role="alertdialog" aria-labelledby="falseStartTitle" aria-describedby="falseStartDesc">
+  <div class="false-start-text" id="falseStartTitle">JUMP START!</div>
+  <div class="false-start-sub" id="falseStartDesc">You went before the lights went out. Press Enter or tap anywhere to try again.</div>
 </div>
 
-<!-- Full Screen Reaction Button (invisible, covers screen when GO) -->
-<button class="btn-react" id="btnReact" onclick="recordReaction()"></button>
-
 <!-- Toast -->
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- Main Content -->
-<div class="container">
+<main class="container" id="game">
   <header class="header">
     <h1>Lights Out!</h1>
-    <div class="subtitle">F1 Reaction Challenge</div>
+    <p class="subtitle">F1 Reaction Challenge</p>
   </header>
 
   <!-- Name Entry -->
-  <div class="name-section" id="nameSection">
-    <input type="text" class="name-input" id="nameInput" placeholder="Enter your name" maxlength="20" autocomplete="off" spellcheck="false">
+  <div class="name-section">
+    <label for="nameInput" class="sr-only">Enter your name</label>
+    <input type="text" class="name-input" id="nameInput" placeholder="Enter your name" maxlength="20" autocomplete="off" spellcheck="false" aria-describedby="nameHint">
+    <span id="nameHint" class="sr-only">Enter a unique name for the leaderboard, then press Enter or tap Start</span>
   </div>
 
-  <!-- Lights Panel -->
+  <!-- Lights Panel - 5 columns x 4 rows -->
   <div class="lights-wrapper">
-    <div class="lights-panel" id="lightsPanel">
+    <div class="lights-panel" id="lightsPanel" role="img" aria-label="F1 starting lights - 5 columns of 4 red lights each">
+      <div class="gantry-bar" aria-hidden="true"></div>
       <div class="lights-row">
         <div class="light-housing">
-          <div class="light" id="l1t"></div>
+          <div class="light" id="l1a"></div>
           <div class="light" id="l1b"></div>
+          <div class="light" id="l1c"></div>
+          <div class="light" id="l1d"></div>
         </div>
         <div class="light-housing">
-          <div class="light" id="l2t"></div>
+          <div class="light" id="l2a"></div>
           <div class="light" id="l2b"></div>
+          <div class="light" id="l2c"></div>
+          <div class="light" id="l2d"></div>
         </div>
         <div class="light-housing">
-          <div class="light" id="l3t"></div>
+          <div class="light" id="l3a"></div>
           <div class="light" id="l3b"></div>
+          <div class="light" id="l3c"></div>
+          <div class="light" id="l3d"></div>
         </div>
         <div class="light-housing">
-          <div class="light" id="l4t"></div>
+          <div class="light" id="l4a"></div>
           <div class="light" id="l4b"></div>
+          <div class="light" id="l4c"></div>
+          <div class="light" id="l4d"></div>
         </div>
         <div class="light-housing">
-          <div class="light" id="l5t"></div>
+          <div class="light" id="l5a"></div>
           <div class="light" id="l5b"></div>
+          <div class="light" id="l5c"></div>
+          <div class="light" id="l5d"></div>
         </div>
       </div>
-      <div class="glow-surface"></div>
+      <div class="glow-surface" aria-hidden="true"></div>
     </div>
   </div>
 
   <!-- Status -->
-  <div class="status waiting" id="status">Enter your name and press START</div>
-  <div class="reaction-display" id="reactionDisplay"></div>
-  <div id="comparisonBox"></div>
+  <div class="status waiting" id="status" role="status" aria-live="polite">Enter your name and press START</div>
+  <div class="reaction-display" id="reactionDisplay" aria-live="assertive"></div>
+  <div id="comparisonBox" aria-live="polite"></div>
 
   <!-- Buttons -->
   <div class="buttons" id="buttonsArea">
-    <button class="btn btn-start" id="btnStart" onclick="startGame()">START</button>
+    <button class="btn btn-start" id="btnStart" type="button" aria-describedby="gameHint">START</button>
   </div>
 
-  <div class="hint" id="hint">
-    5 red lights come on one by one. When they ALL go out — tap as fast as you can!<br>
-    Just like a real F1 race start.
-  </div>
+  <p class="hint" id="gameHint">
+    5 columns of lights turn red one by one. When they ALL go out — tap anywhere or press any key!<br>
+    Timing varies each round, just like real F1.
+  </p>
 
   <!-- Real F1 Pro Reaction Times -->
-  <div class="section-title"><span>F1</span> Pro Reaction Times</div>
-  <div class="pro-times" id="proTimes"></div>
+  <h2 class="section-title"><span>F1</span> Pro Reaction Times</h2>
+  <div class="pro-times" id="proTimes" role="table" aria-label="Top 10 F1 driver reaction times"></div>
 
   <!-- Global Leaderboard -->
-  <div class="section-title">Global <span>Leaderboard</span></div>
-  <div class="leaderboard" id="leaderboard">
-    <div class="lb-loading"><div class="spinner"></div>Loading...</div>
+  <h2 class="section-title">Global <span>Leaderboard</span></h2>
+  <div class="leaderboard" id="leaderboard" role="table" aria-label="Global player leaderboard">
+    <div class="lb-loading"><div class="spinner" aria-hidden="true"></div>Loading...</div>
   </div>
 
   <footer class="footer">
     Built for speed. Hosted on Cloudflare.<br>
-    <a href="https://github.com/sree-pm/F1-lightsout-game" target="_blank">GitHub</a>
+    <a href="https://github.com/sree-pm/F1-lightsout-game" target="_blank" rel="noopener">GitHub</a>
   </footer>
-</div>
+</main>
 
 <script>
 // ==================== CONFIG ====================
 const API_URL = '/api/leaderboard';
 
 // ==================== RATE LIMITING & CACHING ====================
-// Client-side protections to stay within Cloudflare free tier
-// KV writes: 1,000/day free → only submit personal bests
-// KV reads: 100,000/day free → cache leaderboard locally
 const LEADERBOARD_CACHE_KEY = 'f1_lb_cache';
-const LEADERBOARD_CACHE_TTL = 30_000; // 30s — don't re-fetch more often
-const SUBMIT_COOLDOWN = 5_000; // 5s between submissions
+const LEADERBOARD_CACHE_TTL = 30_000;
+const SUBMIT_COOLDOWN = 3_000; // Reduced to 3s for better UX
 let lastSubmitTime = 0;
 let lastFetchTime = 0;
 let cachedLeaderboard = null;
@@ -743,21 +748,6 @@ function setCachedLeaderboard(data) {
   } catch(e) {}
 }
 
-// Only submit if it's a personal best (saves KV writes)
-function shouldSubmitScore(time) {
-  // Cooldown check
-  if (Date.now() - lastSubmitTime < SUBMIT_COOLDOWN) return false;
-  // Only submit personal best
-  const prevBest = parseFloat(localStorage.getItem('f1_best') || '99');
-  if (time >= prevBest) return false;
-  // If we have cached leaderboard and score wouldn't make top 100, skip
-  if (cachedLeaderboard && cachedLeaderboard.length >= 100) {
-    const worstInTop100 = cachedLeaderboard[cachedLeaderboard.length - 1].time;
-    if (time > worstInTop100) return false;
-  }
-  return true;
-}
-
 // ==================== REAL F1 REACTION TIMES ====================
 const F1_PRO_TIMES = [
   { name: 'Valtteri Bottas', team: 'Mercedes', time: 0.201, race: 'Austrian GP', year: 2019 },
@@ -772,7 +762,7 @@ const F1_PRO_TIMES = [
   { name: 'Daniel Ricciardo', team: 'Red Bull', time: 0.240, race: 'Chinese GP', year: 2018 },
 ];
 
-// ==================== AUDIO ENGINE (Web Audio API, no files) ====================
+// ==================== AUDIO ENGINE ====================
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
 function ensureAudio() {
@@ -796,14 +786,14 @@ function playBeep(freq, duration, vol = 0.15) {
   } catch(e) {}
 }
 
-function playLightOn() { playBeep(880, 0.12, 0.1); }
-function playLightsOut() { playBeep(1200, 0.3, 0.2); }
-function playFalseStart() { playBeep(200, 0.5, 0.2); }
+function playLightOn() { playBeep(880, 0.1, 0.08); }
+function playLightsOut() { playBeep(1200, 0.25, 0.18); }
+function playFalseStart() { playBeep(200, 0.4, 0.18); }
 function playSuccess() {
   try {
     ensureAudio();
-    [0, .1, .2].forEach((d, i) => {
-      setTimeout(() => playBeep(800 + i * 200, 0.15, 0.12), d * 1000);
+    [0, .08, .16].forEach((d, i) => {
+      setTimeout(() => playBeep(800 + i * 200, 0.12, 0.1), d * 1000);
     });
   } catch(e) {}
 }
@@ -816,9 +806,21 @@ let bestTime = parseFloat(localStorage.getItem('f1_best') || '99');
 
 // ==================== DOM ====================
 const $ = id => document.getElementById(id);
+// 5 columns x 4 lights each
 const lights = [
-  ['l1t','l1b'],['l2t','l2b'],['l3t','l3b'],['l4t','l4b'],['l5t','l5b']
+  ['l1a','l1b','l1c','l1d'],
+  ['l2a','l2b','l2c','l2d'],
+  ['l3a','l3b','l3c','l3d'],
+  ['l4a','l4b','l4c','l4d'],
+  ['l5a','l5b','l5c','l5d']
 ];
+
+// ==================== ACCESSIBILITY ====================
+function announce(message) {
+  const region = $('liveRegion');
+  region.textContent = '';
+  setTimeout(() => { region.textContent = message; }, 100);
+}
 
 // ==================== INIT ====================
 function init() {
@@ -827,36 +829,67 @@ function init() {
   const saved = localStorage.getItem('f1_name');
   if (saved) $('nameInput').value = saved;
 
-  // Keyboard support
-  document.addEventListener('keydown', e => {
-    if (e.code === 'Space' || e.code === 'Enter') {
+  // Global input handler - keyboard and clicks/taps
+  document.addEventListener('keydown', handleKeyDown);
+  document.addEventListener('mousedown', handleTap);
+  document.addEventListener('touchstart', handleTap, { passive: true });
+
+  // Focus management
+  $('nameInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      if (gameState === 'go') recordReaction();
-      else if (gameState === 'waiting') falseStart();
-      else if (gameState === 'idle' || gameState === 'done' || gameState === 'false_start') startGame();
+      startGame();
     }
   });
+}
 
-  // Touch/click anywhere during GO
-  document.addEventListener('mousedown', e => {
-    if (gameState === 'go') recordReaction();
-    else if (gameState === 'waiting') falseStart();
-  });
-  document.addEventListener('touchstart', e => {
-    if (gameState === 'go') recordReaction();
-    else if (gameState === 'waiting') falseStart();
-  }, { passive: true });
+function handleKeyDown(e) {
+  // Any key triggers reaction during GO state
+  if (gameState === 'go') {
+    e.preventDefault();
+    recordReaction();
+    return;
+  }
+  if (gameState === 'waiting' || gameState === 'sequence') {
+    e.preventDefault();
+    falseStart();
+    return;
+  }
+  // Enter/Space to start or restart
+  if (e.code === 'Space' || e.code === 'Enter') {
+    if (document.activeElement === $('nameInput')) return; // Let input handle Enter
+    e.preventDefault();
+    if (gameState === 'idle' || gameState === 'done' || gameState === 'false_start') {
+      startGame();
+    }
+  }
+}
+
+function handleTap(e) {
+  // Ignore if tapping on interactive elements when idle
+  if (gameState === 'idle' || gameState === 'done') {
+    const tag = e.target.tagName;
+    if (tag === 'BUTTON' || tag === 'INPUT' || tag === 'A') return;
+  }
+  if (gameState === 'go') {
+    recordReaction();
+  } else if (gameState === 'waiting' || gameState === 'sequence') {
+    falseStart();
+  } else if (gameState === 'false_start') {
+    resetGame();
+    setTimeout(startGame, 100);
+  }
 }
 
 // ==================== RENDER PRO TIMES ====================
 function renderProTimes() {
   $('proTimes').innerHTML = F1_PRO_TIMES.map((p, i) => `
-    <div class="pro-row">
-      <span class="pro-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
-      <span class="pro-name">${p.name}</span>
-      <span class="pro-team">${p.team}</span>
-      <span class="pro-time">${p.time.toFixed(3)}s</span>
-      <span class="pro-year">${p.race} '${String(p.year).slice(2)}</span>
+    <div class="pro-row" role="row">
+      <span class="pro-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}" role="cell">${i+1}</span>
+      <span class="pro-name" role="cell">${p.name}</span>
+      <span class="pro-team" role="cell">${p.team}</span>
+      <span class="pro-time" role="cell">${p.time.toFixed(3)}s</span>
+      <span class="pro-year" role="cell">${p.race} '${String(p.year).slice(2)}</span>
     </div>
   `).join('');
 }
@@ -869,6 +902,7 @@ function startGame() {
     $('nameInput').style.borderColor = '#ff4444';
     setTimeout(() => $('nameInput').style.borderColor = '#333', 1500);
     showToast('Enter your name first!');
+    announce('Please enter your name to start');
     return;
   }
   localStorage.setItem('f1_name', name);
@@ -880,94 +914,91 @@ function startGame() {
   $('reactionDisplay').className = 'reaction-display';
   $('comparisonBox').innerHTML = '';
   $('btnStart').style.display = 'none';
-  $('hint').style.display = 'none';
   $('f1Car').classList.remove('racing');
   $('speedLines').classList.remove('active');
-  $('racingOverlay').classList.remove('active');
-  $('lightsPanel').classList.remove('red-active', 'green-active');
-  lights.forEach(pair => pair.forEach(id => {
-    $(id).className = 'light';
-  }));
+  $('lightsPanel').classList.remove('red-active');
+  lights.forEach(col => col.forEach(id => $(id).className = 'light'));
 
   $('status').textContent = 'WATCH THE LIGHTS...';
   $('status').className = 'status ready';
+  announce('Watch the lights. React when they go out.');
 
-  // Light sequence: 1 column every ~1s, then random delay before lights out
-  const baseDelay = 800 + Math.random() * 400;
+  // DYNAMIC TIMING - different delay for each light column
+  // Base delay 400-700ms per column, randomized
   lightTimers = [];
+  let totalDelay = 0;
 
-  lights.forEach((pair, i) => {
+  lights.forEach((col, i) => {
+    // Each column has a different random delay (400-700ms range)
+    const colDelay = 400 + Math.random() * 300;
+    totalDelay += colDelay;
+
     const t = setTimeout(() => {
-      pair.forEach(id => $(id).classList.add('on-red'));
+      col.forEach(id => $(id).classList.add('on-red'));
       $('lightsPanel').classList.add('red-active');
       playLightOn();
-    }, baseDelay * (i + 1));
+      // After first light, enable false start detection
+      if (i === 0) gameState = 'waiting';
+    }, totalDelay);
     lightTimers.push(t);
   });
 
-  // After all 5 lit, random wait 0.5-3.5s then lights out
-  const allLitTime = baseDelay * 5;
-  const randomWait = 500 + Math.random() * 3000;
+  // After all 5 columns lit, random wait 400-1000ms then lights out
+  // This prevents users from counting/predicting
+  const lightsOutDelay = 400 + Math.random() * 600;
 
   const goTimer = setTimeout(() => {
-    // Lights out!
     gameState = 'go';
-    lights.forEach(pair => pair.forEach(id => {
-      $(id).classList.remove('on-red');
-    }));
+    lights.forEach(col => col.forEach(id => $(id).classList.remove('on-red')));
     $('lightsPanel').classList.remove('red-active');
-    $('status').textContent = 'GO GO GO!';
+    $('status').textContent = 'GO!';
     $('status').className = 'status go';
     lightsOutTime = performance.now();
     playLightsOut();
-    $('btnReact').style.display = 'block';
+    announce('GO!');
 
     // Screen flash
     const flash = document.createElement('div');
     flash.className = 'screen-flash';
     document.body.appendChild(flash);
     setTimeout(() => flash.remove(), 500);
-  }, allLitTime + randomWait);
+  }, totalDelay + lightsOutDelay);
 
   lightTimers.push(goTimer);
-
-  // Enable false start detection during waiting period
-  const waitTimer = setTimeout(() => {
-    if (gameState === 'sequence') gameState = 'waiting';
-  }, baseDelay);
-  lightTimers.push(waitTimer);
 }
 
 function falseStart() {
+  if (gameState !== 'waiting' && gameState !== 'sequence') return;
   gameState = 'false_start';
   lightTimers.forEach(clearTimeout);
   lightTimers = [];
   $('falseStart').classList.add('show');
-  $('btnReact').style.display = 'none';
   playFalseStart();
-  $('lightsPanel').classList.remove('red-active', 'green-active');
-  lights.forEach(pair => pair.forEach(id => $(id).className = 'light'));
+  $('lightsPanel').classList.remove('red-active');
+  lights.forEach(col => col.forEach(id => $(id).className = 'light'));
+  announce('Jump start! You went too early. Tap or press Enter to try again.');
 }
 
 function recordReaction() {
   if (gameState !== 'go') return;
   gameState = 'done';
-  $('btnReact').style.display = 'none';
 
   const reaction = (performance.now() - lightsOutTime) / 1000;
   const reactionMs = reaction.toFixed(3);
 
-  // Display
+  // Display with pop animation
   $('reactionDisplay').textContent = reactionMs + 's';
   let cls = 'good';
   if (reaction > 0.3) cls = 'ok';
   if (reaction > 0.5) cls = 'slow';
-  $('reactionDisplay').className = 'reaction-display ' + cls;
+  $('reactionDisplay').className = 'reaction-display ' + cls + ' result-zoom';
+
+  // Fire the blast effect
+  fireBlast(cls);
 
   // Car animation
   $('f1Car').classList.add('racing');
   $('speedLines').classList.add('active');
-  $('racingOverlay').classList.add('active');
   fireSpeedLines();
 
   // Status
@@ -977,43 +1008,41 @@ function recordReaction() {
   // Comparison with F1 drivers
   const beaten = F1_PRO_TIMES.filter(p => reaction < p.time);
   let compHTML = '';
+  let announceMsg = `Your reaction time: ${reactionMs} seconds. `;
   if (beaten.length === F1_PRO_TIMES.length) {
-    compHTML = `<div class="comparison"><span class="beat">INCREDIBLE!</span> You beat ALL F1 drivers' best times! Are you superhuman?</div>`;
+    compHTML = `<div class="comparison comparison-slide"><span class="beat">INCREDIBLE!</span> You beat ALL F1 drivers' best times!</div>`;
+    announceMsg += 'Incredible! You beat all F1 drivers!';
   } else if (beaten.length > 0) {
     const best = beaten[beaten.length - 1];
-    compHTML = `<div class="comparison"><span class="beat">You beat ${best.name}!</span> (${best.time.toFixed(3)}s at ${best.race} ${best.year})</div>`;
+    compHTML = `<div class="comparison comparison-slide"><span class="beat">You beat ${best.name}!</span> (${best.time.toFixed(3)}s)</div>`;
+    announceMsg += `You beat ${best.name}!`;
   } else {
     const closest = F1_PRO_TIMES[F1_PRO_TIMES.length - 1];
     const diff = (reaction - closest.time).toFixed(3);
-    compHTML = `<div class="comparison"><span class="lose">${diff}s slower</span> than ${closest.name}'s ${closest.time.toFixed(3)}s — keep practicing!</div>`;
+    compHTML = `<div class="comparison comparison-slide"><span class="lose">${diff}s slower</span> than ${closest.name} — keep practicing!</div>`;
+    announceMsg += `${diff} seconds slower than ${closest.name}. Keep practicing!`;
   }
   $('comparisonBox').innerHTML = compHTML;
+  announce(announceMsg);
 
   // Sound
   playSuccess();
 
-  // Submit to leaderboard BEFORE updating local best (so shouldSubmitScore sees old best)
+  // Submit to leaderboard
   const name = $('nameInput').value.trim();
   submitScore(name, reaction);
 
-  // Now update best time locally
-  let isBest = false;
+  // Update best time locally
   if (reaction < bestTime) {
     bestTime = reaction;
     localStorage.setItem('f1_best', reaction.toString());
-    isBest = true;
   }
 
   // Buttons
-  $('btnStart').textContent = 'PLAY AGAIN';
-  $('btnStart').style.display = '';
-  const shareBtn = document.createElement('button');
-  shareBtn.className = 'btn btn-share';
-  shareBtn.textContent = 'SHARE RESULT';
-  shareBtn.onclick = () => shareResult(reactionMs);
-  $('buttonsArea').innerHTML = '';
-  $('buttonsArea').appendChild($('btnStart'));
-  $('buttonsArea').appendChild(shareBtn);
+  $('buttonsArea').innerHTML = `
+    <button class="btn btn-start" id="btnStart" type="button" onclick="startGame()">PLAY AGAIN</button>
+    <button class="btn btn-share" type="button" onclick="shareResult('${reactionMs}')">SHARE</button>
+  `;
 }
 
 function fireSpeedLines() {
@@ -1027,29 +1056,76 @@ function fireSpeedLines() {
     line.style.animationDelay = (Math.random() * 0.3) + 's';
     container.appendChild(line);
   }
+  setTimeout(() => container.classList.remove('active'), 1500);
+}
+
+function fireBlast(tier) {
+  const colors = tier === 'good'
+    ? ['#00ff44','#44ff88','#00cc33','#88ffaa','#ffffff','#ffdd00']
+    : tier === 'ok'
+    ? ['#ffd700','#ffaa00','#ff8800','#ffcc44','#ffffff','#ff6600']
+    : ['#ff4444','#ff6644','#ff2200','#ff8866','#ffffff','#cc0000'];
+
+  const container = document.createElement('div');
+  container.className = 'blast-container';
+  document.body.appendChild(container);
+
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight * 0.35;
+
+  const particleCount = tier === 'good' ? 50 : tier === 'ok' ? 30 : 20;
+  for (let i = 0; i < particleCount; i++) {
+    const p = document.createElement('div');
+    p.className = 'blast-particle';
+    const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5;
+    const dist = 80 + Math.random() * 200;
+    const tx = Math.cos(angle) * dist;
+    const ty = Math.sin(angle) * dist - 40;
+    const size = 4 + Math.random() * 8;
+    const dur = 0.6 + Math.random() * 0.6;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    p.style.cssText = `left:${cx}px;top:${cy}px;width:${size}px;height:${size}px;background:${color};box-shadow:0 0 ${size*2}px ${color};--tx:${tx}px;--ty:${ty}px;--dur:${dur}s;`;
+    container.appendChild(p);
+  }
+
+  const ring = document.createElement('div');
+  ring.className = 'blast-ring';
+  ring.style.cssText = `left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);border-color:${colors[0]};`;
+  document.body.appendChild(ring);
+
   setTimeout(() => {
-    container.classList.remove('active');
-  }, 1500);
+    const ring2 = document.createElement('div');
+    ring2.className = 'blast-ring';
+    ring2.style.cssText = `left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);border-color:${colors[1]};`;
+    document.body.appendChild(ring2);
+    setTimeout(() => ring2.remove(), 800);
+  }, 150);
+
+  if (tier === 'good') {
+    const flag = document.createElement('div');
+    flag.className = 'checkered-flash';
+    document.body.appendChild(flag);
+    setTimeout(() => flag.remove(), 700);
+  }
+
+  setTimeout(() => { container.remove(); ring.remove(); }, 1500);
 }
 
 function resetGame() {
   gameState = 'idle';
   $('falseStart').classList.remove('show');
-  $('btnStart').textContent = 'START';
-  $('btnStart').style.display = '';
-  $('status').textContent = 'Press START when ready';
+  $('status').textContent = 'Press START or tap anywhere';
   $('status').className = 'status waiting';
   $('reactionDisplay').textContent = '';
   $('comparisonBox').innerHTML = '';
-  $('hint').style.display = '';
-  $('lightsPanel').classList.remove('red-active','green-active');
-  lights.forEach(pair => pair.forEach(id => $(id).className = 'light'));
+  $('lightsPanel').classList.remove('red-active');
+  lights.forEach(col => col.forEach(id => $(id).className = 'light'));
   $('f1Car').classList.remove('racing');
+  $('buttonsArea').innerHTML = `<button class="btn btn-start" id="btnStart" type="button" onclick="startGame()">START</button>`;
 }
 
 // ==================== SHARE ====================
 function shareResult(time) {
-  const name = $('nameInput').value.trim();
   const beaten = F1_PRO_TIMES.filter(p => parseFloat(time) < p.time);
   let extra = '';
   if (beaten.length > 0) extra = ` and beat ${beaten[beaten.length-1].name}! 🏆`;
@@ -1069,7 +1145,6 @@ function shareResult(time) {
 
 // ==================== LEADERBOARD ====================
 async function loadLeaderboard(force = false) {
-  // Use cached data if fresh enough (reduces KV reads)
   if (!force) {
     const cached = getCachedLeaderboard();
     if (cached) {
@@ -1077,7 +1152,6 @@ async function loadLeaderboard(force = false) {
       return;
     }
   }
-  // Throttle fetches: max 1 per CACHE_TTL
   if (Date.now() - lastFetchTime < LEADERBOARD_CACHE_TTL && cachedLeaderboard) {
     renderLeaderboard(cachedLeaderboard);
     return;
@@ -1090,11 +1164,10 @@ async function loadLeaderboard(force = false) {
     setCachedLeaderboard(data);
     renderLeaderboard(data);
   } catch (e) {
-    // Show cached data if available, otherwise placeholder
     if (cachedLeaderboard) {
       renderLeaderboard(cachedLeaderboard);
     } else {
-      $('leaderboard').innerHTML = '<div class="lb-empty">Leaderboard loading... Play a game to be first!</div>';
+      $('leaderboard').innerHTML = '<div class="lb-empty">Leaderboard unavailable. Play to be first!</div>';
     }
   }
 }
@@ -1107,21 +1180,22 @@ function renderLeaderboard(entries) {
   const currentName = ($('nameInput').value.trim() || '').toUpperCase();
   $('leaderboard').innerHTML = entries.slice(0, 50).map((e, i) => {
     const isYou = e.name.toUpperCase() === currentName;
-    return `<div class="lb-row${isYou ? ' you' : ''}">
-      <span class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
-      <span class="lb-name">${escHtml(e.name)}${isYou ? ' <small>(you)</small>' : ''}</span>
-      <span class="lb-time">${e.time.toFixed(3)}s</span>
+    return `<div class="lb-row${isYou ? ' you' : ''}" role="row">
+      <span class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}" role="cell">${i+1}</span>
+      <span class="lb-name" role="cell">${escHtml(e.name)}${isYou ? ' (you)' : ''}</span>
+      <span class="lb-time" role="cell">${e.time.toFixed(3)}s</span>
     </div>`;
   }).join('');
 }
 
 async function submitScore(name, time) {
-  // Client-side gate: only submit personal bests to save KV writes
-  if (!shouldSubmitScore(time)) {
-    console.log('Skipping submit — not a personal best or cooldown active');
+  // Less restrictive: only check cooldown, always try to submit
+  if (Date.now() - lastSubmitTime < SUBMIT_COOLDOWN) {
+    console.log('Cooldown active, skipping submit');
     return;
   }
   lastSubmitTime = Date.now();
+
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
@@ -1138,9 +1212,11 @@ async function submitScore(name, time) {
       }
     } else if (res.status === 429) {
       showToast('Too many attempts — slow down!');
+    } else {
+      console.log('Submit failed:', res.status);
     }
   } catch (e) {
-    console.log('Score submit failed:', e);
+    console.log('Score submit error:', e);
   }
 }
 

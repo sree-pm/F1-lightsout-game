@@ -28,11 +28,11 @@
 :root{
   --red:#ff1801;
   --red-glow:rgba(255,24,1,.8);
+  --red-dark:#1a0a0a;
   --green:#00ff44;
-  --green-glow:rgba(0,255,68,.8);
   --bg:#0a0a0a;
-  --card:#141414;
-  --card-border:#222;
+  --card:#111;
+  --card-border:#1a1a1a;
   --text:#e0e0e0;
   --text-dim:#666;
   --gold:#ffd700;
@@ -40,1066 +40,721 @@
   --bronze:#cd7f32;
 }
 
-/* Skip link for accessibility */
-.skip-link{
-  position:absolute;top:-100px;left:50%;transform:translateX(-50%);
-  background:var(--red);color:#fff;padding:12px 24px;z-index:9999;
-  border-radius:0 0 8px 8px;font-weight:700;text-decoration:none;
-  transition:top .3s;
-}
-.skip-link:focus{top:0}
-
 html,body{
-  height:100%;
-  background:var(--bg);
+  min-height:100vh;
+  background:linear-gradient(180deg,#0a0a0a 0%,var(--red-dark) 50%,#0a0a0a 100%);
   color:var(--text);
   font-family:'Inter',system-ui,sans-serif;
   overflow-x:hidden;
-  -webkit-tap-highlight-color:transparent;
 }
 
-/* Focus styles for accessibility - WCAG AAA */
-:focus{outline:3px solid var(--gold);outline-offset:2px}
+:focus{outline:2px solid var(--gold);outline-offset:2px}
 :focus:not(:focus-visible){outline:none}
-:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
-/* ==================== BACKGROUND ANIMATION ==================== */
-.bg-scene{
-  position:fixed;inset:0;z-index:0;overflow:hidden;
-  background:linear-gradient(180deg,#0a0a0a 0%,#1a0a0a 50%,#0a0a0a 100%);
-}
-.bg-scene::after{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 80%,rgba(255,24,1,.06) 0%,transparent 70%);
-}
-
-/* Track lines */
-.track{
-  position:absolute;bottom:0;left:0;right:0;height:40%;
-  background:linear-gradient(0deg,#111 0%,transparent 100%);
-  overflow:hidden;
-}
-.track-line{
-  position:absolute;bottom:15%;height:3px;background:white;opacity:.15;
-  animation:trackMove 1.5s linear infinite;
-}
-.track-line:nth-child(1){left:20%;width:60px;animation-delay:0s}
-.track-line:nth-child(2){left:40%;width:80px;animation-delay:.3s}
-.track-line:nth-child(3){left:60%;width:50px;animation-delay:.7s}
-.track-line:nth-child(4){left:30%;width:70px;animation-delay:1s}
-.track-line:nth-child(5){left:70%;width:40px;animation-delay:.5s}
-.track-line:nth-child(6){left:50%;width:90px;animation-delay:1.2s}
-
-@keyframes trackMove{
-  0%{transform:translateX(100vw);opacity:.15}
-  80%{opacity:.15}
-  100%{transform:translateX(-200px);opacity:0}
-}
-
-/* Animated car silhouette */
-.f1-car{
-  position:absolute;bottom:12%;left:10%;
-  width:120px;height:30px;
-  opacity:.3;
-  transition:all 1.5s cubic-bezier(.2,.8,.2,1);
-}
-.f1-car.racing{
-  transform:translateX(calc(100vw - 50px)) scale(1.1);
-  opacity:.6;
-}
-.f1-car svg{width:100%;height:100%}
-
-/* ==================== MAIN CONTAINER ==================== */
-.container{
-  position:relative;z-index:1;
+/* ==================== 3-COLUMN DESKTOP LAYOUT ==================== */
+.app-layout{
+  display:grid;
+  grid-template-columns:280px 1fr 280px;
+  gap:20px;
+  max-width:1400px;
+  margin:0 auto;
+  padding:20px;
   min-height:100vh;
-  display:flex;flex-direction:column;align-items:center;
-  padding:20px 16px 40px;
 }
+
+/* Mobile: single column */
+@media(max-width:1024px){
+  .app-layout{
+    grid-template-columns:1fr;
+    padding:16px;
+  }
+  .sidebar-left{order:3}
+  .main-content{order:1}
+  .sidebar-right{order:2}
+}
+
+/* ==================== SIDEBARS ==================== */
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.panel{
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:12px;
+  padding:16px;
+}
+
+.panel-title{
+  font-family:'Orbitron',monospace;
+  font-size:13px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  margin-bottom:12px;
+  color:var(--text-dim);
+}
+.panel-title span{color:var(--red)}
 
 /* ==================== HEADER ==================== */
 .header{
-  text-align:center;margin-bottom:20px;
-  animation:fadeInDown .8s ease;
+  text-align:center;
+  margin-bottom:20px;
 }
 .header h1{
   font-family:'Orbitron',monospace;
-  font-size:clamp(22px,5.5vw,42px);
+  font-size:clamp(28px,6vw,48px);
   font-weight:900;
   background:linear-gradient(135deg,#fff 0%,var(--red) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   background-clip:text;
-  letter-spacing:2px;
+  letter-spacing:3px;
   text-transform:uppercase;
 }
 .header .subtitle{
   font-size:clamp(11px,2.5vw,14px);
   color:var(--text-dim);
   margin-top:4px;
-  font-weight:300;
   letter-spacing:3px;
   text-transform:uppercase;
 }
 
-@keyframes fadeInDown{
-  from{opacity:0;transform:translateY(-20px)}
-  to{opacity:1;transform:translateY(0)}
+/* ==================== USER INPUTS ==================== */
+.user-inputs{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-bottom:12px;
 }
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-/* ==================== USER ENTRY (Email + Name) ==================== */
-.user-section{
-  margin-bottom:16px;
-  animation:fadeIn .8s ease .2s both;
-  display:flex;flex-direction:column;gap:10px;align-items:center;
+.input-group{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
 }
-.input-row{
-  display:flex;gap:10px;align-items:center;
-  flex-wrap:wrap;justify-content:center;
+.input-group label{
+  font-size:10px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+  letter-spacing:1px;
 }
 .user-input{
   background:#1a1a1a;
-  border:2px solid #333;
+  border:1px solid #333;
   color:#fff;
-  font-family:'Inter',sans-serif;
   font-size:14px;
-  padding:10px 16px;
+  padding:10px 14px;
   border-radius:8px;
   outline:none;
-  width:260px;
-  transition:border-color .3s,box-shadow .3s;
+  transition:border-color .3s;
 }
-.user-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,215,0,.2)}
-.user-input::placeholder{color:#555}
+.user-input:focus{border-color:var(--red)}
 .user-input.name{
   font-family:'Orbitron',monospace;
   text-transform:uppercase;
-  width:180px;
+  width:140px;
 }
-.personal-best{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(12px,3vw,15px);
-  color:var(--gold);
-  padding:8px 16px;
-  background:rgba(255,215,0,.08);
-  border:1px solid rgba(255,215,0,.2);
+.user-input.email{width:220px}
+
+.btn-save{
+  background:var(--red);
+  color:#fff;
+  border:none;
+  padding:10px 24px;
   border-radius:8px;
-  display:none;
-  align-items:center;gap:8px;
+  font-family:'Orbitron',monospace;
+  font-weight:700;
+  font-size:12px;
+  cursor:pointer;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  align-self:flex-end;
+  transition:all .2s;
 }
-.personal-best.show{display:flex}
-.personal-best .icon{font-size:18px}
-.personal-best .label{color:var(--text-dim);font-family:'Inter',sans-serif;font-size:11px}
-.personal-best .time{font-weight:700;color:var(--green)}
-.email-note{
+.btn-save:hover{background:#cc1400}
+
+.user-note{
   font-size:10px;
   color:var(--text-dim);
   text-align:center;
-  max-width:320px;
+  margin-bottom:16px;
 }
 
-/* ==================== LIGHTS PANEL - 5x4 MATRIX ==================== */
+/* ==================== LIGHTS PANEL ==================== */
 .lights-wrapper{
-  perspective:1000px;
+  display:flex;
+  justify-content:center;
   margin-bottom:16px;
-  animation:fadeIn .8s ease .3s both;
 }
 .lights-panel{
   background:linear-gradient(180deg,#1a1a1a 0%,#0d0d0d 100%);
   border-radius:12px;
-  padding:16px 20px;
+  padding:20px 24px;
   border:2px solid #222;
-  box-shadow:
-    0 20px 60px rgba(0,0,0,.7),
-    0 0 0 1px rgba(255,255,255,.02),
-    inset 0 1px 0 rgba(255,255,255,.04),
-    inset 0 -2px 0 rgba(0,0,0,.3);
-  transform:rotateX(3deg);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
   position:relative;
 }
-.lights-panel::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
-}
-
-/* F1 authentic gantry bar above lights */
 .gantry-bar{
-  position:absolute;top:-8px;left:5%;right:5%;height:6px;
+  position:absolute;top:-8px;left:10%;right:10%;height:6px;
   background:linear-gradient(180deg,#333 0%,#1a1a1a 100%);
   border-radius:3px;
-  box-shadow:0 2px 4px rgba(0,0,0,.5);
 }
-
 .lights-row{
   display:flex;
-  gap:clamp(8px,2vw,16px);
+  gap:12px;
   justify-content:center;
 }
-
-/* Individual light column - 4 lights stacked */
 .light-housing{
   background:linear-gradient(180deg,#1c1c1c 0%,#0a0a0a 100%);
   border-radius:8px;
-  padding:6px 5px;
-  display:flex;flex-direction:column;gap:5px;align-items:center;
+  padding:8px 6px;
+  display:flex;flex-direction:column;gap:6px;
   border:1px solid #2a2a2a;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.03),
-    0 4px 8px rgba(0,0,0,.4);
 }
-
-/* 3D realistic light */
 .light{
-  width:clamp(28px,6vw,40px);
-  height:clamp(28px,6vw,40px);
+  width:36px;height:36px;
   border-radius:50%;
-  position:relative;
   background:radial-gradient(circle at 35% 35%,#3a3a3a 0%,#1a1a1a 50%,#0d0d0d 100%);
   border:2px solid #2a2a2a;
-  box-shadow:
-    inset 0 2px 4px rgba(255,255,255,.05),
-    inset 0 -2px 4px rgba(0,0,0,.5),
-    0 2px 6px rgba(0,0,0,.4);
-  transition:all .1s ease;
-  overflow:hidden;
+  position:relative;
+  transition:all .1s;
 }
-
-/* Glass lens effect */
 .light::before{
-  content:'';
-  position:absolute;
-  top:12%;left:18%;
-  width:35%;height:28%;
-  background:radial-gradient(ellipse,rgba(255,255,255,.12),transparent);
+  content:'';position:absolute;top:15%;left:20%;width:30%;height:25%;
+  background:radial-gradient(ellipse,rgba(255,255,255,.1),transparent);
   border-radius:50%;
-  z-index:2;
 }
-
-/* Inner filament */
-.light::after{
-  content:'';
-  position:absolute;
-  inset:18%;
-  border-radius:50%;
-  background:radial-gradient(circle at 50% 50%,#2a2a2a 0%,#1a1a1a 100%);
-  transition:all .1s ease;
-}
-
-/* Light ON - RED */
 .light.on-red{
   background:radial-gradient(circle at 40% 40%,#ff4444 0%,#cc0000 40%,#880000 70%,#440000 100%);
   border-color:#ff2200;
-  box-shadow:
-    inset 0 2px 4px rgba(255,255,255,.25),
-    inset 0 -2px 4px rgba(0,0,0,.3),
-    0 0 15px rgba(255,24,1,.6),
-    0 0 40px rgba(255,24,1,.4),
-    0 0 80px rgba(255,24,1,.2);
+  box-shadow:0 0 20px rgba(255,24,1,.6),0 0 40px rgba(255,24,1,.3);
 }
-.light.on-red::after{
-  background:radial-gradient(circle at 50% 50%,#ff6644 0%,#ff2200 40%,#cc0000 100%);
-  box-shadow:0 0 12px rgba(255,24,1,.9);
-}
-
-/* Glow surface below lights */
 .glow-surface{
-  position:absolute;
-  bottom:-8px;left:10%;right:10%;
-  height:16px;
-  background:transparent;
-  border-radius:50%;
-  transition:all .2s;
-  filter:blur(8px);
+  position:absolute;bottom:-10px;left:15%;right:15%;height:20px;
+  background:transparent;border-radius:50%;filter:blur(10px);transition:all .2s;
 }
-.lights-panel.red-active .glow-surface{
-  background:rgba(255,24,1,.2);
+.lights-panel.red-active .glow-surface{background:rgba(255,24,1,.3)}
+
+@media(max-width:400px){
+  .light{width:28px;height:28px}
+  .lights-row{gap:8px}
+  .light-housing{padding:5px 4px;gap:4px}
 }
 
-/* ==================== STATUS & REACTION ==================== */
-.status{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(13px,3vw,18px);
+/* ==================== RESULT DISPLAY ==================== */
+.result-area{
   text-align:center;
-  margin:12px 0;
-  min-height:24px;
-  letter-spacing:1px;
-  transition:all .3s;
+  min-height:120px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 }
-.status.waiting{color:var(--text-dim)}
-.status.ready{color:var(--red);animation:pulse 1s infinite}
-.status.go{color:var(--green);font-size:clamp(18px,4.5vw,28px);font-weight:900}
-.status.fail{color:#ff4444}
-
-@keyframes pulse{
-  0%,100%{opacity:1}
-  50%{opacity:.5}
-}
-
-.reaction-display{
+.reaction-time{
   font-family:'Orbitron',monospace;
-  font-size:clamp(32px,9vw,64px);
+  font-size:clamp(48px,12vw,80px);
   font-weight:900;
-  text-align:center;
-  margin:6px 0;
-  min-height:44px;
-  transition:all .3s;
+  color:var(--green);
+  text-shadow:0 0 40px rgba(0,255,68,.4);
+  line-height:1;
 }
-.reaction-display.good{color:var(--green);text-shadow:0 0 30px rgba(0,255,68,.4)}
-.reaction-display.ok{color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.4)}
-.reaction-display.slow{color:var(--red);text-shadow:0 0 30px rgba(255,24,1,.4)}
+.reaction-time.ok{color:var(--gold);text-shadow:0 0 40px rgba(255,215,0,.4)}
+.reaction-time.slow{color:var(--red);text-shadow:0 0 40px rgba(255,24,1,.4)}
 
-/* Driver comparison */
 .comparison{
-  text-align:center;
-  font-size:clamp(11px,2.8vw,15px);
-  margin-bottom:12px;
-  padding:10px 16px;
+  font-size:13px;
+  padding:8px 16px;
   background:rgba(255,255,255,.03);
-  border-radius:8px;
-  border:1px solid rgba(255,255,255,.06);
+  border-radius:20px;
+  margin-top:8px;
 }
 .comparison .beat{color:var(--green);font-weight:700}
-.comparison .lose{color:var(--red);font-weight:700}
+.comparison .lose{color:var(--red)}
+
+.status{
+  font-family:'Orbitron',monospace;
+  font-size:16px;
+  color:var(--text-dim);
+  letter-spacing:1px;
+}
+.status.ready{color:var(--red);animation:pulse 1s infinite}
+.status.go{color:var(--green);font-size:28px;font-weight:900}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
 /* ==================== BUTTONS ==================== */
+.buttons{
+  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+  margin:16px 0;
+}
 .btn{
   font-family:'Orbitron',monospace;
   font-weight:700;
+  font-size:13px;
+  padding:12px 28px;
   border:none;
+  border-radius:8px;
   cursor:pointer;
-  border-radius:10px;
   text-transform:uppercase;
-  letter-spacing:2px;
+  letter-spacing:1px;
   transition:all .2s;
-  position:relative;
-  overflow:hidden;
 }
-.btn::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(255,255,255,.1) 0%,transparent 50%);
-  pointer-events:none;
-}
-
-.btn-start{
-  font-size:clamp(14px,3.5vw,18px);
-  padding:14px 40px;
+.btn-primary{
   background:linear-gradient(180deg,var(--red) 0%,#cc1400 100%);
   color:#fff;
-  box-shadow:0 4px 20px rgba(255,24,1,.4),0 0 0 1px rgba(255,255,255,.1) inset;
+  box-shadow:0 4px 20px rgba(255,24,1,.4);
 }
-.btn-start:hover,.btn-start:focus{transform:translateY(-2px);box-shadow:0 6px 30px rgba(255,24,1,.6)}
-.btn-start:active{transform:translateY(0)}
-
-.btn-share{
-  font-size:12px;
-  padding:10px 24px;
-  background:linear-gradient(180deg,#333 0%,#222 100%);
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(255,24,1,.6)}
+.btn-secondary{
+  background:#222;
   color:#fff;
-  box-shadow:0 2px 10px rgba(0,0,0,.3);
-  margin:8px 4px;
+  border:1px solid #333;
 }
-.btn-share:hover,.btn-share:focus{background:linear-gradient(180deg,#444 0%,#333 100%)}
+.btn-secondary:hover{background:#333}
 
-.buttons{
-  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+.practice-toggle{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;color:var(--text-dim);
+  justify-content:center;
+  margin-bottom:12px;
+}
+.practice-toggle input{accent-color:var(--green)}
+
+.hint{
+  font-size:11px;
+  color:var(--text-dim);
+  text-align:center;
+  max-width:400px;
+  margin:0 auto 20px;
+  line-height:1.5;
+}
+
+/* ==================== ACHIEVEMENTS GRID ==================== */
+.achievements-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+.achievement{
+  aspect-ratio:1;
+  background:#1a1a1a;
+  border:2px solid #333;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  position:relative;
+  cursor:default;
+}
+.achievement.locked{filter:grayscale(1) opacity(.3)}
+.achievement.unlocked{border-color:var(--gold);box-shadow:0 0 10px rgba(255,215,0,.2)}
+.achievement-tooltip{
+  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:#222;border:1px solid #444;border-radius:6px;padding:6px 10px;
+  white-space:nowrap;font-size:10px;opacity:0;transition:opacity .2s;z-index:100;
+  pointer-events:none;
+}
+.achievement:hover .achievement-tooltip{opacity:1}
+.achievement-tooltip .name{color:#fff;font-weight:600;display:block}
+.achievement-tooltip .desc{color:var(--text-dim)}
+
+/* ==================== STATS ==================== */
+.stats-row{
+  display:flex;gap:12px;align-items:center;
+}
+.stat-box{
+  background:#1a1a1a;
+  border-radius:8px;
+  padding:8px 12px;
+  text-align:center;
+  flex:1;
+}
+.stat-value{
+  font-family:'Orbitron',monospace;
+  font-size:18px;
+  font-weight:700;
+}
+.stat-label{
+  font-size:9px;
+  color:var(--text-dim);
+  text-transform:uppercase;
+}
+
+.tier-badge{
+  display:inline-block;
+  font-family:'Orbitron',monospace;
+  font-size:10px;font-weight:700;
+  padding:4px 10px;border-radius:4px;
+  text-transform:uppercase;
+}
+.tier-badge.diamond{background:linear-gradient(135deg,#b9f2ff,#00d4ff);color:#003344}
+.tier-badge.platinum{background:linear-gradient(135deg,#e5e4e2,#a8a9ad);color:#222}
+.tier-badge.gold{background:linear-gradient(135deg,#ffd700,#ffaa00);color:#442200}
+.tier-badge.silver{background:linear-gradient(135deg,#c0c0c0,#888);color:#222}
+.tier-badge.bronze{background:linear-gradient(135deg,#cd7f32,#8b4513);color:#fff}
+.tier-badge.unranked{background:#333;color:#666}
+
+.streak-badge{
+  display:flex;align-items:center;gap:4px;
+  background:rgba(255,215,0,.1);
+  padding:6px 10px;border-radius:6px;
+  font-size:12px;color:var(--gold);
+}
+
+/* ==================== YOUR SCORES ==================== */
+.personal-best{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(0,255,68,.1);
+  border:1px solid rgba(0,255,68,.2);
+  border-radius:8px;
+  padding:10px 14px;
+  margin-bottom:12px;
+}
+.personal-best .icon{font-size:20px}
+.personal-best .label{font-size:11px;color:var(--text-dim)}
+.personal-best .time{
+  font-family:'Orbitron',monospace;
+  font-size:16px;font-weight:700;
+  color:var(--green);
+  margin-left:auto;
+}
+
+.scores-list{
+  max-height:200px;
+  overflow-y:auto;
+}
+.score-row{
+  display:flex;justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid #1a1a1a;
+  font-size:12px;
+}
+.score-row:last-child{border-bottom:none}
+.score-date{color:var(--text-dim)}
+.score-time{font-family:'Orbitron',monospace;color:var(--green)}
+
+/* ==================== LEADERBOARD ==================== */
+.leaderboard-tier{
   margin-bottom:16px;
 }
-
-/* ==================== F1 PRO TIMES TABLE ==================== */
-.section-title{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(12px,2.8vw,16px);
-  font-weight:700;
-  text-align:center;
-  margin:20px 0 10px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--text-dim);
-}
-.section-title span{color:var(--red)}
-
-.pro-times,.leaderboard{
-  width:100%;max-width:480px;
-  background:var(--card);
-  border:1px solid var(--card-border);
-  border-radius:10px;
-  overflow:hidden;
+.tier-header{
+  display:flex;align-items:center;gap:10px;
   margin-bottom:8px;
+  padding-bottom:8px;
+  border-bottom:1px solid #222;
 }
-.pro-row,.lb-row{
+.tier-header .tier-badge{font-size:11px;padding:5px 12px}
+.tier-header span{font-size:11px;color:var(--text-dim);text-transform:uppercase}
+
+.lb-row{
   display:flex;align-items:center;
-  padding:8px 14px;
-  border-bottom:1px solid rgba(255,255,255,.04);
-  transition:background .2s;
-  font-size:clamp(11px,2.6vw,13px);
+  padding:6px 0;
+  font-size:12px;
+  border-bottom:1px solid rgba(255,255,255,.03);
 }
-.pro-row:last-child,.lb-row:last-child{border-bottom:none}
-.pro-row:hover,.lb-row:hover{background:rgba(255,255,255,.02)}
-.pro-rank,.lb-rank{
-  width:26px;font-family:'Orbitron',monospace;font-weight:700;font-size:11px;
+.lb-row:last-child{border-bottom:none}
+.lb-name{flex:1;font-weight:500}
+.lb-date{color:var(--text-dim);font-size:10px;margin-right:12px}
+.lb-time{font-family:'Orbitron',monospace;font-weight:700;color:var(--green)}
+.lb-row.you{background:rgba(255,24,1,.1);margin:0 -16px;padding:6px 16px;border-radius:4px}
+
+.lb-empty{
+  text-align:center;
+  color:var(--text-dim);
+  font-size:12px;
+  padding:20px 0;
+}
+
+/* ==================== F1 PRO TIMES ==================== */
+.pro-times{margin-top:20px}
+.pro-row{
+  display:flex;align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:12px;
+}
+.pro-row:last-child{border-bottom:none}
+.pro-rank{
+  width:24px;
+  font-family:'Orbitron',monospace;
+  font-weight:700;
+  font-size:11px;
   color:var(--text-dim);
 }
-.pro-rank.gold,.lb-rank.gold{color:var(--gold)}
-.pro-rank.silver,.lb-rank.silver{color:var(--silver)}
-.pro-rank.bronze,.lb-rank.bronze{color:var(--bronze)}
-.pro-name,.lb-name{flex:1;font-weight:600}
-.pro-team{flex:1;color:var(--text-dim);font-size:10px}
-.pro-time,.lb-time{
-  font-family:'Orbitron',monospace;font-weight:700;font-size:12px;
-  color:var(--green);
-}
-.pro-year{
-  font-size:9px;color:var(--text-dim);margin-left:6px;width:35px;text-align:right;
-}
+.pro-rank.r1{color:var(--gold)}
+.pro-rank.r2{color:var(--silver)}
+.pro-rank.r3{color:var(--bronze)}
+.pro-name{flex:1;font-weight:600}
+.pro-team{color:var(--text-dim);font-size:10px;width:80px}
+.pro-time{font-family:'Orbitron',monospace;font-weight:700;color:var(--red)}
+.pro-race{font-size:9px;color:var(--text-dim);width:60px;text-align:right}
 
-.lb-row.you{background:rgba(255,24,1,.08);border-left:3px solid var(--red)}
-.lb-empty{
-  padding:20px;text-align:center;color:var(--text-dim);font-size:12px;
-}
-
-/* ==================== FOOTER ==================== */
-.footer{
+/* ==================== CHALLENGE BANNER ==================== */
+.challenge-banner{
+  background:linear-gradient(135deg,rgba(255,24,1,.15) 0%,rgba(255,215,0,.08) 100%);
+  border:2px solid var(--red);
+  border-radius:12px;
+  padding:16px 20px;
   text-align:center;
-  font-size:10px;
-  color:#333;
-  margin-top:auto;
-  padding-top:16px;
+  margin-bottom:16px;
+  animation:challengePulse 2s ease infinite;
 }
-.footer a{color:#555;text-decoration:none}
-.footer a:hover,.footer a:focus{color:var(--red)}
+.challenge-banner .title{
+  font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;
+}
+.challenge-banner .target{
+  font-family:'Orbitron',monospace;
+  font-size:32px;font-weight:900;color:var(--red);
+}
+.challenge-banner .from{font-size:11px;color:var(--text-dim)}
+@keyframes challengePulse{
+  0%,100%{box-shadow:0 0 20px rgba(255,24,1,.2)}
+  50%{box-shadow:0 0 30px rgba(255,24,1,.4)}
+}
 
 /* ==================== FALSE START OVERLAY ==================== */
-.false-start-overlay{
-  display:none;
-  position:fixed;inset:0;z-index:200;
+.overlay{
+  display:none;position:fixed;inset:0;z-index:200;
   background:rgba(0,0,0,.95);
-  justify-content:center;align-items:center;
-  flex-direction:column;gap:16px;
-  animation:fadeIn .3s ease;
+  justify-content:center;align-items:center;flex-direction:column;gap:16px;
 }
-.false-start-overlay.show{display:flex}
-.false-start-text{
+.overlay.show{display:flex}
+.overlay-title{
   font-family:'Orbitron',monospace;
-  font-size:clamp(22px,5.5vw,42px);
-  font-weight:900;
-  color:#ff4444;
+  font-size:36px;font-weight:900;color:#ff4444;
   text-shadow:0 0 40px rgba(255,0,0,.5);
 }
-.false-start-sub{color:var(--text-dim);font-size:13px;text-align:center;padding:0 20px}
+.overlay-sub{color:var(--text-dim);font-size:13px}
 
-/* ==================== SCREEN FLASH ==================== */
-@keyframes screenFlashGreen{
-  0%{background:rgba(0,255,68,.15)}
-  100%{background:transparent}
-}
-.screen-flash{
-  position:fixed;inset:0;z-index:50;pointer-events:none;
-  animation:screenFlashGreen .4s ease;
-}
-
-/* ==================== RESPONSIVE ==================== */
-@media(max-width:400px){
-  .lights-panel{padding:12px 12px}
-  .light-housing{padding:4px 4px;gap:4px}
-  .pro-team{display:none}
-}
-@media(min-width:600px){
-  .light{width:44px;height:44px}
-}
-
-/* ==================== SPEED LINES ==================== */
-.speed-lines{
-  position:fixed;inset:0;z-index:49;pointer-events:none;overflow:hidden;
-  display:none;
-}
-.speed-lines.active{display:block}
-.speed-line{
-  position:absolute;
-  height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
-  animation:speedLine .4s linear forwards;
-}
-@keyframes speedLine{
-  0%{transform:translateX(100vw);opacity:.6}
-  100%{transform:translateX(-100vw);opacity:0}
-}
-
-/* ==================== LOADING ==================== */
-.lb-loading{
-  padding:20px;text-align:center;
-}
-.lb-loading .spinner{
-  width:20px;height:20px;border:2px solid #333;border-top-color:var(--red);
-  border-radius:50%;margin:0 auto 6px;
-  animation:spin .8s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* Toast notification */
+/* ==================== TOAST ==================== */
 .toast{
   position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);
-  background:#222;color:#fff;padding:10px 20px;border-radius:8px;
-  font-size:13px;z-index:300;transition:transform .3s ease;
-  border:1px solid #333;
+  background:#222;color:#fff;padding:12px 24px;border-radius:8px;
+  font-size:13px;z-index:300;transition:transform .3s;border:1px solid #333;
 }
 .toast.show{transform:translateX(-50%) translateY(0)}
 
-/* How to play hint */
-.hint{
-  font-size:clamp(10px,2.4vw,12px);
-  color:var(--text-dim);
-  text-align:center;
-  max-width:380px;
-  line-height:1.5;
-  margin-bottom:12px;
+/* ==================== SCREEN FLASH ==================== */
+.screen-flash{
+  position:fixed;inset:0;z-index:50;pointer-events:none;
+  animation:flashGreen .4s ease;
 }
+@keyframes flashGreen{0%{background:rgba(0,255,68,.15)}100%{background:transparent}}
 
-/* ==================== RESULT BLAST ==================== */
-.blast-container{
-  position:fixed;inset:0;z-index:200;pointer-events:none;overflow:hidden;
-}
+/* ==================== BLAST EFFECTS ==================== */
+.blast-container{position:fixed;inset:0;z-index:200;pointer-events:none;overflow:hidden}
 .blast-particle{
-  position:absolute;
-  border-radius:50%;
+  position:absolute;border-radius:50%;
   animation:blastFly var(--dur) cubic-bezier(.15,.8,.3,1) forwards;
 }
 @keyframes blastFly{
   0%{transform:translate(0,0) scale(1);opacity:1}
-  60%{opacity:1}
   100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}
 }
 .blast-ring{
-  position:fixed;
-  border:3px solid var(--green);
-  border-radius:50%;
-  pointer-events:none;
-  z-index:199;
+  position:fixed;border:3px solid var(--green);border-radius:50%;
+  pointer-events:none;z-index:199;
   animation:ringExpand .7s cubic-bezier(.2,.8,.3,1) forwards;
 }
 @keyframes ringExpand{
   0%{width:0;height:0;opacity:.8}
   100%{width:300px;height:300px;opacity:0;border-width:1px}
 }
-.result-zoom{
-  animation:resultPop .5s cubic-bezier(.2,1.4,.4,1) both;
-}
-@keyframes resultPop{
-  0%{transform:scale(0.3);opacity:0}
-  60%{transform:scale(1.15)}
-  100%{transform:scale(1);opacity:1}
-}
-.comparison-slide{
-  animation:slideUp .5s cubic-bezier(.2,.8,.3,1) .3s both;
-}
-@keyframes slideUp{
-  0%{transform:translateY(30px);opacity:0}
-  100%{transform:translateY(0);opacity:1}
-}
-.checkered-flash{
-  position:fixed;inset:0;z-index:198;pointer-events:none;
-  background:repeating-conic-gradient(#fff 0% 25%, transparent 0% 50%) 0 0 / 40px 40px;
-  animation:checkeredIn .6s ease forwards;
-}
-@keyframes checkeredIn{
-  0%{opacity:.12}
-  100%{opacity:0}
-}
 
-/* Live region for screen readers */
-.sr-only{
-  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
-  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
-}
-
-/* High contrast mode support */
-@media(prefers-contrast:high){
-  .light{border-width:3px}
-  .btn{border:2px solid #fff}
-  .name-input{border-width:3px}
-}
-
-/* Reduced motion support */
+/* ==================== REDUCED MOTION ==================== */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{
     animation-duration:0.01ms !important;
-    animation-iteration-count:1 !important;
     transition-duration:0.01ms !important;
   }
 }
 
-/* ==================== CHALLENGE BANNER ==================== */
-.challenge-banner{
-  background:linear-gradient(135deg,rgba(255,24,1,.15) 0%,rgba(255,215,0,.1) 100%);
-  border:2px solid var(--red);
-  border-radius:12px;
-  padding:12px 20px;
-  margin-bottom:16px;
-  text-align:center;
-  animation:challengePulse 2s ease infinite;
-}
-.challenge-banner .title{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(11px,2.5vw,14px);
-  color:var(--gold);
-  text-transform:uppercase;
-  letter-spacing:2px;
-  margin-bottom:4px;
-}
-.challenge-banner .target{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(24px,6vw,36px);
-  font-weight:900;
-  color:var(--red);
-}
-.challenge-banner .from{
-  font-size:11px;
-  color:var(--text-dim);
-  margin-top:4px;
-}
-@keyframes challengePulse{
-  0%,100%{box-shadow:0 0 20px rgba(255,24,1,.2)}
-  50%{box-shadow:0 0 30px rgba(255,24,1,.4)}
-}
-
-/* ==================== RANKED TIERS ==================== */
-.tier-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  font-family:'Orbitron',monospace;
-  font-size:11px;font-weight:700;
-  padding:4px 10px;border-radius:20px;
-  text-transform:uppercase;letter-spacing:1px;
-}
-.tier-badge.diamond{background:linear-gradient(135deg,#b9f2ff,#00d4ff);color:#003344;box-shadow:0 0 15px rgba(0,212,255,.4)}
-.tier-badge.platinum{background:linear-gradient(135deg,#e5e4e2,#a8a9ad);color:#222;box-shadow:0 0 12px rgba(168,169,173,.4)}
-.tier-badge.gold{background:linear-gradient(135deg,#ffd700,#ffaa00);color:#442200;box-shadow:0 0 12px rgba(255,215,0,.4)}
-.tier-badge.silver{background:linear-gradient(135deg,#c0c0c0,#888);color:#222;box-shadow:0 0 10px rgba(192,192,192,.3)}
-.tier-badge.bronze{background:linear-gradient(135deg,#cd7f32,#8b4513);color:#fff;box-shadow:0 0 10px rgba(205,127,50,.3)}
-.tier-badge.unranked{background:#333;color:#888}
-
-/* ==================== ACHIEVEMENTS ==================== */
-.achievements-panel{
-  width:100%;max-width:480px;
-  margin-bottom:16px;
-}
-.achievements-grid{
-  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
-}
-.achievement{
-  width:56px;height:56px;
-  background:#1a1a1a;
-  border:2px solid #333;
-  border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:24px;
-  position:relative;
-  transition:all .3s;
-  cursor:default;
-}
-.achievement.locked{filter:grayscale(1) opacity(.4)}
-.achievement.unlocked{border-color:var(--gold);box-shadow:0 0 12px rgba(255,215,0,.3)}
-.achievement:hover .achievement-tooltip{opacity:1;transform:translateX(-50%) translateY(0)}
-.achievement-tooltip{
-  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(5px);
-  background:#222;border:1px solid #444;border-radius:8px;padding:8px 12px;
-  white-space:nowrap;font-size:11px;opacity:0;transition:all .2s;z-index:100;
-  pointer-events:none;
-}
-.achievement-tooltip .name{color:#fff;font-weight:700;display:block}
-.achievement-tooltip .desc{color:var(--text-dim)}
-.achievement-new{
-  animation:achievementPop .6s cubic-bezier(.2,1.4,.4,1);
-}
-@keyframes achievementPop{
-  0%{transform:scale(0)}
-  60%{transform:scale(1.2)}
-  100%{transform:scale(1)}
-}
-
-/* ==================== PRACTICE MODE & STREAKS ==================== */
-.mode-toggles{
-  display:flex;gap:12px;align-items:center;justify-content:center;
-  margin-bottom:12px;flex-wrap:wrap;
-}
-.mode-toggle{
-  display:flex;align-items:center;gap:6px;
-  font-size:11px;color:var(--text-dim);
-  cursor:pointer;
-}
-.mode-toggle input{display:none}
-.toggle-switch{
-  width:36px;height:20px;
-  background:#333;border-radius:10px;
-  position:relative;transition:background .3s;
-}
-.toggle-switch::after{
-  content:'';position:absolute;top:2px;left:2px;
-  width:16px;height:16px;background:#666;
-  border-radius:50%;transition:all .3s;
-}
-.mode-toggle input:checked + .toggle-switch{background:var(--green)}
-.mode-toggle input:checked + .toggle-switch::after{left:18px;background:#fff}
-
-.streak-display{
-  display:flex;align-items:center;gap:6px;
-  font-family:'Orbitron',monospace;
-  font-size:12px;
-  color:var(--gold);
-  padding:6px 12px;
-  background:rgba(255,215,0,.08);
-  border-radius:20px;
-}
-.streak-display .fire{font-size:16px}
-
-/* ==================== STATS ROW ==================== */
-.stats-row{
-  display:flex;gap:16px;justify-content:center;
-  margin-bottom:12px;flex-wrap:wrap;
-}
-.stat-item{
-  text-align:center;
-}
-.stat-value{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(16px,4vw,22px);
-  font-weight:700;
-  color:var(--text);
-}
-.stat-label{
-  font-size:9px;
-  color:var(--text-dim);
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
+/* ==================== SCROLLBAR ==================== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#111}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#444}
 </style>
 </head>
 <body>
 
-<!-- Skip link for keyboard users -->
-<a href="#game" class="skip-link">Skip to game</a>
-
-<!-- Live region for screen reader announcements -->
-<div id="liveRegion" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
-
-<!-- Background Scene -->
-<div class="bg-scene" aria-hidden="true">
-  <div class="track">
-    <div class="track-line"></div>
-    <div class="track-line"></div>
-    <div class="track-line"></div>
-    <div class="track-line"></div>
-    <div class="track-line"></div>
-    <div class="track-line"></div>
-  </div>
-  <div class="f1-car" id="f1Car">
-    <svg viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="35" cy="38" rx="12" ry="12" fill="#333" stroke="#555" stroke-width="1"/>
-      <ellipse cx="155" cy="38" rx="12" ry="12" fill="#333" stroke="#555" stroke-width="1"/>
-      <ellipse cx="35" cy="38" rx="6" ry="6" fill="#222"/>
-      <ellipse cx="155" cy="38" rx="6" ry="6" fill="#222"/>
-      <path d="M20 30 Q30 8 95 10 L180 14 Q200 16 195 28 L190 34 Q185 38 170 38 L40 38 Q22 38 20 30Z" fill="#cc0000" stroke="#ff1801" stroke-width="0.5"/>
-      <path d="M60 12 Q70 4 100 6 L105 10 Q95 10 60 12Z" fill="rgba(100,200,255,.3)" stroke="rgba(100,200,255,.2)" stroke-width="0.5"/>
-      <rect x="188" y="18" width="8" height="4" rx="1" fill="#ff4444" opacity=".8"/>
-      <path d="M50 10 L52 2 L56 2 L54 10Z" fill="#cc0000"/>
-    </svg>
-  </div>
+<!-- Overlays -->
+<div class="overlay" id="falseStartOverlay">
+  <div class="overlay-title">JUMP START!</div>
+  <div class="overlay-sub">You went before the lights went out. Tap anywhere to try again.</div>
 </div>
+<div class="toast" id="toast"></div>
 
-<!-- Speed Lines -->
-<div class="speed-lines" id="speedLines" aria-hidden="true"></div>
+<!-- Main Layout -->
+<div class="app-layout">
 
-<!-- False Start Overlay -->
-<div class="false-start-overlay" id="falseStart" role="alertdialog" aria-labelledby="falseStartTitle" aria-describedby="falseStartDesc">
-  <div class="false-start-text" id="falseStartTitle">JUMP START!</div>
-  <div class="false-start-sub" id="falseStartDesc">You went before the lights went out. Press Enter or tap anywhere to try again.</div>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<!-- Main Content -->
-<main class="container" id="game">
-  <header class="header">
-    <h1>Lights Out!</h1>
-    <p class="subtitle">F1 Reaction Challenge</p>
-  </header>
-
-  <!-- Challenge Banner (shown when ?challenge=X.XXX) -->
-  <div class="challenge-banner" id="challengeBanner" style="display:none">
-    <div class="title">Challenge Mode</div>
-    <div class="target" id="challengeTarget">Beat 0.234s</div>
-    <div class="from" id="challengeFrom">Can you beat this time?</div>
-  </div>
-
-  <!-- Stats Row -->
-  <div class="stats-row" id="statsRow">
-    <div class="stat-item">
-      <div class="stat-value" id="statGames">0</div>
-      <div class="stat-label">Games</div>
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar sidebar-left">
+    <!-- Achievements -->
+    <div class="panel">
+      <div class="panel-title">Your <span>Achievements</span></div>
+      <div class="achievements-grid" id="achievementsGrid"></div>
     </div>
-    <div class="stat-item">
-      <div class="stat-value" id="statTier"><span class="tier-badge unranked">Unranked</span></div>
-      <div class="stat-label">Rank</div>
-    </div>
-    <div class="stat-item">
-      <div class="streak-display" id="streakDisplay">
-        <span class="fire">🔥</span>
-        <span id="streakCount">0</span> day streak
+
+    <!-- Stats -->
+    <div class="panel">
+      <div class="panel-title">Your <span>Stats</span></div>
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-value" id="statGames">0</div>
+          <div class="stat-label">Games</div>
+        </div>
+        <div class="stat-box">
+          <div id="statTier"><span class="tier-badge unranked">Unranked</span></div>
+          <div class="stat-label">Rank</div>
+        </div>
+        <div class="streak-badge">
+          🔥 <span id="streakCount">0</span> day streak
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- User Entry (Email + Name) -->
-  <div class="user-section">
-    <div class="input-row">
-      <label for="emailInput" class="sr-only">Enter your email</label>
-      <input type="email" class="user-input" id="emailInput" placeholder="Email (optional)" maxlength="100" autocomplete="email" spellcheck="false" aria-describedby="emailHint">
-    </div>
-    <div class="input-row">
-      <label for="nameInput" class="sr-only">Enter your name</label>
-      <input type="text" class="user-input name" id="nameInput" placeholder="Your name" maxlength="20" autocomplete="off" spellcheck="false" aria-describedby="nameHint">
-    </div>
-    <div class="personal-best" id="personalBest" aria-live="polite">
-      <span class="icon">🏆</span>
-      <span class="label">Your best:</span>
-      <span class="time" id="personalBestTime">--</span>
-    </div>
-    <span id="emailHint" class="sr-only">Optional: Enter your email to save your progress across devices</span>
-    <span id="nameHint" class="sr-only">Enter your name for the leaderboard, then press Enter or tap Start</span>
-    <p class="email-note">Email saves your progress. No signup required — just play!</p>
-  </div>
-
-  <!-- Lights Panel - 5 columns x 4 rows -->
-  <div class="lights-wrapper">
-    <div class="lights-panel" id="lightsPanel" role="img" aria-label="F1 starting lights - 5 columns of 4 red lights each">
-      <div class="gantry-bar" aria-hidden="true"></div>
-      <div class="lights-row">
-        <div class="light-housing">
-          <div class="light" id="l1a"></div>
-          <div class="light" id="l1b"></div>
-          <div class="light" id="l1c"></div>
-          <div class="light" id="l1d"></div>
-        </div>
-        <div class="light-housing">
-          <div class="light" id="l2a"></div>
-          <div class="light" id="l2b"></div>
-          <div class="light" id="l2c"></div>
-          <div class="light" id="l2d"></div>
-        </div>
-        <div class="light-housing">
-          <div class="light" id="l3a"></div>
-          <div class="light" id="l3b"></div>
-          <div class="light" id="l3c"></div>
-          <div class="light" id="l3d"></div>
-        </div>
-        <div class="light-housing">
-          <div class="light" id="l4a"></div>
-          <div class="light" id="l4b"></div>
-          <div class="light" id="l4c"></div>
-          <div class="light" id="l4d"></div>
-        </div>
-        <div class="light-housing">
-          <div class="light" id="l5a"></div>
-          <div class="light" id="l5b"></div>
-          <div class="light" id="l5c"></div>
-          <div class="light" id="l5d"></div>
-        </div>
+    <!-- Your Scores -->
+    <div class="panel">
+      <div class="panel-title">Your <span>Scores</span></div>
+      <div class="personal-best" id="personalBest" style="display:none">
+        <span class="icon">🏆</span>
+        <span class="label">Your best</span>
+        <span class="time" id="bestTime">--</span>
       </div>
-      <div class="glow-surface" aria-hidden="true"></div>
+      <div class="scores-list" id="scoresList">
+        <div class="lb-empty">Play to see your scores!</div>
+      </div>
     </div>
-  </div>
+  </aside>
 
-  <!-- Status -->
-  <div class="status waiting" id="status" role="status" aria-live="polite">Enter your name and press START</div>
-  <div class="reaction-display" id="reactionDisplay" aria-live="assertive"></div>
-  <div id="comparisonBox" aria-live="polite"></div>
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <header class="header">
+      <h1>F1 Lights Out</h1>
+      <p class="subtitle">F1 Reaction Challenge</p>
+    </header>
 
-  <!-- Buttons -->
-  <div class="buttons" id="buttonsArea">
-    <button class="btn btn-start" id="btnStart" type="button" aria-describedby="gameHint">START</button>
-  </div>
+    <!-- Challenge Banner -->
+    <div class="challenge-banner" id="challengeBanner" style="display:none">
+      <div class="title">Challenge Mode</div>
+      <div class="target" id="challengeTarget">Beat 0.234s</div>
+      <div class="from" id="challengeFrom">Can you beat this time?</div>
+    </div>
 
-  <!-- Mode Toggles -->
-  <div class="mode-toggles">
-    <label class="mode-toggle">
+    <!-- User Inputs -->
+    <div class="user-inputs">
+      <div class="input-group">
+        <label for="emailInput">Email</label>
+        <input type="email" class="user-input email" id="emailInput" placeholder="your@email.com" maxlength="100">
+      </div>
+      <div class="input-group">
+        <label for="nameInput">Unique Name</label>
+        <input type="text" class="user-input name" id="nameInput" placeholder="NAME" maxlength="20">
+      </div>
+      <button class="btn-save" id="btnSave">Save</button>
+    </div>
+    <p class="user-note">Email saves your progress. No signup required — just play!</p>
+
+    <!-- Lights -->
+    <div class="lights-wrapper">
+      <div class="lights-panel" id="lightsPanel">
+        <div class="gantry-bar"></div>
+        <div class="lights-row">
+          <div class="light-housing">
+            <div class="light" id="l1a"></div><div class="light" id="l1b"></div>
+            <div class="light" id="l1c"></div><div class="light" id="l1d"></div>
+          </div>
+          <div class="light-housing">
+            <div class="light" id="l2a"></div><div class="light" id="l2b"></div>
+            <div class="light" id="l2c"></div><div class="light" id="l2d"></div>
+          </div>
+          <div class="light-housing">
+            <div class="light" id="l3a"></div><div class="light" id="l3b"></div>
+            <div class="light" id="l3c"></div><div class="light" id="l3d"></div>
+          </div>
+          <div class="light-housing">
+            <div class="light" id="l4a"></div><div class="light" id="l4b"></div>
+            <div class="light" id="l4c"></div><div class="light" id="l4d"></div>
+          </div>
+          <div class="light-housing">
+            <div class="light" id="l5a"></div><div class="light" id="l5b"></div>
+            <div class="light" id="l5c"></div><div class="light" id="l5d"></div>
+          </div>
+        </div>
+        <div class="glow-surface"></div>
+      </div>
+    </div>
+
+    <!-- Result Area -->
+    <div class="result-area" id="resultArea">
+      <div class="status" id="status">Press START to begin</div>
+      <div class="reaction-time" id="reactionTime" style="display:none"></div>
+      <div class="comparison" id="comparison" style="display:none"></div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="buttons" id="buttonsArea">
+      <button class="btn btn-primary" id="btnStart">START</button>
+    </div>
+
+    <div class="practice-toggle">
       <input type="checkbox" id="practiceMode">
-      <span class="toggle-switch"></span>
-      Practice Mode
-    </label>
-  </div>
+      <label for="practiceMode">Practice Mode</label>
+    </div>
 
-  <p class="hint" id="gameHint">
-    5 columns of lights turn red one by one. When they ALL go out — tap anywhere or press any key!<br>
-    Timing varies each round, just like real F1.
-  </p>
+    <p class="hint">
+      5 columns of lights turn red one by one. When they ALL go out — tap anywhere or press any key!<br>
+      Timing varies each round, just like real F1.
+    </p>
 
-  <!-- Achievements -->
-  <h2 class="section-title">Your <span>Achievements</span></h2>
-  <div class="achievements-panel">
-    <div class="achievements-grid" id="achievementsGrid"></div>
-  </div>
+    <!-- F1 Pro Times -->
+    <div class="pro-times">
+      <div class="panel-title"><span>F1</span> Pro Reaction Times</div>
+      <div id="proTimesTable"></div>
+    </div>
+  </main>
 
-  <!-- Real F1 Pro Reaction Times -->
-  <h2 class="section-title"><span>F1</span> Pro Reaction Times</h2>
-  <div class="pro-times" id="proTimes" role="table" aria-label="Top 10 F1 driver reaction times"></div>
+  <!-- RIGHT SIDEBAR -->
+  <aside class="sidebar sidebar-right">
+    <div class="panel">
+      <div class="panel-title">Global <span>Leaderboard</span></div>
+      <div id="leaderboard">
+        <div class="lb-empty">Loading...</div>
+      </div>
+    </div>
+  </aside>
 
-  <!-- Global Leaderboard -->
-  <h2 class="section-title">Global <span>Leaderboard</span></h2>
-  <div class="leaderboard" id="leaderboard" role="table" aria-label="Global player leaderboard">
-    <div class="lb-loading"><div class="spinner" aria-hidden="true"></div>Loading...</div>
-  </div>
-
-  <footer class="footer">
-    Built for speed. Hosted on Cloudflare.<br>
-    <a href="https://github.com/sree-pm/F1-lightsout-game" target="_blank" rel="noopener">GitHub</a>
-  </footer>
-</main>
+</div>
 
 <script>
 // ==================== CONFIG ====================
 const API_URL = '/api/leaderboard';
 const USER_API_URL = '/api/user';
 
-// ==================== RATE LIMITING & CACHING ====================
-const LEADERBOARD_CACHE_KEY = 'f1_lb_cache';
-const LEADERBOARD_CACHE_TTL = 30_000;
-const SUBMIT_COOLDOWN = 3_000;
-let lastSubmitTime = 0;
-let lastFetchTime = 0;
-let cachedLeaderboard = null;
-
-// ==================== USER STATE ====================
-let currentUserEmail = null;
-let currentUserBestTime = null;
-let emailLookupTimeout = null;
-
-// ==================== CHALLENGE MODE ====================
-let challengeTime = null;
-let challengeFrom = null;
-
-// ==================== STATS & STREAKS ====================
-let gamesPlayed = parseInt(localStorage.getItem('f1_games') || '0');
-let currentStreak = parseInt(localStorage.getItem('f1_streak') || '0');
-let lastPlayDate = localStorage.getItem('f1_last_play');
+// ==================== STATE ====================
+let gameState = 'idle';
+let lightTimers = [];
+let lightsOutTime = 0;
 let practiceMode = false;
 
-// ==================== ACHIEVEMENTS ====================
-const ACHIEVEMENTS = [
-  { id: 'first_game', icon: '🎮', name: 'First Start', desc: 'Play your first game' },
-  { id: 'sub_500', icon: '⚡', name: 'Quick Reflexes', desc: 'Get under 0.500s' },
-  { id: 'sub_300', icon: '🚀', name: 'Lightning Fast', desc: 'Get under 0.300s' },
-  { id: 'sub_250', icon: '💨', name: 'Pro Tier', desc: 'Get under 0.250s' },
-  { id: 'sub_200', icon: '👑', name: 'Sub-200 Club', desc: 'Get under 0.200s' },
-  { id: 'beat_ricciardo', icon: '🇦🇺', name: 'Beat Ricciardo', desc: 'Beat Daniel Ricciardo (0.240s)' },
-  { id: 'beat_hamilton', icon: '🇬🇧', name: 'Beat Hamilton', desc: 'Beat Lewis Hamilton (0.219s)' },
-  { id: 'beat_verstappen', icon: '🇳🇱', name: 'Beat Verstappen', desc: 'Beat Max Verstappen (0.214s)' },
-  { id: 'beat_bottas', icon: '🇫🇮', name: 'Beat Bottas', desc: 'Beat Valtteri Bottas (0.201s)' },
-  { id: 'games_10', icon: '🔟', name: 'Warming Up', desc: 'Play 10 games' },
-  { id: 'games_50', icon: '5️⃣', name: 'Dedicated', desc: 'Play 50 games' },
-  { id: 'games_100', icon: '💯', name: 'Centurion', desc: 'Play 100 games' },
-  { id: 'streak_3', icon: '🔥', name: 'On Fire', desc: '3 day streak' },
-  { id: 'streak_7', icon: '🌟', name: 'Week Warrior', desc: '7 day streak' },
-  { id: 'no_false_start', icon: '🎯', name: 'Perfect Start', desc: '10 games without false start' },
-  { id: 'challenge_win', icon: '🏆', name: 'Challenger', desc: 'Beat a challenge' },
-];
+// User state
+let currentEmail = localStorage.getItem('f1_email') || '';
+let currentName = localStorage.getItem('f1_name') || '';
+let bestTime = parseFloat(localStorage.getItem('f1_best') || '99');
+let gamesPlayed = parseInt(localStorage.getItem('f1_games') || '0');
+let currentStreak = parseInt(localStorage.getItem('f1_streak') || '0');
+let lastPlayDate = localStorage.getItem('f1_last_play') || '';
+let myScores = JSON.parse(localStorage.getItem('f1_scores') || '[]');
 let unlockedAchievements = JSON.parse(localStorage.getItem('f1_achievements') || '[]');
 let gamesWithoutFalseStart = parseInt(localStorage.getItem('f1_no_false') || '0');
 
-// ==================== RANKED TIERS ====================
-const TIERS = [
-  { name: 'Diamond', class: 'diamond', maxTime: 0.200 },
-  { name: 'Platinum', class: 'platinum', maxTime: 0.220 },
-  { name: 'Gold', class: 'gold', maxTime: 0.250 },
-  { name: 'Silver', class: 'silver', maxTime: 0.300 },
-  { name: 'Bronze', class: 'bronze', maxTime: 0.400 },
-  { name: 'Unranked', class: 'unranked', maxTime: Infinity },
-];
+// Challenge
+let challengeTime = null;
+let challengeFrom = null;
 
-function getTier(time) {
-  if (!time || time >= 99) return TIERS[TIERS.length - 1];
-  return TIERS.find(t => time < t.maxTime) || TIERS[TIERS.length - 1];
-}
-
-function renderTierBadge(time) {
-  const tier = getTier(time);
-  return `<span class="tier-badge ${tier.class}">${tier.name}</span>`;
-}
-
-function getCachedLeaderboard() {
-  try {
-    const raw = sessionStorage.getItem(LEADERBOARD_CACHE_KEY);
-    if (!raw) return null;
-    const { data, ts } = JSON.parse(raw);
-    if (Date.now() - ts < LEADERBOARD_CACHE_TTL) return data;
-  } catch(e) {}
-  return null;
-}
-
-function setCachedLeaderboard(data) {
-  try {
-    sessionStorage.setItem(LEADERBOARD_CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
-    cachedLeaderboard = data;
-  } catch(e) {}
-}
-
-// ==================== REAL F1 REACTION TIMES ====================
-const F1_PRO_TIMES = [
-  { name: 'Valtteri Bottas', team: 'Mercedes', time: 0.201, race: 'Austrian GP', year: 2019 },
-  { name: 'Max Verstappen', team: 'Red Bull', time: 0.214, race: 'Bahrain GP', year: 2023 },
-  { name: 'Lewis Hamilton', team: 'Mercedes', time: 0.219, race: 'British GP', year: 2020 },
-  { name: 'Charles Leclerc', team: 'Ferrari', time: 0.221, race: 'Monaco GP', year: 2024 },
-  { name: 'Lando Norris', team: 'McLaren', time: 0.224, race: 'Dutch GP', year: 2023 },
-  { name: 'Sebastian Vettel', team: 'Red Bull', time: 0.227, race: 'Japanese GP', year: 2013 },
-  { name: 'Carlos Sainz', team: 'Ferrari', time: 0.230, race: 'Italian GP', year: 2023 },
-  { name: 'Kimi Raikkonen', team: 'Ferrari', time: 0.233, race: 'Malaysian GP', year: 2017 },
-  { name: 'Fernando Alonso', team: 'Aston Martin', time: 0.236, race: 'Saudi GP', year: 2023 },
-  { name: 'Daniel Ricciardo', team: 'Red Bull', time: 0.240, race: 'Chinese GP', year: 2018 },
-];
-
-// ==================== AUDIO ENGINE ====================
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx;
-function ensureAudio() {
-  if (!audioCtx) audioCtx = new AudioCtx();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-}
-
-function playBeep(freq, duration, vol = 0.15) {
-  try {
-    ensureAudio();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + duration);
-  } catch(e) {}
-}
-
-function playLightOn() { playBeep(880, 0.1, 0.08); }
-function playLightsOut() { playBeep(1200, 0.25, 0.18); }
-function playFalseStart() { playBeep(200, 0.4, 0.18); }
-function playSuccess() {
-  try {
-    ensureAudio();
-    [0, .08, .16].forEach((d, i) => {
-      setTimeout(() => playBeep(800 + i * 200, 0.12, 0.1), d * 1000);
-    });
-  } catch(e) {}
-}
-
-// ==================== GAME STATE ====================
-let gameState = 'idle'; // idle | sequence | waiting | go | done | false_start
-let lightTimers = [];
-let lightsOutTime = 0;
-let bestTime = parseFloat(localStorage.getItem('f1_best') || '99');
-
-// ==================== DOM ====================
+// DOM helpers
 const $ = id => document.getElementById(id);
-// 5 columns x 4 lights each
 const lights = [
   ['l1a','l1b','l1c','l1d'],
   ['l2a','l2b','l2c','l2d'],
@@ -1108,90 +763,189 @@ const lights = [
   ['l5a','l5b','l5c','l5d']
 ];
 
-// ==================== ACCESSIBILITY ====================
-function announce(message) {
-  const region = $('liveRegion');
-  region.textContent = '';
-  setTimeout(() => { region.textContent = message; }, 100);
+// ==================== F1 DATA ====================
+const F1_PRO_TIMES = [
+  { name: 'Valtteri Bottas', team: 'Mercedes', time: 0.201, race: "Austrian GP '19" },
+  { name: 'Max Verstappen', team: 'Red Bull', time: 0.214, race: "Bahrain GP '23" },
+  { name: 'Lewis Hamilton', team: 'Mercedes', time: 0.219, race: "British GP '20" },
+  { name: 'Charles Leclerc', team: 'Ferrari', time: 0.221, race: "Monaco GP '24" },
+  { name: 'Lando Norris', team: 'McLaren', time: 0.224, race: "Dutch GP '23" },
+  { name: 'Sebastian Vettel', team: 'Red Bull', time: 0.227, race: "Japanese GP '13" },
+  { name: 'Carlos Sainz', team: 'Ferrari', time: 0.230, race: "Italian GP '23" },
+  { name: 'Kimi Raikkonen', team: 'Ferrari', time: 0.233, race: "Malaysian GP '17" },
+  { name: 'Fernando Alonso', team: 'Aston Martin', time: 0.236, race: "Saudi GP '23" },
+  { name: 'Daniel Ricciardo', team: 'Red Bull', time: 0.240, race: "Chinese GP '18" },
+];
+
+// ==================== TIERS ====================
+const TIERS = [
+  { name: 'Diamond', class: 'diamond', max: 0.200 },
+  { name: 'Platinum', class: 'platinum', max: 0.220 },
+  { name: 'Gold', class: 'gold', max: 0.250 },
+  { name: 'Silver', class: 'silver', max: 0.300 },
+  { name: 'Bronze', class: 'bronze', max: 0.400 },
+  { name: 'Unranked', class: 'unranked', max: Infinity },
+];
+
+function getTier(time) {
+  if (!time || time >= 99) return TIERS[5];
+  return TIERS.find(t => time < t.max) || TIERS[5];
+}
+
+// ==================== ACHIEVEMENTS ====================
+const ACHIEVEMENTS = [
+  { id: 'first_game', icon: '🎮', name: 'First Start', desc: 'Play your first game' },
+  { id: 'sub_500', icon: '⚡', name: 'Quick Reflexes', desc: 'Under 0.500s' },
+  { id: 'sub_300', icon: '🚀', name: 'Lightning Fast', desc: 'Under 0.300s' },
+  { id: 'sub_250', icon: '💨', name: 'Pro Tier', desc: 'Under 0.250s' },
+  { id: 'sub_200', icon: '👑', name: 'Sub-200 Club', desc: 'Under 0.200s' },
+  { id: 'beat_ricciardo', icon: '🇦🇺', name: 'Beat Ricciardo', desc: 'Under 0.240s' },
+  { id: 'beat_hamilton', icon: '🇬🇧', name: 'Beat Hamilton', desc: 'Under 0.219s' },
+  { id: 'beat_verstappen', icon: '🇳🇱', name: 'Beat Verstappen', desc: 'Under 0.214s' },
+  { id: 'beat_bottas', icon: '🇫🇮', name: 'Beat Bottas', desc: 'Under 0.201s' },
+  { id: 'games_10', icon: '🔟', name: 'Warming Up', desc: '10 games played' },
+  { id: 'games_50', icon: '5️⃣', name: 'Dedicated', desc: '50 games played' },
+  { id: 'games_100', icon: '💯', name: 'Centurion', desc: '100 games played' },
+  { id: 'streak_3', icon: '🔥', name: 'On Fire', desc: '3 day streak' },
+  { id: 'streak_7', icon: '🌟', name: 'Week Warrior', desc: '7 day streak' },
+  { id: 'no_false', icon: '🎯', name: 'Perfect Start', desc: '10 games, no false start' },
+  { id: 'challenge', icon: '🏆', name: 'Challenger', desc: 'Beat a challenge' },
+];
+
+// ==================== AUDIO ====================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function playBeep(freq, dur, vol = 0.1) {
+  try {
+    if (!audioCtx) audioCtx = new AudioCtx();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + dur);
+  } catch(e) {}
 }
 
 // ==================== INIT ====================
 function init() {
-  renderProTimes();
-  loadLeaderboard();
-  renderAchievements();
-  updateStats();
-  checkStreak();
-  parseChallenge();
-
   // Load saved data
-  const savedName = localStorage.getItem('f1_name');
-  const savedEmail = localStorage.getItem('f1_email');
-  const savedBest = parseFloat(localStorage.getItem('f1_best') || '99');
+  if (currentEmail) $('emailInput').value = currentEmail;
+  if (currentName) $('nameInput').value = currentName;
 
-  if (savedName) $('nameInput').value = savedName;
-  if (savedEmail) {
-    $('emailInput').value = savedEmail;
-    currentUserEmail = savedEmail;
-    lookupUser(savedEmail);
+  // Setup UI
+  renderProTimes();
+  renderAchievements();
+  updateStatsUI();
+  renderMyScores();
+  loadLeaderboard();
+  parseChallenge();
+  checkStreak();
+
+  // If we have email, lookup user from server
+  if (currentEmail) {
+    lookupUser(currentEmail);
   }
 
-  if (savedBest < 99) {
-    showPersonalBest(savedBest);
-  }
-
-  // Global input handler
+  // Event listeners
   document.addEventListener('keydown', handleKeyDown);
   document.addEventListener('mousedown', handleTap);
   document.addEventListener('touchstart', handleTap, { passive: true });
 
-  // Email input - debounced lookup
-  $('emailInput').addEventListener('input', e => {
-    clearTimeout(emailLookupTimeout);
-    const email = e.target.value.trim();
-    if (email && email.includes('@') && email.includes('.')) {
-      emailLookupTimeout = setTimeout(() => lookupUser(email), 500);
-    }
-  });
-
-  $('emailInput').addEventListener('blur', e => {
-    const email = e.target.value.trim();
-    if (email && email.includes('@')) {
-      localStorage.setItem('f1_email', email);
-      currentUserEmail = email;
-    }
-  });
-
-  // Focus management
-  $('nameInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); startGame(); }
-  });
-  $('emailInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); $('nameInput').focus(); }
-  });
-
-  // Practice mode toggle
-  $('practiceMode').addEventListener('change', e => {
+  $('btnStart').onclick = startGame;
+  $('btnSave').onclick = saveUser;
+  $('practiceMode').onchange = e => {
     practiceMode = e.target.checked;
-    showToast(practiceMode ? 'Practice mode ON - scores not saved' : 'Practice mode OFF');
-  });
+    showToast(practiceMode ? 'Practice mode ON' : 'Practice mode OFF');
+  };
 
-  // Register service worker for PWA
+  $('nameInput').onkeydown = e => { if (e.key === 'Enter') startGame(); };
+
+  // PWA
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
 }
 
-// ==================== CHALLENGE MODE ====================
+// ==================== USER MANAGEMENT ====================
+async function saveUser() {
+  const email = $('emailInput').value.trim();
+  const name = $('nameInput').value.trim();
+
+  if (!name) {
+    showToast('Enter a name first!');
+    return;
+  }
+
+  currentName = name;
+  localStorage.setItem('f1_name', name);
+
+  if (email && email.includes('@')) {
+    currentEmail = email;
+    localStorage.setItem('f1_email', email);
+
+    try {
+      const res = await fetch(USER_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, username: name })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        showToast(data.created ? 'Profile created!' : 'Profile saved!');
+        if (data.bestTime && data.bestTime < bestTime) {
+          bestTime = data.bestTime;
+          localStorage.setItem('f1_best', bestTime.toString());
+          updateStatsUI();
+        }
+      }
+    } catch(e) {
+      showToast('Saved locally');
+    }
+  } else {
+    showToast('Profile saved locally');
+  }
+}
+
+async function lookupUser(email) {
+  try {
+    const res = await fetch(`${USER_API_URL}?email=${encodeURIComponent(email)}`);
+    if (!res.ok) return;
+
+    const data = await res.json();
+    if (data.found) {
+      if (data.username) {
+        currentName = data.username;
+        $('nameInput').value = data.username;
+        localStorage.setItem('f1_name', data.username);
+      }
+      if (data.bestTime && data.bestTime < bestTime) {
+        bestTime = data.bestTime;
+        localStorage.setItem('f1_best', bestTime.toString());
+      }
+      if (data.gamesPlayed && data.gamesPlayed > gamesPlayed) {
+        gamesPlayed = data.gamesPlayed;
+        localStorage.setItem('f1_games', gamesPlayed.toString());
+      }
+      updateStatsUI();
+      showToast(`Welcome back, ${data.username}!`);
+    }
+  } catch(e) {}
+}
+
+// ==================== CHALLENGE ====================
 function parseChallenge() {
   const params = new URLSearchParams(window.location.search);
-  const challenge = params.get('challenge');
-  const from = params.get('from');
+  const c = params.get('challenge');
+  const f = params.get('from');
 
-  if (challenge) {
-    challengeTime = parseFloat(challenge);
-    challengeFrom = from || 'a friend';
-    if (!isNaN(challengeTime) && challengeTime > 0 && challengeTime < 10) {
+  if (c) {
+    challengeTime = parseFloat(c);
+    challengeFrom = f || 'Someone';
+    if (!isNaN(challengeTime) && challengeTime > 0) {
       $('challengeBanner').style.display = 'block';
       $('challengeTarget').textContent = `Beat ${challengeTime.toFixed(3)}s`;
       $('challengeFrom').textContent = `Challenge from ${challengeFrom}`;
@@ -1202,58 +956,65 @@ function parseChallenge() {
 // ==================== STREAKS ====================
 function checkStreak() {
   const today = new Date().toISOString().slice(0, 10);
-  if (lastPlayDate) {
-    const lastDate = new Date(lastPlayDate);
-    const todayDate = new Date(today);
-    const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
-
-    if (diffDays > 1) {
+  if (lastPlayDate && lastPlayDate !== today) {
+    const last = new Date(lastPlayDate);
+    const now = new Date(today);
+    const diff = Math.floor((now - last) / (1000 * 60 * 60 * 24));
+    if (diff > 1) {
       currentStreak = 0;
       localStorage.setItem('f1_streak', '0');
     }
   }
-  updateStreakDisplay();
+  $('streakCount').textContent = currentStreak;
 }
 
 function updateStreak() {
   const today = new Date().toISOString().slice(0, 10);
   if (lastPlayDate !== today) {
     if (lastPlayDate) {
-      const lastDate = new Date(lastPlayDate);
-      const todayDate = new Date(today);
-      const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
-      if (diffDays === 1) {
-        currentStreak++;
-      } else if (diffDays > 1) {
-        currentStreak = 1;
-      }
+      const last = new Date(lastPlayDate);
+      const now = new Date(today);
+      const diff = Math.floor((now - last) / (1000 * 60 * 60 * 24));
+      currentStreak = (diff === 1) ? currentStreak + 1 : 1;
     } else {
       currentStreak = 1;
     }
     lastPlayDate = today;
-    localStorage.setItem('f1_streak', String(currentStreak));
+    localStorage.setItem('f1_streak', currentStreak.toString());
     localStorage.setItem('f1_last_play', today);
-    checkStreakAchievements();
   }
-  updateStreakDisplay();
-}
-
-function updateStreakDisplay() {
   $('streakCount').textContent = currentStreak;
 }
 
-// ==================== STATS ====================
-function updateStats() {
+// ==================== STATS UI ====================
+function updateStatsUI() {
   $('statGames').textContent = gamesPlayed;
-  const best = parseFloat(localStorage.getItem('f1_best') || '99');
-  $('statTier').innerHTML = renderTierBadge(best);
+  const tier = getTier(bestTime);
+  $('statTier').innerHTML = `<span class="tier-badge ${tier.class}">${tier.name}</span>`;
+
+  if (bestTime < 99) {
+    $('personalBest').style.display = 'flex';
+    $('bestTime').textContent = bestTime.toFixed(3) + 's';
+  }
 }
 
-// ==================== ACHIEVEMENTS ====================
+// ==================== RENDER ====================
+function renderProTimes() {
+  $('proTimesTable').innerHTML = F1_PRO_TIMES.map((p, i) => `
+    <div class="pro-row">
+      <span class="pro-rank ${i<3?'r'+(i+1):''}">${i+1}</span>
+      <span class="pro-name">${p.name}</span>
+      <span class="pro-team">${p.team}</span>
+      <span class="pro-time">${p.time.toFixed(3)}s</span>
+      <span class="pro-race">${p.race}</span>
+    </div>
+  `).join('');
+}
+
 function renderAchievements() {
   $('achievementsGrid').innerHTML = ACHIEVEMENTS.map(a => {
     const unlocked = unlockedAchievements.includes(a.id);
-    return `<div class="achievement ${unlocked ? 'unlocked' : 'locked'}" id="ach-${a.id}">
+    return `<div class="achievement ${unlocked ? 'unlocked' : 'locked'}">
       ${a.icon}
       <div class="achievement-tooltip">
         <span class="name">${a.name}</span>
@@ -1263,150 +1024,98 @@ function renderAchievements() {
   }).join('');
 }
 
-function unlockAchievement(id) {
-  if (unlockedAchievements.includes(id)) return;
-  unlockedAchievements.push(id);
-  localStorage.setItem('f1_achievements', JSON.stringify(unlockedAchievements));
-
-  const ach = ACHIEVEMENTS.find(a => a.id === id);
-  if (ach) {
-    showToast(`🏆 Achievement: ${ach.name}!`);
-    const el = $(`ach-${id}`);
-    if (el) {
-      el.classList.remove('locked');
-      el.classList.add('unlocked', 'achievement-new');
-    }
-  }
-}
-
-function checkAchievements(reactionTime) {
-  // First game
-  if (gamesPlayed === 1) unlockAchievement('first_game');
-
-  // Time-based
-  if (reactionTime < 0.500) unlockAchievement('sub_500');
-  if (reactionTime < 0.300) unlockAchievement('sub_300');
-  if (reactionTime < 0.250) unlockAchievement('sub_250');
-  if (reactionTime < 0.200) unlockAchievement('sub_200');
-
-  // Beat drivers
-  if (reactionTime < 0.240) unlockAchievement('beat_ricciardo');
-  if (reactionTime < 0.219) unlockAchievement('beat_hamilton');
-  if (reactionTime < 0.214) unlockAchievement('beat_verstappen');
-  if (reactionTime < 0.201) unlockAchievement('beat_bottas');
-
-  // Games played
-  if (gamesPlayed >= 10) unlockAchievement('games_10');
-  if (gamesPlayed >= 50) unlockAchievement('games_50');
-  if (gamesPlayed >= 100) unlockAchievement('games_100');
-
-  // No false start streak
-  if (gamesWithoutFalseStart >= 10) unlockAchievement('no_false_start');
-
-  // Challenge win
-  if (challengeTime && reactionTime < challengeTime) unlockAchievement('challenge_win');
-}
-
-function checkStreakAchievements() {
-  if (currentStreak >= 3) unlockAchievement('streak_3');
-  if (currentStreak >= 7) unlockAchievement('streak_7');
-}
-
-// ==================== HAPTICS ====================
-function vibrate(pattern) {
-  if ('vibrate' in navigator) {
-    try { navigator.vibrate(pattern); } catch(e) {}
-  }
-}
-
-// ==================== USER LOOKUP ====================
-async function lookupUser(email) {
-  if (!email || !email.includes('@')) return;
-
-  try {
-    const res = await fetch(`${USER_API_URL}?email=${encodeURIComponent(email)}`);
-    if (!res.ok) return;
-
-    const data = await res.json();
-    if (data.found) {
-      // Auto-populate username
-      if (data.username && !$('nameInput').value.trim()) {
-        $('nameInput').value = data.username;
-        localStorage.setItem('f1_name', data.username);
-      }
-      // Show personal best
-      if (data.bestTime) {
-        currentUserBestTime = data.bestTime;
-        showPersonalBest(data.bestTime);
-        localStorage.setItem('f1_best', data.bestTime.toString());
-        bestTime = data.bestTime;
-      }
-      showToast(`Welcome back, ${data.username}!`);
-    }
-    currentUserEmail = email;
-    localStorage.setItem('f1_email', email);
-  } catch (e) {
-    console.log('User lookup failed:', e);
-  }
-}
-
-function showPersonalBest(time) {
-  $('personalBestTime').textContent = time.toFixed(3) + 's';
-  $('personalBest').classList.add('show');
-}
-
-function handleKeyDown(e) {
-  // Any key triggers reaction during GO state
-  if (gameState === 'go') {
-    e.preventDefault();
-    recordReaction();
+function renderMyScores() {
+  if (myScores.length === 0) {
+    $('scoresList').innerHTML = '<div class="lb-empty">Play to see your scores!</div>';
     return;
   }
-  if (gameState === 'waiting' || gameState === 'sequence') {
-    e.preventDefault();
-    falseStart();
-    return;
-  }
-  // Enter/Space to start or restart
-  if (e.code === 'Space' || e.code === 'Enter') {
-    if (document.activeElement === $('nameInput')) return; // Let input handle Enter
-    e.preventDefault();
-    if (gameState === 'idle' || gameState === 'done' || gameState === 'false_start') {
-      startGame();
-    }
-  }
-}
-
-function handleTap(e) {
-  // Ignore if tapping on interactive elements when idle
-  if (gameState === 'idle' || gameState === 'done') {
-    const tag = e.target.tagName;
-    if (tag === 'BUTTON' || tag === 'INPUT' || tag === 'A') return;
-  }
-  if (gameState === 'go') {
-    recordReaction();
-  } else if (gameState === 'waiting' || gameState === 'sequence') {
-    falseStart();
-  } else if (gameState === 'false_start') {
-    resetGame();
-    setTimeout(startGame, 100);
-  }
-}
-
-// ==================== RENDER PRO TIMES ====================
-function renderProTimes() {
-  $('proTimes').innerHTML = F1_PRO_TIMES.map((p, i) => `
-    <div class="pro-row" role="row">
-      <span class="pro-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}" role="cell">${i+1}</span>
-      <span class="pro-name" role="cell">${p.name}</span>
-      <span class="pro-team" role="cell">${p.team}</span>
-      <span class="pro-time" role="cell">${p.time.toFixed(3)}s</span>
-      <span class="pro-year" role="cell">${p.race} '${String(p.year).slice(2)}</span>
+  $('scoresList').innerHTML = myScores.slice(0, 10).map(s => `
+    <div class="score-row">
+      <span class="score-date">${s.date}</span>
+      <span class="score-time">${s.time.toFixed(3)}s</span>
     </div>
   `).join('');
 }
 
+async function loadLeaderboard() {
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    renderLeaderboard(data);
+  } catch(e) {
+    $('leaderboard').innerHTML = '<div class="lb-empty">Could not load leaderboard</div>';
+  }
+}
+
+function renderLeaderboard(entries) {
+  if (!entries || entries.length === 0) {
+    $('leaderboard').innerHTML = '<div class="lb-empty">No scores yet. Be the first!</div>';
+    return;
+  }
+
+  // Group by tier
+  const groups = { gold: [], silver: [], bronze: [] };
+  entries.forEach(e => {
+    const t = getTier(e.time);
+    if (t.class === 'diamond' || t.class === 'platinum' || t.class === 'gold') {
+      groups.gold.push(e);
+    } else if (t.class === 'silver') {
+      groups.silver.push(e);
+    } else {
+      groups.bronze.push(e);
+    }
+  });
+
+  const renderGroup = (tier, tierClass, items) => {
+    if (items.length === 0) return '';
+    return `
+      <div class="leaderboard-tier">
+        <div class="tier-header">
+          <span class="tier-badge ${tierClass}">${tier}</span>
+          <span>Rank</span>
+        </div>
+        ${items.slice(0, 10).map(e => {
+          const isYou = currentName && e.name.toUpperCase() === currentName.toUpperCase();
+          const dateStr = e.date ? new Date(e.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+          return `<div class="lb-row${isYou ? ' you' : ''}">
+            <span class="lb-name">${e.name}</span>
+            <span class="lb-date">${dateStr}</span>
+            <span class="lb-time">${e.time.toFixed(3)}s</span>
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+  };
+
+  $('leaderboard').innerHTML =
+    renderGroup('GOLD', 'gold', groups.gold) +
+    renderGroup('SILVER', 'silver', groups.silver) +
+    renderGroup('BRONZE', 'bronze', groups.bronze);
+}
+
 // ==================== GAME LOGIC ====================
+function handleKeyDown(e) {
+  if (gameState === 'go') { e.preventDefault(); recordReaction(); }
+  else if (gameState === 'waiting' || gameState === 'sequence') { e.preventDefault(); falseStart(); }
+  else if ((e.code === 'Space' || e.code === 'Enter') && document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault();
+    if (gameState === 'idle' || gameState === 'done' || gameState === 'false_start') startGame();
+  }
+}
+
+function handleTap(e) {
+  if (gameState === 'idle' || gameState === 'done') {
+    if (['BUTTON', 'INPUT', 'A', 'LABEL'].includes(e.target.tagName)) return;
+  }
+  if (gameState === 'go') recordReaction();
+  else if (gameState === 'waiting' || gameState === 'sequence') falseStart();
+  else if (gameState === 'false_start') {
+    $('falseStartOverlay').classList.remove('show');
+    setTimeout(startGame, 100);
+  }
+}
+
 function startGame() {
   const name = $('nameInput').value.trim();
   if (!name) {
@@ -1414,58 +1123,40 @@ function startGame() {
     $('nameInput').style.borderColor = '#ff4444';
     setTimeout(() => $('nameInput').style.borderColor = '#333', 1500);
     showToast('Enter your name first!');
-    announce('Please enter your name to start');
     return;
   }
+  currentName = name;
   localStorage.setItem('f1_name', name);
 
-  // Save email if provided
-  const email = $('emailInput').value.trim();
-  if (email && email.includes('@')) {
-    localStorage.setItem('f1_email', email);
-    currentUserEmail = email;
-  }
-
-  // Reset
+  // Reset UI
   gameState = 'sequence';
-  $('falseStart').classList.remove('show');
-  $('reactionDisplay').textContent = '';
-  $('reactionDisplay').className = 'reaction-display';
-  $('comparisonBox').innerHTML = '';
+  $('reactionTime').style.display = 'none';
+  $('comparison').style.display = 'none';
+  $('status').textContent = 'WATCH THE LIGHTS...';
+  $('status').className = 'status ready';
+  $('status').style.display = 'block';
   $('btnStart').style.display = 'none';
-  $('f1Car').classList.remove('racing');
-  $('speedLines').classList.remove('active');
   $('lightsPanel').classList.remove('red-active');
   lights.forEach(col => col.forEach(id => $(id).className = 'light'));
 
-  $('status').textContent = 'WATCH THE LIGHTS...';
-  $('status').className = 'status ready';
-  announce('Watch the lights. React when they go out.');
-
-  // DYNAMIC TIMING - different delay for each light column
-  // Base delay 400-700ms per column, randomized
+  // Dynamic timing
   lightTimers = [];
   let totalDelay = 0;
 
   lights.forEach((col, i) => {
-    // Each column has a different random delay (400-700ms range)
     const colDelay = 400 + Math.random() * 300;
     totalDelay += colDelay;
 
     const t = setTimeout(() => {
       col.forEach(id => $(id).classList.add('on-red'));
       $('lightsPanel').classList.add('red-active');
-      playLightOn();
-      // After first light, enable false start detection
+      playBeep(880, 0.1, 0.08);
       if (i === 0) gameState = 'waiting';
     }, totalDelay);
     lightTimers.push(t);
   });
 
-  // After all 5 columns lit, random wait 400-1000ms then lights out
-  // This prevents users from counting/predicting
   const lightsOutDelay = 400 + Math.random() * 600;
-
   const goTimer = setTimeout(() => {
     gameState = 'go';
     lights.forEach(col => col.forEach(id => $(id).classList.remove('on-red')));
@@ -1473,10 +1164,8 @@ function startGame() {
     $('status').textContent = 'GO!';
     $('status').className = 'status go';
     lightsOutTime = performance.now();
-    playLightsOut();
-    announce('GO!');
+    playBeep(1200, 0.25, 0.15);
 
-    // Screen flash
     const flash = document.createElement('div');
     flash.className = 'screen-flash';
     document.body.appendChild(flash);
@@ -1491,17 +1180,13 @@ function falseStart() {
   gameState = 'false_start';
   lightTimers.forEach(clearTimeout);
   lightTimers = [];
-  $('falseStart').classList.add('show');
-  playFalseStart();
-  vibrate([200, 100, 200]); // Haptic feedback for false start
+  $('falseStartOverlay').classList.add('show');
+  playBeep(200, 0.4, 0.15);
+  vibrate([200, 100, 200]);
   $('lightsPanel').classList.remove('red-active');
   lights.forEach(col => col.forEach(id => $(id).className = 'light'));
-
-  // Reset no false start counter
   gamesWithoutFalseStart = 0;
   localStorage.setItem('f1_no_false', '0');
-
-  announce('Jump start! You went too early. Tap or press Enter to try again.');
 }
 
 function recordReaction() {
@@ -1509,126 +1194,156 @@ function recordReaction() {
   gameState = 'done';
 
   const reaction = (performance.now() - lightsOutTime) / 1000;
-  const reactionMs = reaction.toFixed(3);
-
-  // Haptic feedback
   vibrate(reaction < 0.3 ? [50, 30, 50, 30, 100] : [50, 50, 50]);
 
   // Update stats
   gamesPlayed++;
   gamesWithoutFalseStart++;
-  localStorage.setItem('f1_games', String(gamesPlayed));
-  localStorage.setItem('f1_no_false', String(gamesWithoutFalseStart));
+  localStorage.setItem('f1_games', gamesPlayed.toString());
+  localStorage.setItem('f1_no_false', gamesWithoutFalseStart.toString());
   updateStreak();
-  updateStats();
 
-  // Display with pop animation
-  $('reactionDisplay').textContent = reactionMs + 's';
-  let cls = 'good';
-  if (reaction > 0.3) cls = 'ok';
-  if (reaction > 0.5) cls = 'slow';
-  $('reactionDisplay').className = 'reaction-display ' + cls + ' result-zoom';
+  // Save score locally
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+  myScores.unshift({ time: reaction, date: dateStr });
+  if (myScores.length > 50) myScores.pop();
+  localStorage.setItem('f1_scores', JSON.stringify(myScores));
+  renderMyScores();
 
-  // Fire the blast effect
-  fireBlast(cls);
+  // Display result
+  $('status').style.display = 'none';
+  $('reactionTime').textContent = reaction.toFixed(3) + 's';
+  $('reactionTime').className = 'reaction-time' + (reaction > 0.3 ? (reaction > 0.5 ? ' slow' : ' ok') : '');
+  $('reactionTime').style.display = 'block';
 
-  // Car animation
-  $('f1Car').classList.add('racing');
-  $('speedLines').classList.add('active');
-  fireSpeedLines();
+  // Blast effect
+  fireBlast(reaction < 0.3 ? 'good' : reaction < 0.5 ? 'ok' : 'slow');
 
-  // Status
-  $('status').textContent = '';
-  $('status').className = 'status';
-
-  // Challenge mode check
-  let challengeWon = false;
-  if (challengeTime && reaction < challengeTime) {
-    challengeWon = true;
-  }
-
-  // Comparison with F1 drivers
-  const beaten = F1_PRO_TIMES.filter(p => reaction < p.time);
+  // Comparison
   let compHTML = '';
-  let announceMsg = `Your reaction time: ${reactionMs} seconds. `;
+  const beaten = F1_PRO_TIMES.filter(p => reaction < p.time);
 
-  if (challengeWon) {
-    compHTML = `<div class="comparison comparison-slide"><span class="beat">CHALLENGE WON!</span> You beat ${challengeTime.toFixed(3)}s!</div>`;
-    announceMsg += `Challenge won! You beat ${challengeTime.toFixed(3)}s!`;
-  } else if (challengeTime && reaction >= challengeTime) {
-    const diff = (reaction - challengeTime).toFixed(3);
-    compHTML = `<div class="comparison comparison-slide"><span class="lose">Challenge failed</span> — ${diff}s too slow. Try again!</div>`;
-    announceMsg += `Challenge failed. ${diff}s too slow.`;
+  if (challengeTime && reaction < challengeTime) {
+    compHTML = `<span class="beat">CHALLENGE WON!</span> You beat ${challengeTime.toFixed(3)}s!`;
+    unlock('challenge');
+  } else if (challengeTime) {
+    compHTML = `<span class="lose">Challenge failed</span> — ${(reaction - challengeTime).toFixed(3)}s too slow`;
   } else if (beaten.length === F1_PRO_TIMES.length) {
-    compHTML = `<div class="comparison comparison-slide"><span class="beat">INCREDIBLE!</span> You beat ALL F1 drivers' best times!</div>`;
-    announceMsg += 'Incredible! You beat all F1 drivers!';
+    compHTML = `<span class="beat">INCREDIBLE!</span> You beat ALL F1 drivers!`;
   } else if (beaten.length > 0) {
-    const best = beaten[beaten.length - 1];
-    compHTML = `<div class="comparison comparison-slide"><span class="beat">You beat ${best.name}!</span> (${best.time.toFixed(3)}s)</div>`;
-    announceMsg += `You beat ${best.name}!`;
+    compHTML = `<span class="beat">You beat ${beaten[beaten.length-1].name}!</span> (${beaten[beaten.length-1].time.toFixed(3)}s)`;
   } else {
-    const closest = F1_PRO_TIMES[F1_PRO_TIMES.length - 1];
-    const diff = (reaction - closest.time).toFixed(3);
-    compHTML = `<div class="comparison comparison-slide"><span class="lose">${diff}s slower</span> than ${closest.name} — keep practicing!</div>`;
-    announceMsg += `${diff} seconds slower than ${closest.name}. Keep practicing!`;
+    const diff = (reaction - F1_PRO_TIMES[F1_PRO_TIMES.length-1].time).toFixed(3);
+    compHTML = `<span class="lose">${diff}s slower</span> than ${F1_PRO_TIMES[F1_PRO_TIMES.length-1].name} — keep practicing!`;
   }
-  $('comparisonBox').innerHTML = compHTML;
-  announce(announceMsg);
+  $('comparison').innerHTML = compHTML;
+  $('comparison').style.display = 'block';
 
   // Sound
-  playSuccess();
+  playBeep(800, 0.1, 0.1);
+  setTimeout(() => playBeep(1000, 0.1, 0.1), 80);
+  setTimeout(() => playBeep(1200, 0.1, 0.1), 160);
 
   // Check achievements
   checkAchievements(reaction);
 
-  // Submit to leaderboard (unless practice mode)
-  if (!practiceMode) {
-    const name = $('nameInput').value.trim();
-    submitScore(name, reaction);
-  }
-
-  // Update best time locally
+  // Update best
   if (reaction < bestTime) {
-    const wasPreviousBest = bestTime < 99;
     bestTime = reaction;
-    localStorage.setItem('f1_best', reaction.toString());
-    currentUserBestTime = reaction;
-    showPersonalBest(reaction);
-    updateStats(); // Update tier display
-    if (wasPreviousBest) {
-      showToast('🎉 New personal best!');
-    }
+    localStorage.setItem('f1_best', bestTime.toString());
+    if (gamesPlayed > 1) showToast('🎉 New personal best!');
+  }
+  updateStatsUI();
+
+  // Submit to server
+  if (!practiceMode) {
+    const email = $('emailInput').value.trim();
+    submitScore(currentName, reaction, email);
   }
 
-  // Buttons with challenge share option
-  const shareParam = challengeTime ? '' : `?challenge=${reactionMs}&from=${encodeURIComponent($('nameInput').value.trim() || 'Anonymous')}`;
+  // Buttons
   $('buttonsArea').innerHTML = `
-    <button class="btn btn-start" id="btnStart" type="button" onclick="startGame()">PLAY AGAIN</button>
-    <button class="btn btn-share" type="button" onclick="shareResult('${reactionMs}')">SHARE</button>
-    <button class="btn btn-share" type="button" onclick="shareChallenge('${reactionMs}')">⚔️ CHALLENGE</button>
+    <button class="btn btn-primary" onclick="startGame()">PLAY AGAIN</button>
+    <button class="btn btn-secondary" onclick="shareResult(${reaction})">SHARE</button>
+    <button class="btn btn-secondary" onclick="shareChallenge(${reaction})">⚔️ CHALLENGE</button>
   `;
 }
 
-function fireSpeedLines() {
-  const container = $('speedLines');
-  container.innerHTML = '';
-  for (let i = 0; i < 20; i++) {
-    const line = document.createElement('div');
-    line.className = 'speed-line';
-    line.style.top = Math.random() * 100 + '%';
-    line.style.width = (50 + Math.random() * 150) + 'px';
-    line.style.animationDelay = (Math.random() * 0.3) + 's';
-    container.appendChild(line);
-  }
-  setTimeout(() => container.classList.remove('active'), 1500);
+async function submitScore(name, time, email) {
+  try {
+    const payload = { name, time: parseFloat(time.toFixed(3)) };
+    if (email && email.includes('@')) payload.email = email;
+
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.leaderboard) renderLeaderboard(data.leaderboard);
+    }
+  } catch(e) {}
 }
 
+// ==================== ACHIEVEMENTS ====================
+function unlock(id) {
+  if (unlockedAchievements.includes(id)) return;
+  unlockedAchievements.push(id);
+  localStorage.setItem('f1_achievements', JSON.stringify(unlockedAchievements));
+  const a = ACHIEVEMENTS.find(x => x.id === id);
+  if (a) showToast(`🏆 ${a.name}!`);
+  renderAchievements();
+}
+
+function checkAchievements(time) {
+  if (gamesPlayed === 1) unlock('first_game');
+  if (time < 0.500) unlock('sub_500');
+  if (time < 0.300) unlock('sub_300');
+  if (time < 0.250) unlock('sub_250');
+  if (time < 0.200) unlock('sub_200');
+  if (time < 0.240) unlock('beat_ricciardo');
+  if (time < 0.219) unlock('beat_hamilton');
+  if (time < 0.214) unlock('beat_verstappen');
+  if (time < 0.201) unlock('beat_bottas');
+  if (gamesPlayed >= 10) unlock('games_10');
+  if (gamesPlayed >= 50) unlock('games_50');
+  if (gamesPlayed >= 100) unlock('games_100');
+  if (currentStreak >= 3) unlock('streak_3');
+  if (currentStreak >= 7) unlock('streak_7');
+  if (gamesWithoutFalseStart >= 10) unlock('no_false');
+}
+
+// ==================== SHARING ====================
+function shareResult(time) {
+  const tier = getTier(time);
+  const text = `🏎️ I got ${time.toFixed(3)}s on F1 Lights Out!\n\n${tier.name} Tier 🎖️\n\nCan you beat me?\nhttps://f1lightsoutgame.site`;
+
+  if (navigator.share) {
+    navigator.share({ title: 'F1 Lights Out!', text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => showToast('Copied!')).catch(() => {});
+  }
+}
+
+function shareChallenge(time) {
+  const url = `https://f1lightsoutgame.site?challenge=${time.toFixed(3)}&from=${encodeURIComponent(currentName || 'Someone')}`;
+  const text = `⚔️ ${currentName || 'Someone'} challenges you!\n\nBeat my ${time.toFixed(3)}s reaction time!\n\n${url}`;
+
+  if (navigator.share) {
+    navigator.share({ title: 'F1 Challenge!', text, url }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => showToast('Challenge link copied!')).catch(() => {});
+  }
+}
+
+// ==================== EFFECTS ====================
 function fireBlast(tier) {
-  const colors = tier === 'good'
-    ? ['#00ff44','#44ff88','#00cc33','#88ffaa','#ffffff','#ffdd00']
-    : tier === 'ok'
-    ? ['#ffd700','#ffaa00','#ff8800','#ffcc44','#ffffff','#ff6600']
-    : ['#ff4444','#ff6644','#ff2200','#ff8866','#ffffff','#cc0000'];
+  const colors = tier === 'good' ? ['#00ff44','#44ff88','#ffffff']
+    : tier === 'ok' ? ['#ffd700','#ffaa00','#ffffff']
+    : ['#ff4444','#ff6644','#ffffff'];
 
   const container = document.createElement('div');
   container.className = 'blast-container';
@@ -1636,19 +1351,17 @@ function fireBlast(tier) {
 
   const cx = window.innerWidth / 2;
   const cy = window.innerHeight * 0.35;
+  const count = tier === 'good' ? 40 : 25;
 
-  const particleCount = tier === 'good' ? 50 : tier === 'ok' ? 30 : 20;
-  for (let i = 0; i < particleCount; i++) {
+  for (let i = 0; i < count; i++) {
     const p = document.createElement('div');
     p.className = 'blast-particle';
-    const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5;
-    const dist = 80 + Math.random() * 200;
-    const tx = Math.cos(angle) * dist;
-    const ty = Math.sin(angle) * dist - 40;
-    const size = 4 + Math.random() * 8;
-    const dur = 0.6 + Math.random() * 0.6;
+    const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+    const dist = 80 + Math.random() * 150;
+    const size = 4 + Math.random() * 6;
+    const dur = 0.5 + Math.random() * 0.5;
     const color = colors[Math.floor(Math.random() * colors.length)];
-    p.style.cssText = `left:${cx}px;top:${cy}px;width:${size}px;height:${size}px;background:${color};box-shadow:0 0 ${size*2}px ${color};--tx:${tx}px;--ty:${ty}px;--dur:${dur}s;`;
+    p.style.cssText = `left:${cx}px;top:${cy}px;width:${size}px;height:${size}px;background:${color};--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;--dur:${dur}s;`;
     container.appendChild(p);
   }
 
@@ -1657,174 +1370,11 @@ function fireBlast(tier) {
   ring.style.cssText = `left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);border-color:${colors[0]};`;
   document.body.appendChild(ring);
 
-  setTimeout(() => {
-    const ring2 = document.createElement('div');
-    ring2.className = 'blast-ring';
-    ring2.style.cssText = `left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);border-color:${colors[1]};`;
-    document.body.appendChild(ring2);
-    setTimeout(() => ring2.remove(), 800);
-  }, 150);
-
-  if (tier === 'good') {
-    const flag = document.createElement('div');
-    flag.className = 'checkered-flash';
-    document.body.appendChild(flag);
-    setTimeout(() => flag.remove(), 700);
-  }
-
-  setTimeout(() => { container.remove(); ring.remove(); }, 1500);
+  setTimeout(() => { container.remove(); ring.remove(); }, 1000);
 }
 
-function resetGame() {
-  gameState = 'idle';
-  $('falseStart').classList.remove('show');
-  $('status').textContent = 'Press START or tap anywhere';
-  $('status').className = 'status waiting';
-  $('reactionDisplay').textContent = '';
-  $('comparisonBox').innerHTML = '';
-  $('lightsPanel').classList.remove('red-active');
-  lights.forEach(col => col.forEach(id => $(id).className = 'light'));
-  $('f1Car').classList.remove('racing');
-  $('buttonsArea').innerHTML = `<button class="btn btn-start" id="btnStart" type="button" onclick="startGame()">START</button>`;
-}
-
-// ==================== SHARE ====================
-function shareResult(time) {
-  const beaten = F1_PRO_TIMES.filter(p => parseFloat(time) < p.time);
-  let extra = '';
-  if (beaten.length > 0) extra = ` and beat ${beaten[beaten.length-1].name}! 🏆`;
-
-  const tier = getTier(parseFloat(time));
-  const text = `🏎️ I got ${time}s reaction time on F1 Lights Out!${extra}\n\n${tier.name} Tier 🎖️\n\nCan you beat me?\nhttps://f1lightsoutgame.site`;
-
-  if (navigator.share) {
-    navigator.share({ title: 'F1 Lights Out!', text }).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('Copied to clipboard!');
-    }).catch(() => {
-      showToast('Could not copy');
-    });
-  }
-}
-
-function shareChallenge(time) {
-  const name = $('nameInput').value.trim() || 'Someone';
-  const challengeUrl = `https://f1lightsoutgame.site?challenge=${time}&from=${encodeURIComponent(name)}`;
-
-  const text = `⚔️ ${name} challenges you!\n\n🏎️ Beat my ${time}s reaction time on F1 Lights Out!\n\n${challengeUrl}`;
-
-  if (navigator.share) {
-    navigator.share({
-      title: `${name} challenges you - F1 Lights Out!`,
-      text,
-      url: challengeUrl
-    }).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('Challenge link copied!');
-    }).catch(() => {
-      showToast('Could not copy');
-    });
-  }
-}
-
-// ==================== LEADERBOARD ====================
-async function loadLeaderboard(force = false) {
-  if (!force) {
-    const cached = getCachedLeaderboard();
-    if (cached) {
-      renderLeaderboard(cached);
-      return;
-    }
-  }
-  if (Date.now() - lastFetchTime < LEADERBOARD_CACHE_TTL && cachedLeaderboard) {
-    renderLeaderboard(cachedLeaderboard);
-    return;
-  }
-  try {
-    const res = await fetch(API_URL);
-    if (!res.ok) throw new Error('API error');
-    const data = await res.json();
-    lastFetchTime = Date.now();
-    setCachedLeaderboard(data);
-    renderLeaderboard(data);
-  } catch (e) {
-    if (cachedLeaderboard) {
-      renderLeaderboard(cachedLeaderboard);
-    } else {
-      $('leaderboard').innerHTML = '<div class="lb-empty">Leaderboard unavailable. Play to be first!</div>';
-    }
-  }
-}
-
-function renderLeaderboard(entries) {
-  if (!entries || entries.length === 0) {
-    $('leaderboard').innerHTML = '<div class="lb-empty">No scores yet. Be the first!</div>';
-    return;
-  }
-  const currentName = ($('nameInput').value.trim() || '').toUpperCase();
-  $('leaderboard').innerHTML = entries.slice(0, 50).map((e, i) => {
-    const isYou = e.name.toUpperCase() === currentName;
-    return `<div class="lb-row${isYou ? ' you' : ''}" role="row">
-      <span class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}" role="cell">${i+1}</span>
-      <span class="lb-name" role="cell">${escHtml(e.name)}${isYou ? ' (you)' : ''}</span>
-      <span class="lb-time" role="cell">${e.time.toFixed(3)}s</span>
-    </div>`;
-  }).join('');
-}
-
-async function submitScore(name, time) {
-  // Less restrictive: only check cooldown, always try to submit
-  if (Date.now() - lastSubmitTime < SUBMIT_COOLDOWN) {
-    console.log('Cooldown active, skipping submit');
-    return;
-  }
-  lastSubmitTime = Date.now();
-
-  // Get email if available
-  const email = $('emailInput').value.trim() || currentUserEmail;
-
-  try {
-    const payload = { name, time: parseFloat(time.toFixed(3)) };
-    if (email && email.includes('@')) {
-      payload.email = email;
-    }
-
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.leaderboard) {
-        setCachedLeaderboard(data.leaderboard);
-        renderLeaderboard(data.leaderboard);
-      } else {
-        loadLeaderboard(true);
-      }
-      // Update personal best display if new best
-      if (data.isNewBest && data.personalBest) {
-        currentUserBestTime = data.personalBest;
-        showPersonalBest(data.personalBest);
-        showToast('New personal best!');
-      }
-    } else if (res.status === 429) {
-      showToast('Too many attempts — slow down!');
-    } else {
-      console.log('Submit failed:', res.status);
-    }
-  } catch (e) {
-    console.log('Score submit error:', e);
-  }
-}
-
-// ==================== UTILS ====================
-function escHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
+function vibrate(pattern) {
+  if ('vibrate' in navigator) try { navigator.vibrate(pattern); } catch(e) {}
 }
 
 function showToast(msg) {

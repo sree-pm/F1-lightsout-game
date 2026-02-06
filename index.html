@@ -930,6 +930,31 @@ async function lookupUser(email) {
         gamesPlayed = data.gamesPlayed;
         localStorage.setItem('f1_games', gamesPlayed.toString());
       }
+      // Merge server scores with local scores
+      if (data.scores && data.scores.length > 0) {
+        const serverScores = data.scores.map(s => ({
+          time: s.time,
+          date: new Date(s.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' })
+        }));
+        // Merge: keep unique by date/time combination
+        const merged = [...serverScores];
+        myScores.forEach(local => {
+          if (!merged.some(s => Math.abs(s.time - local.time) < 0.001 && s.date === local.date)) {
+            merged.push(local);
+          }
+        });
+        // Sort by date descending (most recent first)
+        merged.sort((a, b) => {
+          const parseDate = d => {
+            const parts = d.split(/[\s,]+/);
+            return new Date(parts.join(' ')).getTime() || 0;
+          };
+          return parseDate(b.date) - parseDate(a.date);
+        });
+        myScores = merged.slice(0, 50);
+        localStorage.setItem('f1_scores', JSON.stringify(myScores));
+        renderMyScores();
+      }
       updateStatsUI();
       showToast(`Welcome back, ${data.username}!`);
     }

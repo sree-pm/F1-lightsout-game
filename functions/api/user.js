@@ -72,11 +72,22 @@ async function handleGet(request, env) {
   };
 
   const user = await env.DB.prepare(
-    'SELECT username, best_time, games_played FROM users WHERE email = ?'
+    'SELECT id, username, best_time, games_played FROM users WHERE email = ?'
   ).bind(email).first();
 
   if (!user) {
     return jsonResponse({ found: false }, 200, cacheHeaders);
+  }
+
+  // Fetch user's recent scores (up to 20)
+  let scores = [];
+  try {
+    const { results } = await env.DB.prepare(
+      'SELECT time, created_at as date FROM scores WHERE user_id = ? ORDER BY created_at DESC LIMIT 20'
+    ).bind(user.id).all();
+    scores = results || [];
+  } catch (e) {
+    // Scores table might not exist yet
   }
 
   return jsonResponse({
@@ -84,6 +95,7 @@ async function handleGet(request, env) {
     username: user.username,
     bestTime: user.best_time,
     gamesPlayed: user.games_played,
+    scores,
   }, 200, cacheHeaders);
 }
 

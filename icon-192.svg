@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="32" fill="#0a0a0a"/>
+  <circle cx="56" cy="70" r="20" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+  <circle cx="96" cy="70" r="20" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+  <circle cx="136" cy="70" r="20" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+  <circle cx="56" cy="70" r="14" fill="#ff1801"/>
+  <circle cx="96" cy="70" r="14" fill="#ff1801"/>
+  <circle cx="136" cy="70" r="14" fill="#ff1801"/>
+  <circle cx="56" cy="70" r="6" fill="#ff6644"/>
+  <circle cx="96" cy="70" r="6" fill="#ff6644"/>
+  <circle cx="136" cy="70" r="6" fill="#ff6644"/>
+  <text x="96" y="145" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="32" font-weight="900" fill="#fff">F1</text>
+  <text x="96" y="172" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#666">LIGHTS OUT</text>
+</svg>

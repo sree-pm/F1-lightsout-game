@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="50%" style="stop-color:#1a0a0a"/>
+      <stop offset="100%" style="stop-color:#0a0a0a"/>
+    </linearGradient>
+    <linearGradient id="redGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff1801;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#ff1801;stop-opacity:0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <ellipse cx="600" cy="500" rx="400" ry="200" fill="url(#redGlow)"/>
+
+  <!-- Gantry bar -->
+  <rect x="200" y="150" width="800" height="12" rx="6" fill="#333"/>
+
+  <!-- Lights housing -->
+  <g transform="translate(200, 180)">
+    <!-- 5 light columns -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="140" height="200" rx="16" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+      <circle cx="70" cy="50" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="50" r="12" fill="#ff6644"/>
+      <circle cx="70" cy="110" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="110" r="12" fill="#ff6644"/>
+      <circle cx="70" cy="170" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="170" r="12" fill="#ff6644"/>
+    </g>
+    <g transform="translate(160, 0)">
+      <rect x="0" y="0" width="140" height="200" rx="16" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+      <circle cx="70" cy="50" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="50" r="12" fill="#ff6644"/>
+      <circle cx="70" cy="110" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="110" r="12" fill="#ff6644"/>
+      <circle cx="70" cy="170" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="170" r="12" fill="#ff6644"/>
+    </g>
+    <g transform="translate(320, 0)">
+      <rect x="0" y="0" width="140" height="200" rx="16" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+      <circle cx="70" cy="50" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="50" r="12" fill="#ff6644"/>
+      <circle cx="70" cy="110" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="110" r="12" fill="#ff6644"/>
+      <circle cx="70" cy="170" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="170" r="12" fill="#ff6644"/>
+    </g>
+    <g transform="translate(480, 0)">
+      <rect x="0" y="0" width="140" height="200" rx="16" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+      <circle cx="70" cy="50" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="50" r="12" fill="#ff6644"/>
+      <circle cx="70" cy="110" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="110" r="12" fill="#ff6644"/>
+      <circle cx="70" cy="170" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="170" r="12" fill="#ff6644"/>
+    </g>
+    <g transform="translate(640, 0)">
+      <rect x="0" y="0" width="140" height="200" rx="16" fill="#1a1a1a" stroke="#333" stroke-width="2"/>
+      <circle cx="70" cy="50" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="50" r="12" fill="#ff6644"/>
+      <circle cx="70" cy="110" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="110" r="12" fill="#ff6644"/>
+      <circle cx="70" cy="170" r="30" fill="#ff1801"/>
+      <circle cx="70" cy="170" r="12" fill="#ff6644"/>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="480" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="72" font-weight="900" fill="#fff">LIGHTS OUT!</text>
+  <text x="600" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#666" letter-spacing="8">F1 REACTION CHALLENGE</text>
+
+  <!-- Call to action -->
+  <text x="600" y="590" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#ff1801">Can you beat an F1 driver? → f1lightsoutgame.site</text>
+</svg>

@@ -11,569 +11,723 @@
 <meta property="og:url" content="https://f1lightsoutgame.site">
 <meta property="og:image" content="https://f1lightsoutgame.site/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="F1 Lights Out! - Test Your Reaction Time">
-<meta name="twitter:description" content="Can you beat an F1 driver? Test your reaction time now!">
-<meta name="twitter:image" content="https://f1lightsoutgame.site/og-image.png">
-<meta name="theme-color" content="#ff1801">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="F1 Lights Out">
+<meta name="theme-color" content="#e10600">
 <link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+/* ========== DESIGN SYSTEM ========== */
+:root {
+  /* Colors */
+  --f1-red: #e10600;
+  --f1-red-dark: #b30500;
+  --f1-red-glow: rgba(225, 6, 0, 0.6);
+  --green: #00ff44;
+  --green-glow: rgba(0, 255, 68, 0.4);
+  --gold: #ffd700;
+  --silver: #c0c0c0;
+  --bronze: #cd7f32;
+  --bg-dark: #0d0d0d;
+  --bg-card: #151515;
+  --bg-card-hover: #1a1a1a;
+  --border: #2a2a2a;
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --text-dim: #555555;
 
-:root{
-  --red:#ff1801;
-  --red-glow:rgba(255,24,1,.8);
-  --red-dark:#1a0a0a;
-  --green:#00ff44;
-  --bg:#0a0a0a;
-  --card:#111;
-  --card-border:#1a1a1a;
-  --text:#e0e0e0;
-  --text-dim:#666;
-  --gold:#ffd700;
-  --silver:#c0c0c0;
-  --bronze:#cd7f32;
+  /* Spacing (8px base) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Fonts */
+  --font-display: 'Orbitron', monospace;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-html,body{
-  min-height:100vh;
-  background:linear-gradient(180deg,#0a0a0a 0%,var(--red-dark) 50%,#0a0a0a 100%);
-  color:var(--text);
-  font-family:'Inter',system-ui,sans-serif;
-  overflow-x:hidden;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('https://fonts.gstatic.com/s/orbitron/v29/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6BoWgz.woff2') format('woff2');
+  font-weight: 400 900;
+  font-display: swap;
 }
 
-:focus{outline:2px solid var(--gold);outline-offset:2px}
-:focus:not(:focus-visible){outline:none}
+html, body {
+  min-height: 100vh;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
 
-/* ==================== 3-COLUMN DESKTOP LAYOUT ==================== */
-.app-layout{
-  display:grid;
-  grid-template-columns:280px 1fr 280px;
-  gap:20px;
-  max-width:1400px;
-  margin:0 auto;
-  padding:20px;
-  min-height:100vh;
+/* ========== LAYOUT: 25% - 50% - 25% ========== */
+.app {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: var(--space-lg);
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+  min-height: 100vh;
+}
+
+.col-left, .col-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.col-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Mobile: single column */
-@media(max-width:1024px){
-  .app-layout{
-    grid-template-columns:1fr;
-    padding:16px;
+@media (max-width: 1024px) {
+  .app {
+    grid-template-columns: 1fr;
+    padding: var(--space-md);
+    gap: var(--space-md);
   }
-  .sidebar-left{order:3}
-  .main-content{order:1}
-  .sidebar-right{order:2}
+  .col-left { order: 2; }
+  .col-center { order: 1; }
+  .col-right { order: 3; }
 }
 
-/* ==================== SIDEBARS ==================== */
-.sidebar{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
+/* ========== CARDS (Atomic Component) ========== */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
 }
 
-.panel{
-  background:var(--card);
-  border:1px solid var(--card-border);
-  border-radius:12px;
-  padding:16px;
+.card-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
 }
 
-.panel-title{
-  font-family:'Orbitron',monospace;
-  font-size:13px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:2px;
-  margin-bottom:12px;
-  color:var(--text-dim);
-}
-.panel-title span{color:var(--red)}
-
-/* ==================== HEADER ==================== */
-.header{
-  text-align:center;
-  margin-bottom:20px;
-}
-.header h1{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(28px,6vw,48px);
-  font-weight:900;
-  background:linear-gradient(135deg,#fff 0%,var(--red) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
-  letter-spacing:3px;
-  text-transform:uppercase;
-}
-.header .subtitle{
-  font-size:clamp(11px,2.5vw,14px);
-  color:var(--text-dim);
-  margin-top:4px;
-  letter-spacing:3px;
-  text-transform:uppercase;
+.card-title span {
+  color: var(--f1-red);
 }
 
-/* ==================== USER INPUTS ==================== */
-.user-inputs{
-  display:flex;
-  gap:12px;
-  justify-content:center;
-  flex-wrap:wrap;
-  margin-bottom:12px;
-}
-.input-group{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-.input-group label{
-  font-size:10px;
-  color:var(--text-dim);
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
-.user-input{
-  background:#1a1a1a;
-  border:1px solid #333;
-  color:#fff;
-  font-size:14px;
-  padding:10px 14px;
-  border-radius:8px;
-  outline:none;
-  transition:border-color .3s;
-}
-.user-input:focus{border-color:var(--red)}
-.user-input.name{
-  font-family:'Orbitron',monospace;
-  text-transform:uppercase;
-  width:140px;
-}
-.user-input.email{width:220px}
-
-.btn-save{
-  background:var(--red);
-  color:#fff;
-  border:none;
-  padding:10px 24px;
-  border-radius:8px;
-  font-family:'Orbitron',monospace;
-  font-weight:700;
-  font-size:12px;
-  cursor:pointer;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  align-self:flex-end;
-  transition:all .2s;
-}
-.btn-save:hover{background:#cc1400}
-
-.user-note{
-  font-size:10px;
-  color:var(--text-dim);
-  text-align:center;
-  margin-bottom:16px;
+/* ========== HEADER ========== */
+.header {
+  text-align: center;
+  margin-bottom: var(--space-lg);
 }
 
-/* ==================== LIGHTS PANEL ==================== */
-.lights-wrapper{
-  display:flex;
-  justify-content:center;
-  margin-bottom:16px;
-}
-.lights-panel{
-  background:linear-gradient(180deg,#1a1a1a 0%,#0d0d0d 100%);
-  border-radius:12px;
-  padding:20px 24px;
-  border:2px solid #222;
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
-  position:relative;
-}
-.gantry-bar{
-  position:absolute;top:-8px;left:10%;right:10%;height:6px;
-  background:linear-gradient(180deg,#333 0%,#1a1a1a 100%);
-  border-radius:3px;
-}
-.lights-row{
-  display:flex;
-  gap:12px;
-  justify-content:center;
-}
-.light-housing{
-  background:linear-gradient(180deg,#1c1c1c 0%,#0a0a0a 100%);
-  border-radius:8px;
-  padding:8px 6px;
-  display:flex;flex-direction:column;gap:6px;
-  border:1px solid #2a2a2a;
-}
-.light{
-  width:36px;height:36px;
-  border-radius:50%;
-  background:radial-gradient(circle at 35% 35%,#3a3a3a 0%,#1a1a1a 50%,#0d0d0d 100%);
-  border:2px solid #2a2a2a;
-  position:relative;
-  transition:all .1s;
-}
-.light::before{
-  content:'';position:absolute;top:15%;left:20%;width:30%;height:25%;
-  background:radial-gradient(ellipse,rgba(255,255,255,.1),transparent);
-  border-radius:50%;
-}
-.light.on-red{
-  background:radial-gradient(circle at 40% 40%,#ff4444 0%,#cc0000 40%,#880000 70%,#440000 100%);
-  border-color:#ff2200;
-  box-shadow:0 0 20px rgba(255,24,1,.6),0 0 40px rgba(255,24,1,.3);
-}
-.glow-surface{
-  position:absolute;bottom:-10px;left:15%;right:15%;height:20px;
-  background:transparent;border-radius:50%;filter:blur(10px);transition:all .2s;
-}
-.lights-panel.red-active .glow-surface{background:rgba(255,24,1,.3)}
-
-@media(max-width:400px){
-  .light{width:28px;height:28px}
-  .lights-row{gap:8px}
-  .light-housing{padding:5px 4px;gap:4px}
+.header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 900;
+  color: var(--text-primary);
+  letter-spacing: 4px;
+  text-transform: uppercase;
 }
 
-/* ==================== RESULT DISPLAY ==================== */
-.result-area{
-  text-align:center;
-  min-height:120px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-}
-.reaction-time{
-  font-family:'Orbitron',monospace;
-  font-size:clamp(48px,12vw,80px);
-  font-weight:900;
-  color:var(--green);
-  text-shadow:0 0 40px rgba(0,255,68,.4);
-  line-height:1;
-}
-.reaction-time.ok{color:var(--gold);text-shadow:0 0 40px rgba(255,215,0,.4)}
-.reaction-time.slow{color:var(--red);text-shadow:0 0 40px rgba(255,24,1,.4)}
-
-.comparison{
-  font-size:13px;
-  padding:8px 16px;
-  background:rgba(255,255,255,.03);
-  border-radius:20px;
-  margin-top:8px;
-}
-.comparison .beat{color:var(--green);font-weight:700}
-.comparison .lose{color:var(--red)}
-
-.status{
-  font-family:'Orbitron',monospace;
-  font-size:16px;
-  color:var(--text-dim);
-  letter-spacing:1px;
-}
-.status.ready{color:var(--red);animation:pulse 1s infinite}
-.status.go{color:var(--green);font-size:28px;font-weight:900}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-
-/* ==================== BUTTONS ==================== */
-.buttons{
-  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
-  margin:16px 0;
-}
-.btn{
-  font-family:'Orbitron',monospace;
-  font-weight:700;
-  font-size:13px;
-  padding:12px 28px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  transition:all .2s;
-}
-.btn-primary{
-  background:linear-gradient(180deg,var(--red) 0%,#cc1400 100%);
-  color:#fff;
-  box-shadow:0 4px 20px rgba(255,24,1,.4);
-}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(255,24,1,.6)}
-.btn-secondary{
-  background:#222;
-  color:#fff;
-  border:1px solid #333;
-}
-.btn-secondary:hover{background:#333}
-
-.practice-toggle{
-  display:flex;align-items:center;gap:8px;
-  font-size:11px;color:var(--text-dim);
-  justify-content:center;
-  margin-bottom:12px;
-}
-.practice-toggle input{accent-color:var(--green)}
-
-.hint{
-  font-size:11px;
-  color:var(--text-dim);
-  text-align:center;
-  max-width:400px;
-  margin:0 auto 20px;
-  line-height:1.5;
+.header h1 .f1 {
+  color: var(--f1-red);
 }
 
-/* ==================== ACHIEVEMENTS GRID ==================== */
-.achievements-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-}
-.achievement{
-  aspect-ratio:1;
-  background:#1a1a1a;
-  border:2px solid #333;
-  border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;
-  position:relative;
-  cursor:default;
-}
-.achievement.locked{filter:grayscale(1) opacity(.3)}
-.achievement.unlocked{border-color:var(--gold);box-shadow:0 0 10px rgba(255,215,0,.2)}
-.achievement-tooltip{
-  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
-  background:#222;border:1px solid #444;border-radius:6px;padding:6px 10px;
-  white-space:nowrap;font-size:10px;opacity:0;transition:opacity .2s;z-index:100;
-  pointer-events:none;
-}
-.achievement:hover .achievement-tooltip{opacity:1}
-.achievement-tooltip .name{color:#fff;font-weight:600;display:block}
-.achievement-tooltip .desc{color:var(--text-dim)}
-
-/* ==================== STATS ==================== */
-.stats-row{
-  display:flex;gap:12px;align-items:center;
-}
-.stat-box{
-  background:#1a1a1a;
-  border-radius:8px;
-  padding:8px 12px;
-  text-align:center;
-  flex:1;
-}
-.stat-value{
-  font-family:'Orbitron',monospace;
-  font-size:18px;
-  font-weight:700;
-}
-.stat-label{
-  font-size:9px;
-  color:var(--text-dim);
-  text-transform:uppercase;
+.header .subtitle {
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--text-secondary);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: var(--space-xs);
 }
 
-.tier-badge{
-  display:inline-block;
-  font-family:'Orbitron',monospace;
-  font-size:10px;font-weight:700;
-  padding:4px 10px;border-radius:4px;
-  text-transform:uppercase;
-}
-.tier-badge.diamond{background:linear-gradient(135deg,#b9f2ff,#00d4ff);color:#003344}
-.tier-badge.platinum{background:linear-gradient(135deg,#e5e4e2,#a8a9ad);color:#222}
-.tier-badge.gold{background:linear-gradient(135deg,#ffd700,#ffaa00);color:#442200}
-.tier-badge.silver{background:linear-gradient(135deg,#c0c0c0,#888);color:#222}
-.tier-badge.bronze{background:linear-gradient(135deg,#cd7f32,#8b4513);color:#fff}
-.tier-badge.unranked{background:#333;color:#666}
-
-.streak-badge{
-  display:flex;align-items:center;gap:4px;
-  background:rgba(255,215,0,.1);
-  padding:6px 10px;border-radius:6px;
-  font-size:12px;color:var(--gold);
+/* ========== USER INPUTS ========== */
+.user-form {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: flex-end;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-sm);
 }
 
-/* ==================== YOUR SCORES ==================== */
-.personal-best{
-  display:flex;align-items:center;gap:8px;
-  background:rgba(0,255,68,.1);
-  border:1px solid rgba(0,255,68,.2);
-  border-radius:8px;
-  padding:10px 14px;
-  margin-bottom:12px;
-}
-.personal-best .icon{font-size:20px}
-.personal-best .label{font-size:11px;color:var(--text-dim)}
-.personal-best .time{
-  font-family:'Orbitron',monospace;
-  font-size:16px;font-weight:700;
-  color:var(--green);
-  margin-left:auto;
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
-.scores-list{
-  max-height:200px;
-  overflow-y:auto;
-}
-.score-row{
-  display:flex;justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px solid #1a1a1a;
-  font-size:12px;
-}
-.score-row:last-child{border-bottom:none}
-.score-date{color:var(--text-dim)}
-.score-time{font-family:'Orbitron',monospace;color:var(--green)}
-
-/* ==================== LEADERBOARD ==================== */
-.leaderboard-tier{
-  margin-bottom:16px;
-}
-.tier-header{
-  display:flex;align-items:center;gap:10px;
-  margin-bottom:8px;
-  padding-bottom:8px;
-  border-bottom:1px solid #222;
-}
-.tier-header .tier-badge{font-size:11px;padding:5px 12px}
-.tier-header span{font-size:11px;color:var(--text-dim);text-transform:uppercase}
-
-.lb-row{
-  display:flex;align-items:center;
-  padding:6px 0;
-  font-size:12px;
-  border-bottom:1px solid rgba(255,255,255,.03);
-}
-.lb-row:last-child{border-bottom:none}
-.lb-name{flex:1;font-weight:500}
-.lb-date{color:var(--text-dim);font-size:10px;margin-right:12px}
-.lb-time{font-family:'Orbitron',monospace;font-weight:700;color:var(--green)}
-.lb-row.you{background:rgba(255,24,1,.1);margin:0 -16px;padding:6px 16px;border-radius:4px}
-
-.lb-empty{
-  text-align:center;
-  color:var(--text-dim);
-  font-size:12px;
-  padding:20px 0;
+.input-group label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
 }
 
-/* ==================== F1 PRO TIMES ==================== */
-.pro-times{margin-top:20px}
-.pro-row{
-  display:flex;align-items:center;
-  padding:8px 0;
-  border-bottom:1px solid rgba(255,255,255,.04);
-  font-size:12px;
-}
-.pro-row:last-child{border-bottom:none}
-.pro-rank{
-  width:24px;
-  font-family:'Orbitron',monospace;
-  font-weight:700;
-  font-size:11px;
-  color:var(--text-dim);
-}
-.pro-rank.r1{color:var(--gold)}
-.pro-rank.r2{color:var(--silver)}
-.pro-rank.r3{color:var(--bronze)}
-.pro-name{flex:1;font-weight:600}
-.pro-team{color:var(--text-dim);font-size:10px;width:80px}
-.pro-time{font-family:'Orbitron',monospace;font-weight:700;color:var(--red)}
-.pro-race{font-size:9px;color:var(--text-dim);width:60px;text-align:right}
-
-/* ==================== CHALLENGE BANNER ==================== */
-.challenge-banner{
-  background:linear-gradient(135deg,rgba(255,24,1,.15) 0%,rgba(255,215,0,.08) 100%);
-  border:2px solid var(--red);
-  border-radius:12px;
-  padding:16px 20px;
-  text-align:center;
-  margin-bottom:16px;
-  animation:challengePulse 2s ease infinite;
-}
-.challenge-banner .title{
-  font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;
-}
-.challenge-banner .target{
-  font-family:'Orbitron',monospace;
-  font-size:32px;font-weight:900;color:var(--red);
-}
-.challenge-banner .from{font-size:11px;color:var(--text-dim)}
-@keyframes challengePulse{
-  0%,100%{box-shadow:0 0 20px rgba(255,24,1,.2)}
-  50%{box-shadow:0 0 30px rgba(255,24,1,.4)}
+.input-field {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 14px;
+  padding: var(--space-sm) var(--space-md);
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-/* ==================== FALSE START OVERLAY ==================== */
-.overlay{
-  display:none;position:fixed;inset:0;z-index:200;
-  background:rgba(0,0,0,.95);
-  justify-content:center;align-items:center;flex-direction:column;gap:16px;
-}
-.overlay.show{display:flex}
-.overlay-title{
-  font-family:'Orbitron',monospace;
-  font-size:36px;font-weight:900;color:#ff4444;
-  text-shadow:0 0 40px rgba(255,0,0,.5);
-}
-.overlay-sub{color:var(--text-dim);font-size:13px}
-
-/* ==================== TOAST ==================== */
-.toast{
-  position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);
-  background:#222;color:#fff;padding:12px 24px;border-radius:8px;
-  font-size:13px;z-index:300;transition:transform .3s;border:1px solid #333;
-}
-.toast.show{transform:translateX(-50%) translateY(0)}
-
-/* ==================== SCREEN FLASH ==================== */
-.screen-flash{
-  position:fixed;inset:0;z-index:50;pointer-events:none;
-  animation:flashGreen .4s ease;
-}
-@keyframes flashGreen{0%{background:rgba(0,255,68,.15)}100%{background:transparent}}
-
-/* ==================== BLAST EFFECTS ==================== */
-.blast-container{position:fixed;inset:0;z-index:200;pointer-events:none;overflow:hidden}
-.blast-particle{
-  position:absolute;border-radius:50%;
-  animation:blastFly var(--dur) cubic-bezier(.15,.8,.3,1) forwards;
-}
-@keyframes blastFly{
-  0%{transform:translate(0,0) scale(1);opacity:1}
-  100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}
-}
-.blast-ring{
-  position:fixed;border:3px solid var(--green);border-radius:50%;
-  pointer-events:none;z-index:199;
-  animation:ringExpand .7s cubic-bezier(.2,.8,.3,1) forwards;
-}
-@keyframes ringExpand{
-  0%{width:0;height:0;opacity:.8}
-  100%{width:300px;height:300px;opacity:0;border-width:1px}
+.input-field:focus {
+  border-color: var(--f1-red);
 }
 
-/* ==================== REDUCED MOTION ==================== */
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{
-    animation-duration:0.01ms !important;
-    transition-duration:0.01ms !important;
+.input-field.email { width: 200px; }
+.input-field.name {
+  width: 120px;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+
+.btn-save {
+  background: var(--f1-red);
+  color: white;
+  border: none;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-save:hover { background: var(--f1-red-dark); }
+
+.user-hint {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: var(--space-lg);
+}
+
+/* ========== LIGHTS (Centered, Responsive) ========== */
+.lights-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: var(--space-xl) 0;
+}
+
+.lights-gantry {
+  background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg) var(--space-xl);
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.lights-bar {
+  position: absolute;
+  top: -6px;
+  left: 15%;
+  right: 15%;
+  height: 4px;
+  background: linear-gradient(180deg, #333 0%, #1a1a1a 100%);
+  border-radius: 2px;
+}
+
+.lights-row {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.light-column {
+  background: linear-gradient(180deg, #1c1c1c 0%, #0a0a0a 100%);
+  border: 1px solid #2a2a2a;
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.light {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #3a3a3a 0%, #1a1a1a 50%, #0d0d0d 100%);
+  border: 2px solid #2a2a2a;
+  transition: all 0.05s;
+}
+
+.light.on {
+  background: radial-gradient(circle at 40% 40%, #ff4444 0%, #cc0000 40%, #880000 70%, #440000 100%);
+  border-color: var(--f1-red);
+  box-shadow: 0 0 20px var(--f1-red-glow), 0 0 40px rgba(255, 24, 1, 0.3);
+}
+
+/* Responsive lights */
+@media (max-width: 500px) {
+  .light { width: 24px; height: 24px; }
+  .lights-row { gap: var(--space-sm); }
+  .light-column { padding: 6px; gap: 3px; }
+  .lights-gantry { padding: var(--space-md); }
+}
+
+/* ========== RESULT AREA ========== */
+.result-area {
+  text-align: center;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+
+.status-text {
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--text-secondary);
+  letter-spacing: 2px;
+}
+
+.status-text.watching {
+  color: var(--f1-red);
+  animation: pulse 1s infinite;
+}
+
+.status-text.go {
+  color: var(--green);
+  font-size: 32px;
+  font-weight: 900;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.reaction-display {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 12vw, 72px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.reaction-display.fast { color: var(--green); text-shadow: 0 0 30px var(--green-glow); }
+.reaction-display.medium { color: var(--gold); text-shadow: 0 0 30px rgba(255, 215, 0, 0.4); }
+.reaction-display.slow { color: var(--f1-red); text-shadow: 0 0 30px var(--f1-red-glow); }
+
+.comparison-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+}
+
+.comparison-text .win { color: var(--green); font-weight: 700; }
+.comparison-text .lose { color: var(--f1-red); }
+
+/* ========== BUTTONS ========== */
+.buttons {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-md);
+}
+
+.btn {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  padding: var(--space-md) var(--space-xl);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--f1-red);
+  color: white;
+  box-shadow: 0 4px 20px var(--f1-red-glow);
+}
+
+.btn-primary:hover {
+  background: var(--f1-red-dark);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  color: white;
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card-hover);
+}
+
+.practice-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 11px;
+  color: var(--text-secondary);
+  justify-content: center;
+  margin-bottom: var(--space-md);
+}
+
+.practice-toggle input { accent-color: var(--green); }
+
+.game-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+/* ========== ACHIEVEMENTS GRID ========== */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm);
+}
+
+.achievement {
+  aspect-ratio: 1;
+  background: var(--bg-card-hover);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  position: relative;
+  cursor: default;
+}
+
+.achievement.locked {
+  filter: grayscale(1) opacity(0.3);
+}
+
+.achievement.unlocked {
+  border-color: var(--gold);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.achievement-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  border: 1px solid #444;
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  white-space: nowrap;
+  font-size: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 100;
+}
+
+.achievement:hover .achievement-tip { opacity: 1; }
+.achievement-tip .name { color: white; font-weight: 600; display: block; }
+.achievement-tip .desc { color: var(--text-secondary); }
+
+/* ========== STATS ROW ========== */
+.stats-row {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: stretch;
+}
+
+.stat-box {
+  flex: 1;
+  background: var(--bg-card-hover);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  text-align: center;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+/* Tier badges */
+.tier-badge {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.tier-badge.diamond { background: linear-gradient(135deg, #b9f2ff, #00d4ff); color: #003344; }
+.tier-badge.platinum { background: linear-gradient(135deg, #e5e4e2, #a8a9ad); color: #222; }
+.tier-badge.gold { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #442200; }
+.tier-badge.silver { background: linear-gradient(135deg, #c0c0c0, #888); color: #222; }
+.tier-badge.bronze { background: linear-gradient(135deg, #cd7f32, #8b4513); color: #fff; }
+.tier-badge.unranked { background: #333; color: #666; }
+
+.streak-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  font-size: 11px;
+  color: var(--gold);
+}
+
+/* ========== YOUR SCORES ========== */
+.personal-best {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: rgba(0, 255, 68, 0.08);
+  border: 1px solid rgba(0, 255, 68, 0.2);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.personal-best .icon { font-size: 18px; }
+.personal-best .label { font-size: 11px; color: var(--text-secondary); }
+.personal-best .time {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--green);
+  margin-left: auto;
+}
+
+.scores-list {
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.score-item {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.score-item:last-child { border-bottom: none; }
+.score-date { color: var(--text-secondary); }
+.score-time { font-family: var(--font-display); color: var(--green); }
+
+/* ========== LEADERBOARD ========== */
+.leaderboard-section {
+  margin-bottom: var(--space-md);
+}
+
+.leaderboard-section:last-child { margin-bottom: 0; }
+
+.tier-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-sm);
+}
+
+.lb-entry {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.lb-entry:last-child { border-bottom: none; }
+.lb-name { flex: 1; font-weight: 500; }
+.lb-time { font-family: var(--font-display); font-weight: 700; color: var(--green); }
+.lb-entry.highlight { background: rgba(225, 6, 0, 0.1); margin: 0 -16px; padding: 6px 16px; border-radius: 4px; }
+
+.lb-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 12px;
+  padding: var(--space-lg) 0;
+}
+
+/* ========== F1 PRO TIMES ========== */
+.pro-times-card {
+  width: 100%;
+  max-width: 600px;
+  margin-top: var(--space-xl);
+}
+
+.pro-entry {
+  display: flex;
+  align-items: center;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 12px;
+}
+
+.pro-entry:last-child { border-bottom: none; }
+
+.pro-rank {
+  width: 24px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.pro-rank.top1 { color: var(--gold); }
+.pro-rank.top2 { color: var(--silver); }
+.pro-rank.top3 { color: var(--bronze); }
+
+.pro-name { flex: 1; font-weight: 600; }
+.pro-team { color: var(--text-secondary); font-size: 10px; width: 80px; }
+.pro-time { font-family: var(--font-display); font-weight: 700; color: var(--f1-red); width: 60px; }
+.pro-race { font-size: 9px; color: var(--text-dim); text-align: right; }
+
+/* ========== OVERLAYS ========== */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.95);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.overlay.show { display: flex; }
+
+.overlay-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 900;
+  color: #ff4444;
+  text-shadow: 0 0 40px rgba(255, 0, 0, 0.5);
+}
+
+.overlay-sub {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #222;
+  color: white;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  z-index: 300;
+  transition: transform 0.3s;
+  border: 1px solid var(--border);
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Challenge banner */
+.challenge-banner {
+  background: linear-gradient(135deg, rgba(225, 6, 0, 0.15) 0%, rgba(255, 215, 0, 0.08) 100%);
+  border: 2px solid var(--f1-red);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  text-align: center;
+  margin-bottom: var(--space-lg);
+  width: 100%;
+  max-width: 400px;
+}
+
+.challenge-banner .title {
+  font-size: 10px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.challenge-banner .target {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--f1-red);
+}
+
+.challenge-banner .from {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ========== EFFECTS ========== */
+.screen-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  animation: flashGreen 0.4s ease;
+}
+
+@keyframes flashGreen {
+  0% { background: rgba(0, 255, 68, 0.15); }
+  100% { background: transparent; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
-/* ==================== SCROLLBAR ==================== */
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:#111}
-::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:#444}
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-card); }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #444; }
 </style>
 </head>
 <body>
@@ -581,24 +735,24 @@ html,body{
 <!-- Overlays -->
 <div class="overlay" id="falseStartOverlay">
   <div class="overlay-title">JUMP START!</div>
-  <div class="overlay-sub">You went before the lights went out. Tap anywhere to try again.</div>
+  <div class="overlay-sub">You went before lights out. Tap anywhere to try again.</div>
 </div>
 <div class="toast" id="toast"></div>
 
-<!-- Main Layout -->
-<div class="app-layout">
+<!-- Main App -->
+<div class="app">
 
-  <!-- LEFT SIDEBAR -->
-  <aside class="sidebar sidebar-left">
+  <!-- LEFT COLUMN (25%) -->
+  <div class="col-left">
     <!-- Achievements -->
-    <div class="panel">
-      <div class="panel-title">Your <span>Achievements</span></div>
+    <div class="card">
+      <div class="card-title">Your <span>Achievements</span></div>
       <div class="achievements-grid" id="achievementsGrid"></div>
     </div>
 
     <!-- Stats -->
-    <div class="panel">
-      <div class="panel-title">Your <span>Stats</span></div>
+    <div class="card">
+      <div class="card-title">Your <span>Stats</span></div>
       <div class="stats-row">
         <div class="stat-box">
           <div class="stat-value" id="statGames">0</div>
@@ -608,15 +762,17 @@ html,body{
           <div id="statTier"><span class="tier-badge unranked">Unranked</span></div>
           <div class="stat-label">Rank</div>
         </div>
-        <div class="streak-badge">
-          🔥 <span id="streakCount">0</span> day streak
+        <div class="streak-box">
+          <span>🔥</span>
+          <span id="streakCount">0</span>
+          <span>day streak</span>
         </div>
       </div>
     </div>
 
     <!-- Your Scores -->
-    <div class="panel">
-      <div class="panel-title">Your <span>Scores</span></div>
+    <div class="card">
+      <div class="card-title">Your <span>Scores</span></div>
       <div class="personal-best" id="personalBest" style="display:none">
         <span class="icon">🏆</span>
         <span class="label">Your best</span>
@@ -626,71 +782,81 @@ html,body{
         <div class="lb-empty">Play to see your scores!</div>
       </div>
     </div>
-  </aside>
+  </div>
 
-  <!-- MAIN CONTENT -->
-  <main class="main-content">
+  <!-- CENTER COLUMN (50%) -->
+  <div class="col-center">
+    <!-- Header -->
     <header class="header">
-      <h1>F1 Lights Out</h1>
-      <p class="subtitle">F1 Reaction Challenge</p>
+      <h1><span class="f1">F1</span> LIGHTS OUT</h1>
+      <p class="subtitle">Reaction Challenge</p>
     </header>
 
     <!-- Challenge Banner -->
     <div class="challenge-banner" id="challengeBanner" style="display:none">
       <div class="title">Challenge Mode</div>
       <div class="target" id="challengeTarget">Beat 0.234s</div>
-      <div class="from" id="challengeFrom">Can you beat this time?</div>
+      <div class="from" id="challengeFrom">Can you beat this?</div>
     </div>
 
-    <!-- User Inputs -->
-    <div class="user-inputs">
+    <!-- User Form -->
+    <div class="user-form">
       <div class="input-group">
-        <label for="emailInput">Email</label>
-        <input type="email" class="user-input email" id="emailInput" placeholder="your@email.com" maxlength="100">
+        <label>Email</label>
+        <input type="email" class="input-field email" id="emailInput" placeholder="your@email.com" maxlength="100">
       </div>
       <div class="input-group">
-        <label for="nameInput">Unique Name</label>
-        <input type="text" class="user-input name" id="nameInput" placeholder="NAME" maxlength="20">
+        <label>Name</label>
+        <input type="text" class="input-field name" id="nameInput" placeholder="NAME" maxlength="20">
       </div>
       <button class="btn-save" id="btnSave">Save</button>
     </div>
-    <p class="user-note">Email saves your progress. No signup required — just play!</p>
+    <p class="user-hint">Email saves your progress. No signup required.</p>
 
     <!-- Lights -->
-    <div class="lights-wrapper">
-      <div class="lights-panel" id="lightsPanel">
-        <div class="gantry-bar"></div>
+    <div class="lights-container">
+      <div class="lights-gantry" id="lightsGantry">
+        <div class="lights-bar"></div>
         <div class="lights-row">
-          <div class="light-housing">
-            <div class="light" id="l1a"></div><div class="light" id="l1b"></div>
-            <div class="light" id="l1c"></div><div class="light" id="l1d"></div>
+          <div class="light-column">
+            <div class="light" data-col="1"></div>
+            <div class="light" data-col="1"></div>
+            <div class="light" data-col="1"></div>
+            <div class="light" data-col="1"></div>
           </div>
-          <div class="light-housing">
-            <div class="light" id="l2a"></div><div class="light" id="l2b"></div>
-            <div class="light" id="l2c"></div><div class="light" id="l2d"></div>
+          <div class="light-column">
+            <div class="light" data-col="2"></div>
+            <div class="light" data-col="2"></div>
+            <div class="light" data-col="2"></div>
+            <div class="light" data-col="2"></div>
           </div>
-          <div class="light-housing">
-            <div class="light" id="l3a"></div><div class="light" id="l3b"></div>
-            <div class="light" id="l3c"></div><div class="light" id="l3d"></div>
+          <div class="light-column">
+            <div class="light" data-col="3"></div>
+            <div class="light" data-col="3"></div>
+            <div class="light" data-col="3"></div>
+            <div class="light" data-col="3"></div>
           </div>
-          <div class="light-housing">
-            <div class="light" id="l4a"></div><div class="light" id="l4b"></div>
-            <div class="light" id="l4c"></div><div class="light" id="l4d"></div>
+          <div class="light-column">
+            <div class="light" data-col="4"></div>
+            <div class="light" data-col="4"></div>
+            <div class="light" data-col="4"></div>
+            <div class="light" data-col="4"></div>
           </div>
-          <div class="light-housing">
-            <div class="light" id="l5a"></div><div class="light" id="l5b"></div>
-            <div class="light" id="l5c"></div><div class="light" id="l5d"></div>
+          <div class="light-column">
+            <div class="light" data-col="5"></div>
+            <div class="light" data-col="5"></div>
+            <div class="light" data-col="5"></div>
+            <div class="light" data-col="5"></div>
           </div>
         </div>
-        <div class="glow-surface"></div>
       </div>
     </div>
 
     <!-- Result Area -->
     <div class="result-area" id="resultArea">
-      <div class="status" id="status">Press START to begin</div>
-      <div class="reaction-time" id="reactionTime" style="display:none"></div>
-      <div class="comparison" id="comparison" style="display:none"></div>
+      <div class="status-text" id="statusText">Press START or Enter to begin</div>
+      <div class="reaction-display" id="reactionDisplay" style="display:none"></div>
+      <div class="comparison-text" id="comparisonText" style="display:none"></div>
     </div>
 
     <!-- Buttons -->
@@ -700,84 +866,43 @@ html,body{
 
     <div class="practice-toggle">
       <input type="checkbox" id="practiceMode">
-      <label for="practiceMode">Practice Mode</label>
+      <label for="practiceMode">Practice Mode (scores won't save)</label>
     </div>
 
-    <p class="hint">
-      5 columns of lights turn red one by one. When they ALL go out — tap anywhere or press any key!<br>
-      Timing varies each round, just like real F1.
+    <p class="game-hint">
+      5 columns light up one by one (1 second apart). After all 5 are lit, they go out randomly (0.2-3s delay).<br>
+      React as fast as you can! Click anywhere or press any key.
     </p>
 
     <!-- F1 Pro Times -->
-    <div class="pro-times">
-      <div class="panel-title"><span>F1</span> Pro Reaction Times</div>
+    <div class="card pro-times-card">
+      <div class="card-title"><span>F1</span> Pro Reaction Times</div>
       <div id="proTimesTable"></div>
     </div>
-  </main>
+  </div>
 
-  <!-- RIGHT SIDEBAR -->
-  <aside class="sidebar sidebar-right">
-    <div class="panel">
-      <div class="panel-title">Global <span>Leaderboard</span></div>
+  <!-- RIGHT COLUMN (25%) -->
+  <div class="col-right">
+    <div class="card">
+      <div class="card-title">Global <span>Leaderboard</span></div>
       <div id="leaderboard">
         <div class="lb-empty">Loading...</div>
       </div>
     </div>
-  </aside>
+  </div>
 
 </div>
 
 <script>
-// ==================== CONFIG ====================
+// ========== CONFIG ==========
 const API_URL = '/api/leaderboard';
 const USER_API_URL = '/api/user';
 
-// ==================== STATE ====================
-let gameState = 'idle';
-let lightTimers = [];
-let lightsOutTime = 0;
-let practiceMode = false;
+// ========== CONSTANTS ==========
+const LIGHT_INTERVAL = 1000; // 1 second between each column (like real F1)
+const LIGHTS_OUT_MIN = 200;  // min delay before lights out
+const LIGHTS_OUT_MAX = 3000; // max delay before lights out (real F1 is 0.2-3s)
 
-// User state
-let currentEmail = localStorage.getItem('f1_email') || '';
-let currentName = localStorage.getItem('f1_name') || '';
-let bestTime = parseFloat(localStorage.getItem('f1_best') || '99');
-let gamesPlayed = parseInt(localStorage.getItem('f1_games') || '0');
-let currentStreak = parseInt(localStorage.getItem('f1_streak') || '0');
-let lastPlayDate = localStorage.getItem('f1_last_play') || '';
-let myScores = JSON.parse(localStorage.getItem('f1_scores') || '[]');
-let unlockedAchievements = JSON.parse(localStorage.getItem('f1_achievements') || '[]');
-let gamesWithoutFalseStart = parseInt(localStorage.getItem('f1_no_false') || '0');
-
-// Challenge
-let challengeTime = null;
-let challengeFrom = null;
-
-// DOM helpers
-const $ = id => document.getElementById(id);
-const lights = [
-  ['l1a','l1b','l1c','l1d'],
-  ['l2a','l2b','l2c','l2d'],
-  ['l3a','l3b','l3c','l3d'],
-  ['l4a','l4b','l4c','l4d'],
-  ['l5a','l5b','l5c','l5d']
-];
-
-// ==================== F1 DATA ====================
-const F1_PRO_TIMES = [
-  { name: 'Valtteri Bottas', team: 'Mercedes', time: 0.201, race: "Austrian GP '19" },
-  { name: 'Max Verstappen', team: 'Red Bull', time: 0.214, race: "Bahrain GP '23" },
-  { name: 'Lewis Hamilton', team: 'Mercedes', time: 0.219, race: "British GP '20" },
-  { name: 'Charles Leclerc', team: 'Ferrari', time: 0.221, race: "Monaco GP '24" },
-  { name: 'Lando Norris', team: 'McLaren', time: 0.224, race: "Dutch GP '23" },
-  { name: 'Sebastian Vettel', team: 'Red Bull', time: 0.227, race: "Japanese GP '13" },
-  { name: 'Carlos Sainz', team: 'Ferrari', time: 0.230, race: "Italian GP '23" },
-  { name: 'Kimi Raikkonen', team: 'Ferrari', time: 0.233, race: "Malaysian GP '17" },
-  { name: 'Fernando Alonso', team: 'Aston Martin', time: 0.236, race: "Saudi GP '23" },
-  { name: 'Daniel Ricciardo', team: 'Red Bull', time: 0.240, race: "Chinese GP '18" },
-];
-
-// ==================== TIERS ====================
 const TIERS = [
   { name: 'Diamond', class: 'diamond', max: 0.200 },
   { name: 'Platinum', class: 'platinum', max: 0.220 },
@@ -787,12 +912,6 @@ const TIERS = [
   { name: 'Unranked', class: 'unranked', max: Infinity },
 ];
 
-function getTier(time) {
-  if (!time || time >= 99) return TIERS[5];
-  return TIERS.find(t => time < t.max) || TIERS[5];
-}
-
-// ==================== ACHIEVEMENTS ====================
 const ACHIEVEMENTS = [
   { id: 'first_game', icon: '🎮', name: 'First Start', desc: 'Play your first game' },
   { id: 'sub_500', icon: '⚡', name: 'Quick Reflexes', desc: 'Under 0.500s' },
@@ -812,9 +931,46 @@ const ACHIEVEMENTS = [
   { id: 'challenge', icon: '🏆', name: 'Challenger', desc: 'Beat a challenge' },
 ];
 
-// ==================== AUDIO ====================
+const F1_PRO_TIMES = [
+  { name: 'Valtteri Bottas', team: 'Mercedes', time: 0.201, race: "Austrian GP '19" },
+  { name: 'Max Verstappen', team: 'Red Bull', time: 0.214, race: "Bahrain GP '23" },
+  { name: 'Lewis Hamilton', team: 'Mercedes', time: 0.219, race: "British GP '20" },
+  { name: 'Charles Leclerc', team: 'Ferrari', time: 0.221, race: "Monaco GP '24" },
+  { name: 'Lando Norris', team: 'McLaren', time: 0.224, race: "Dutch GP '23" },
+  { name: 'Sebastian Vettel', team: 'Red Bull', time: 0.227, race: "Japanese GP '13" },
+  { name: 'Carlos Sainz', team: 'Ferrari', time: 0.230, race: "Italian GP '23" },
+  { name: 'Kimi Raikkonen', team: 'Ferrari', time: 0.233, race: "Malaysian GP '17" },
+  { name: 'Fernando Alonso', team: 'Aston Martin', time: 0.236, race: "Saudi GP '23" },
+  { name: 'Daniel Ricciardo', team: 'Red Bull', time: 0.240, race: "Chinese GP '18" },
+];
+
+// ========== STATE ==========
+let gameState = 'idle'; // idle, sequence, waiting, go, done, false_start
+let timers = [];
+let lightsOutTime = 0;
+let practiceMode = false;
+
+// User data from localStorage
+let bestTime = parseFloat(localStorage.getItem('f1_best') || '99');
+let gamesPlayed = parseInt(localStorage.getItem('f1_games') || '0');
+let currentStreak = parseInt(localStorage.getItem('f1_streak') || '0');
+let lastPlayDate = localStorage.getItem('f1_last_play') || '';
+let myScores = JSON.parse(localStorage.getItem('f1_scores') || '[]');
+let unlockedAchievements = JSON.parse(localStorage.getItem('f1_achievements') || '[]');
+let gamesWithoutFalseStart = parseInt(localStorage.getItem('f1_no_false') || '0');
+
+// Challenge
+let challengeTime = null;
+let challengeFrom = null;
+
+// DOM
+const $ = id => document.getElementById(id);
+const lights = document.querySelectorAll('.light');
+
+// ========== AUDIO ==========
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
+
 function playBeep(freq, dur, vol = 0.1) {
   try {
     if (!audioCtx) audioCtx = new AudioCtx();
@@ -830,13 +986,15 @@ function playBeep(freq, dur, vol = 0.1) {
   } catch(e) {}
 }
 
-// ==================== INIT ====================
-function init() {
-  // Load saved data
-  if (currentEmail) $('emailInput').value = currentEmail;
-  if (currentName) $('nameInput').value = currentName;
+function vibrate(pattern) {
+  if ('vibrate' in navigator) try { navigator.vibrate(pattern); } catch(e) {}
+}
 
-  // Setup UI
+// ========== INIT ==========
+function init() {
+  // Do NOT pre-fill email/name - keep placeholders empty
+  // Only load data, but don't show in inputs
+
   renderProTimes();
   renderAchievements();
   updateStatsUI();
@@ -844,11 +1002,6 @@ function init() {
   loadLeaderboard();
   parseChallenge();
   checkStreak();
-
-  // If we have email, lookup user from server
-  if (currentEmail) {
-    lookupUser(currentEmail);
-  }
 
   // Event listeners
   document.addEventListener('keydown', handleKeyDown);
@@ -862,15 +1015,26 @@ function init() {
     showToast(practiceMode ? 'Practice mode ON' : 'Practice mode OFF');
   };
 
-  $('nameInput').onkeydown = e => { if (e.key === 'Enter') startGame(); };
-
   // PWA
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
 }
 
-// ==================== USER MANAGEMENT ====================
+// ========== UTILITIES ==========
+function getTier(time) {
+  if (!time || time >= 99) return TIERS[5];
+  return TIERS.find(t => time < t.max) || TIERS[5];
+}
+
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ========== USER MANAGEMENT ==========
 async function saveUser() {
   const email = $('emailInput').value.trim();
   const name = $('nameInput').value.trim();
@@ -880,11 +1044,9 @@ async function saveUser() {
     return;
   }
 
-  currentName = name;
   localStorage.setItem('f1_name', name);
 
   if (email && email.includes('@')) {
-    currentEmail = email;
     localStorage.setItem('f1_email', email);
 
     try {
@@ -910,58 +1072,7 @@ async function saveUser() {
   }
 }
 
-async function lookupUser(email) {
-  try {
-    const res = await fetch(`${USER_API_URL}?email=${encodeURIComponent(email)}`);
-    if (!res.ok) return;
-
-    const data = await res.json();
-    if (data.found) {
-      if (data.username) {
-        currentName = data.username;
-        $('nameInput').value = data.username;
-        localStorage.setItem('f1_name', data.username);
-      }
-      if (data.bestTime && data.bestTime < bestTime) {
-        bestTime = data.bestTime;
-        localStorage.setItem('f1_best', bestTime.toString());
-      }
-      if (data.gamesPlayed && data.gamesPlayed > gamesPlayed) {
-        gamesPlayed = data.gamesPlayed;
-        localStorage.setItem('f1_games', gamesPlayed.toString());
-      }
-      // Merge server scores with local scores
-      if (data.scores && data.scores.length > 0) {
-        const serverScores = data.scores.map(s => ({
-          time: s.time,
-          date: new Date(s.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' })
-        }));
-        // Merge: keep unique by date/time combination
-        const merged = [...serverScores];
-        myScores.forEach(local => {
-          if (!merged.some(s => Math.abs(s.time - local.time) < 0.001 && s.date === local.date)) {
-            merged.push(local);
-          }
-        });
-        // Sort by date descending (most recent first)
-        merged.sort((a, b) => {
-          const parseDate = d => {
-            const parts = d.split(/[\s,]+/);
-            return new Date(parts.join(' ')).getTime() || 0;
-          };
-          return parseDate(b.date) - parseDate(a.date);
-        });
-        myScores = merged.slice(0, 50);
-        localStorage.setItem('f1_scores', JSON.stringify(myScores));
-        renderMyScores();
-      }
-      updateStatsUI();
-      showToast(`Welcome back, ${data.username}!`);
-    }
-  } catch(e) {}
-}
-
-// ==================== CHALLENGE ====================
+// ========== CHALLENGE ==========
 function parseChallenge() {
   const params = new URLSearchParams(window.location.search);
   const c = params.get('challenge');
@@ -978,7 +1089,7 @@ function parseChallenge() {
   }
 }
 
-// ==================== STREAKS ====================
+// ========== STREAKS ==========
 function checkStreak() {
   const today = new Date().toISOString().slice(0, 10);
   if (lastPlayDate && lastPlayDate !== today) {
@@ -1011,7 +1122,7 @@ function updateStreak() {
   $('streakCount').textContent = currentStreak;
 }
 
-// ==================== STATS UI ====================
+// ========== STATS UI ==========
 function updateStatsUI() {
   $('statGames').textContent = gamesPlayed;
   const tier = getTier(bestTime);
@@ -1023,11 +1134,11 @@ function updateStatsUI() {
   }
 }
 
-// ==================== RENDER ====================
+// ========== RENDER ==========
 function renderProTimes() {
   $('proTimesTable').innerHTML = F1_PRO_TIMES.map((p, i) => `
-    <div class="pro-row">
-      <span class="pro-rank ${i<3?'r'+(i+1):''}">${i+1}</span>
+    <div class="pro-entry">
+      <span class="pro-rank ${i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : ''}">${i + 1}</span>
       <span class="pro-name">${p.name}</span>
       <span class="pro-team">${p.team}</span>
       <span class="pro-time">${p.time.toFixed(3)}s</span>
@@ -1041,7 +1152,7 @@ function renderAchievements() {
     const unlocked = unlockedAchievements.includes(a.id);
     return `<div class="achievement ${unlocked ? 'unlocked' : 'locked'}">
       ${a.icon}
-      <div class="achievement-tooltip">
+      <div class="achievement-tip">
         <span class="name">${a.name}</span>
         <span class="desc">${a.desc}</span>
       </div>
@@ -1055,7 +1166,7 @@ function renderMyScores() {
     return;
   }
   $('scoresList').innerHTML = myScores.slice(0, 10).map(s => `
-    <div class="score-row">
+    <div class="score-item">
       <span class="score-date">${s.date}</span>
       <span class="score-time">${s.time.toFixed(3)}s</span>
     </div>
@@ -1081,6 +1192,8 @@ function renderLeaderboard(entries) {
 
   // Group by tier
   const groups = { gold: [], silver: [], bronze: [] };
+  const currentName = $('nameInput').value.trim().toUpperCase();
+
   entries.forEach(e => {
     const t = getTier(e.time);
     if (t.class === 'diamond' || t.class === 'platinum' || t.class === 'gold') {
@@ -1095,17 +1208,14 @@ function renderLeaderboard(entries) {
   const renderGroup = (tier, tierClass, items) => {
     if (items.length === 0) return '';
     return `
-      <div class="leaderboard-tier">
+      <div class="leaderboard-section">
         <div class="tier-header">
           <span class="tier-badge ${tierClass}">${tier}</span>
-          <span>Rank</span>
         </div>
         ${items.slice(0, 10).map(e => {
-          const isYou = currentName && e.name.toUpperCase() === currentName.toUpperCase();
-          const dateStr = e.date ? new Date(e.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
-          return `<div class="lb-row${isYou ? ' you' : ''}">
+          const isYou = currentName && e.name.toUpperCase() === currentName;
+          return `<div class="lb-entry${isYou ? ' highlight' : ''}">
             <span class="lb-name">${e.name}</span>
-            <span class="lb-date">${dateStr}</span>
             <span class="lb-time">${e.time.toFixed(3)}s</span>
           </div>`;
         }).join('')}
@@ -1116,26 +1226,46 @@ function renderLeaderboard(entries) {
   $('leaderboard').innerHTML =
     renderGroup('GOLD', 'gold', groups.gold) +
     renderGroup('SILVER', 'silver', groups.silver) +
-    renderGroup('BRONZE', 'bronze', groups.bronze);
+    renderGroup('BRONZE', 'bronze', groups.bronze) ||
+    '<div class="lb-empty">No scores yet. Be the first!</div>';
 }
 
-// ==================== GAME LOGIC ====================
+// ========== GAME LOGIC ==========
 function handleKeyDown(e) {
-  if (gameState === 'go') { e.preventDefault(); recordReaction(); }
-  else if (gameState === 'waiting' || gameState === 'sequence') { e.preventDefault(); falseStart(); }
-  else if ((e.code === 'Space' || e.code === 'Enter') && document.activeElement.tagName !== 'INPUT') {
+  // Allow Enter/Space for start/restart from anywhere (except when typing)
+  if (document.activeElement.tagName === 'INPUT') {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      document.activeElement.blur();
+      if (gameState === 'idle' || gameState === 'done' || gameState === 'false_start') {
+        startGame();
+      }
+    }
+    return;
+  }
+
+  if (gameState === 'go') {
     e.preventDefault();
-    if (gameState === 'idle' || gameState === 'done' || gameState === 'false_start') startGame();
+    recordReaction();
+  } else if (gameState === 'waiting' || gameState === 'sequence') {
+    e.preventDefault();
+    falseStart();
+  } else if (e.code === 'Space' || e.code === 'Enter') {
+    e.preventDefault();
+    if (gameState === 'idle' || gameState === 'done' || gameState === 'false_start') {
+      startGame();
+    }
   }
 }
 
 function handleTap(e) {
-  if (gameState === 'idle' || gameState === 'done') {
-    if (['BUTTON', 'INPUT', 'A', 'LABEL'].includes(e.target.tagName)) return;
-  }
-  if (gameState === 'go') recordReaction();
-  else if (gameState === 'waiting' || gameState === 'sequence') falseStart();
-  else if (gameState === 'false_start') {
+  if (['BUTTON', 'INPUT', 'LABEL'].includes(e.target.tagName)) return;
+
+  if (gameState === 'go') {
+    recordReaction();
+  } else if (gameState === 'waiting' || gameState === 'sequence') {
+    falseStart();
+  } else if (gameState === 'false_start') {
     $('falseStartOverlay').classList.remove('show');
     setTimeout(startGame, 100);
   }
@@ -1146,70 +1276,75 @@ function startGame() {
   if (!name) {
     $('nameInput').focus();
     $('nameInput').style.borderColor = '#ff4444';
-    setTimeout(() => $('nameInput').style.borderColor = '#333', 1500);
+    setTimeout(() => $('nameInput').style.borderColor = '', 1500);
     showToast('Enter your name first!');
     return;
   }
-  currentName = name;
+
   localStorage.setItem('f1_name', name);
 
   // Reset UI
   gameState = 'sequence';
-  $('reactionTime').style.display = 'none';
-  $('comparison').style.display = 'none';
-  $('status').textContent = 'WATCH THE LIGHTS...';
-  $('status').className = 'status ready';
-  $('status').style.display = 'block';
+  $('reactionDisplay').style.display = 'none';
+  $('comparisonText').style.display = 'none';
+  $('statusText').textContent = 'WATCH THE LIGHTS...';
+  $('statusText').className = 'status-text watching';
+  $('statusText').style.display = 'block';
   $('btnStart').style.display = 'none';
-  $('lightsPanel').classList.remove('red-active');
-  lights.forEach(col => col.forEach(id => $(id).className = 'light'));
 
-  // Dynamic timing
-  lightTimers = [];
-  let totalDelay = 0;
+  // Reset all lights
+  lights.forEach(l => l.classList.remove('on'));
 
-  lights.forEach((col, i) => {
-    const colDelay = 400 + Math.random() * 300;
-    totalDelay += colDelay;
+  // Clear previous timers
+  timers.forEach(clearTimeout);
+  timers = [];
 
+  // Real F1 timing: each column lights up 1 second apart
+  for (let col = 1; col <= 5; col++) {
     const t = setTimeout(() => {
-      col.forEach(id => $(id).classList.add('on-red'));
-      $('lightsPanel').classList.add('red-active');
+      document.querySelectorAll(`.light[data-col="${col}"]`).forEach(l => l.classList.add('on'));
       playBeep(880, 0.1, 0.08);
-      if (i === 0) gameState = 'waiting';
-    }, totalDelay);
-    lightTimers.push(t);
-  });
 
-  const lightsOutDelay = 400 + Math.random() * 600;
+      // After first light, any click is a false start
+      if (col === 1) gameState = 'waiting';
+    }, col * LIGHT_INTERVAL);
+    timers.push(t);
+  }
+
+  // Random delay after all lights are on (0.2 - 3 seconds, like real F1)
+  const lightsOutDelay = LIGHTS_OUT_MIN + Math.random() * (LIGHTS_OUT_MAX - LIGHTS_OUT_MIN);
+
   const goTimer = setTimeout(() => {
     gameState = 'go';
-    lights.forEach(col => col.forEach(id => $(id).classList.remove('on-red')));
-    $('lightsPanel').classList.remove('red-active');
-    $('status').textContent = 'GO!';
-    $('status').className = 'status go';
+    lights.forEach(l => l.classList.remove('on'));
+    $('statusText').textContent = 'GO!';
+    $('statusText').className = 'status-text go';
     lightsOutTime = performance.now();
     playBeep(1200, 0.25, 0.15);
 
+    // Screen flash
     const flash = document.createElement('div');
     flash.className = 'screen-flash';
     document.body.appendChild(flash);
     setTimeout(() => flash.remove(), 500);
-  }, totalDelay + lightsOutDelay);
+  }, 5 * LIGHT_INTERVAL + lightsOutDelay);
 
-  lightTimers.push(goTimer);
+  timers.push(goTimer);
 }
 
 function falseStart() {
   if (gameState !== 'waiting' && gameState !== 'sequence') return;
+
   gameState = 'false_start';
-  lightTimers.forEach(clearTimeout);
-  lightTimers = [];
+  timers.forEach(clearTimeout);
+  timers = [];
+
   $('falseStartOverlay').classList.add('show');
   playBeep(200, 0.4, 0.15);
   vibrate([200, 100, 200]);
-  $('lightsPanel').classList.remove('red-active');
-  lights.forEach(col => col.forEach(id => $(id).className = 'light'));
+
+  lights.forEach(l => l.classList.remove('on'));
+
   gamesWithoutFalseStart = 0;
   localStorage.setItem('f1_no_false', '0');
 }
@@ -1237,38 +1372,33 @@ function recordReaction() {
   renderMyScores();
 
   // Display result
-  $('status').style.display = 'none';
-  $('reactionTime').textContent = reaction.toFixed(3) + 's';
-  $('reactionTime').className = 'reaction-time' + (reaction > 0.3 ? (reaction > 0.5 ? ' slow' : ' ok') : '');
-  $('reactionTime').style.display = 'block';
-
-  // Blast effect
-  fireBlast(reaction < 0.3 ? 'good' : reaction < 0.5 ? 'ok' : 'slow');
+  $('statusText').style.display = 'none';
+  $('reactionDisplay').textContent = reaction.toFixed(3) + 's';
+  $('reactionDisplay').className = 'reaction-display ' + (reaction < 0.3 ? 'fast' : reaction < 0.5 ? 'medium' : 'slow');
+  $('reactionDisplay').style.display = 'block';
 
   // Comparison
   let compHTML = '';
   const beaten = F1_PRO_TIMES.filter(p => reaction < p.time);
 
   if (challengeTime && reaction < challengeTime) {
-    compHTML = `<span class="beat">CHALLENGE WON!</span> You beat ${challengeTime.toFixed(3)}s!`;
+    compHTML = `<span class="win">CHALLENGE WON!</span> You beat ${challengeTime.toFixed(3)}s!`;
     unlock('challenge');
   } else if (challengeTime) {
     compHTML = `<span class="lose">Challenge failed</span> — ${(reaction - challengeTime).toFixed(3)}s too slow`;
   } else if (beaten.length === F1_PRO_TIMES.length) {
-    compHTML = `<span class="beat">INCREDIBLE!</span> You beat ALL F1 drivers!`;
+    compHTML = `<span class="win">INCREDIBLE!</span> You beat ALL F1 drivers!`;
   } else if (beaten.length > 0) {
-    compHTML = `<span class="beat">You beat ${beaten[beaten.length-1].name}!</span> (${beaten[beaten.length-1].time.toFixed(3)}s)`;
+    compHTML = `<span class="win">You beat ${beaten[beaten.length-1].name}!</span>`;
   } else {
     const diff = (reaction - F1_PRO_TIMES[F1_PRO_TIMES.length-1].time).toFixed(3);
-    compHTML = `<span class="lose">${diff}s slower</span> than ${F1_PRO_TIMES[F1_PRO_TIMES.length-1].name} — keep practicing!`;
+    compHTML = `<span class="lose">${diff}s slower</span> than ${F1_PRO_TIMES[F1_PRO_TIMES.length-1].name}`;
   }
-  $('comparison').innerHTML = compHTML;
-  $('comparison').style.display = 'block';
+  $('comparisonText').innerHTML = compHTML;
+  $('comparisonText').style.display = 'block';
 
   // Sound
   playBeep(800, 0.1, 0.1);
-  setTimeout(() => playBeep(1000, 0.1, 0.1), 80);
-  setTimeout(() => playBeep(1200, 0.1, 0.1), 160);
 
   // Check achievements
   checkAchievements(reaction);
@@ -1277,22 +1407,27 @@ function recordReaction() {
   if (reaction < bestTime) {
     bestTime = reaction;
     localStorage.setItem('f1_best', bestTime.toString());
-    if (gamesPlayed > 1) showToast('🎉 New personal best!');
+    if (gamesPlayed > 1) showToast('New personal best!');
   }
   updateStatsUI();
 
   // Submit to server
   if (!practiceMode) {
     const email = $('emailInput').value.trim();
-    submitScore(currentName, reaction, email);
+    const name = $('nameInput').value.trim();
+    submitScore(name, reaction, email);
   }
 
-  // Buttons
+  // Show buttons
   $('buttonsArea').innerHTML = `
-    <button class="btn btn-primary" onclick="startGame()">PLAY AGAIN</button>
-    <button class="btn btn-secondary" onclick="shareResult(${reaction})">SHARE</button>
-    <button class="btn btn-secondary" onclick="shareChallenge(${reaction})">⚔️ CHALLENGE</button>
+    <button class="btn btn-primary" id="btnPlayAgain">PLAY AGAIN</button>
+    <button class="btn btn-secondary" id="btnShare">SHARE</button>
+    <button class="btn btn-secondary" id="btnChallenge">CHALLENGE</button>
   `;
+
+  $('btnPlayAgain').onclick = startGame;
+  $('btnShare').onclick = () => shareResult(reaction);
+  $('btnChallenge').onclick = () => shareChallenge(reaction);
 }
 
 async function submitScore(name, time, email) {
@@ -1313,13 +1448,13 @@ async function submitScore(name, time, email) {
   } catch(e) {}
 }
 
-// ==================== ACHIEVEMENTS ====================
+// ========== ACHIEVEMENTS ==========
 function unlock(id) {
   if (unlockedAchievements.includes(id)) return;
   unlockedAchievements.push(id);
   localStorage.setItem('f1_achievements', JSON.stringify(unlockedAchievements));
   const a = ACHIEVEMENTS.find(x => x.id === id);
-  if (a) showToast(`🏆 ${a.name}!`);
+  if (a) showToast(`Achievement: ${a.name}!`);
   renderAchievements();
 }
 
@@ -1341,21 +1476,22 @@ function checkAchievements(time) {
   if (gamesWithoutFalseStart >= 10) unlock('no_false');
 }
 
-// ==================== SHARING ====================
+// ========== SHARING ==========
 function shareResult(time) {
   const tier = getTier(time);
-  const text = `🏎️ I got ${time.toFixed(3)}s on F1 Lights Out!\n\n${tier.name} Tier 🎖️\n\nCan you beat me?\nhttps://f1lightsoutgame.site`;
+  const text = `🏎️ I got ${time.toFixed(3)}s on F1 Lights Out!\n\n${tier.name} Tier\n\nCan you beat me?\nhttps://f1lightsoutgame.site`;
 
   if (navigator.share) {
     navigator.share({ title: 'F1 Lights Out!', text }).catch(() => {});
   } else {
-    navigator.clipboard.writeText(text).then(() => showToast('Copied!')).catch(() => {});
+    navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!')).catch(() => {});
   }
 }
 
 function shareChallenge(time) {
-  const url = `https://f1lightsoutgame.site?challenge=${time.toFixed(3)}&from=${encodeURIComponent(currentName || 'Someone')}`;
-  const text = `⚔️ ${currentName || 'Someone'} challenges you!\n\nBeat my ${time.toFixed(3)}s reaction time!\n\n${url}`;
+  const name = $('nameInput').value.trim() || 'Someone';
+  const url = `https://f1lightsoutgame.site?challenge=${time.toFixed(3)}&from=${encodeURIComponent(name)}`;
+  const text = `${name} challenges you!\n\nBeat my ${time.toFixed(3)}s reaction time!\n\n${url}`;
 
   if (navigator.share) {
     navigator.share({ title: 'F1 Challenge!', text, url }).catch(() => {});
@@ -1364,52 +1500,7 @@ function shareChallenge(time) {
   }
 }
 
-// ==================== EFFECTS ====================
-function fireBlast(tier) {
-  const colors = tier === 'good' ? ['#00ff44','#44ff88','#ffffff']
-    : tier === 'ok' ? ['#ffd700','#ffaa00','#ffffff']
-    : ['#ff4444','#ff6644','#ffffff'];
-
-  const container = document.createElement('div');
-  container.className = 'blast-container';
-  document.body.appendChild(container);
-
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight * 0.35;
-  const count = tier === 'good' ? 40 : 25;
-
-  for (let i = 0; i < count; i++) {
-    const p = document.createElement('div');
-    p.className = 'blast-particle';
-    const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
-    const dist = 80 + Math.random() * 150;
-    const size = 4 + Math.random() * 6;
-    const dur = 0.5 + Math.random() * 0.5;
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    p.style.cssText = `left:${cx}px;top:${cy}px;width:${size}px;height:${size}px;background:${color};--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;--dur:${dur}s;`;
-    container.appendChild(p);
-  }
-
-  const ring = document.createElement('div');
-  ring.className = 'blast-ring';
-  ring.style.cssText = `left:${cx}px;top:${cy}px;transform:translate(-50%,-50%);border-color:${colors[0]};`;
-  document.body.appendChild(ring);
-
-  setTimeout(() => { container.remove(); ring.remove(); }, 1000);
-}
-
-function vibrate(pattern) {
-  if ('vibrate' in navigator) try { navigator.vibrate(pattern); } catch(e) {}
-}
-
-function showToast(msg) {
-  const t = $('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-// ==================== START ====================
+// ========== START ==========
 init();
 </script>
 </body>
